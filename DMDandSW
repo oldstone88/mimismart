@@ -1,0 +1,36 @@
+u8 OldState [2] ={0,0};
+u8 State [2] = {0,0};
+u8 OnOff = 0;
+V-ID/btn{
+	State[0]=opt(0);
+	State[1]=opt(1);
+	if(opt(0)==0xfc) {
+
+		if(OnOff == 0)
+			OnOff = 1;
+		else 
+			OnOff = 0;
+		setStatus(dimmer, {OnOff});
+	}
+
+}
+u8 temp =0;
+
+V-ID/ms:150{
+	u8 breakpoint=0;
+	if(State[0]==0xfd){
+		for(u8 i=0;i<2;++i){
+			if(OldState[i]!=State[i] || (OldState[1]==0xff && State[1]==0xff)){
+				OldState[i]=State[i];
+				if(!breakpoint){
+					u8 bright = [dimmer.1];
+					if(bright>245) temp = 1;
+					else if(bright<5) temp = 0;
+					if(temp) setStatus(dimmer,{1,bright-3,0});
+					else setStatus(dimmer,{1,bright+3,0});
+					breakpoint=1;
+				}
+			}
+		}
+	}
+}
