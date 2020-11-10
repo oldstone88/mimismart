@@ -1,0 +1,143 @@
+/*
+{
+	desc:"Чудо увлажнители",
+	tag:"import-script",
+	selectArea:true,
+	
+	vars:[
+
+{name:"H0",type:"devices-list",required:true,width:1000,filter:["conditioner"],desc:"Увлажнитель 0",descWidth:100},
+{name:"H1",type:"devices-list",required:false,width:1000,filter:["conditioner"],desc:"Увлажнитель 1",descWidth:100},
+{name:"H2",type:"devices-list",required:false,width:1000,filter:["conditioner"],desc:"Увлажнитель 2",descWidth:100},
+{name:"H3",type:"devices-list",required:false,width:1000,filter:["conditioner"],desc:"Увлажнитель 3",descWidth:100},
+{name:"H4",type:"devices-list",required:false,width:1000,filter:["conditioner"],desc:"Увлажнитель 4",descWidth:100},
+{name:"H5",type:"devices-list",required:false,width:1000,filter:["conditioner"],desc:"Увлажнитель 5",descWidth:100},
+{name:"H6",type:"devices-list",required:false,width:1000,filter:["conditioner"],desc:"Увлажнитель 6",descWidth:100},
+{name:"H7",type:"devices-list",required:false,width:1000,filter:["conditioner"],desc:"Увлажнитель 7",descWidth:100},
+
+
+{name:"B0",type:"devices-list",required:true,width:1000,filter:["lamp"],desc:"Кнопка 0",descWidth:100},
+{name:"B1",type:"devices-list",required:false,width:1000,filter:["lamp"],desc:"Кнопка 1",descWidth:100},
+{name:"B2",type:"devices-list",required:false,width:1000,filter:["lamp"],desc:"Кнопка 2",descWidth:100},
+{name:"B3",type:"devices-list",required:false,width:1000,filter:["lamp"],desc:"Кнопка 3",descWidth:100},
+{name:"B4",type:"devices-list",required:false,width:1000,filter:["lamp"],desc:"Кнопка 4",descWidth:100},
+{name:"B5",type:"devices-list",required:false,width:1000,filter:["lamp"],desc:"Кнопка 5",descWidth:100},
+{name:"B6",type:"devices-list",required:false,width:1000,filter:["lamp"],desc:"Кнопка 6",descWidth:100},
+{name:"B7",type:"devices-list",required:false,width:1000,filter:["lamp"],desc:"Кнопка 7",descWidth:100},
+
+
+{name:"D0",type:"devices-list",required:true,width:1000,filter:["humidity-sensor"],desc:"Датчик 0",descWidth:100},
+{name:"D1",type:"devices-list",required:false,width:1000,filter:["humidity-sensor"],desc:"Датчик 1",descWidth:100},
+{name:"D2",type:"devices-list",required:false,width:1000,filter:["humidity-sensor"],desc:"Датчик 2",descWidth:100},
+{name:"D3",type:"devices-list",required:false,width:1000,filter:["humidity-sensor"],desc:"Датчик 3",descWidth:100},
+{name:"D4",type:"devices-list",required:false,width:1000,filter:["humidity-sensor"],desc:"Датчик 4",descWidth:100},
+{name:"D5",type:"devices-list",required:false,width:1000,filter:["humidity-sensor"],desc:"Датчик 5",descWidth:100},
+{name:"D6",type:"devices-list",required:false,width:1000,filter:["humidity-sensor"],desc:"Датчик 6",descWidth:100},
+{name:"D7",type:"devices-list",required:false,width:1000,filter:["humidity-sensor"],desc:"Датчик 7",descWidth:100},
+
+
+	]
+}
+*/
+
+u8 i[9];
+
+void off()
+{
+setStatus(B0, 0);
+#ifdef B1 setStatus(B1, 0); #endif
+#ifdef B2 setStatus(B2, 0); #endif
+#ifdef B3 setStatus(B3, 0); #endif
+#ifdef B4 setStatus(B4, 0); #endif
+#ifdef B5 setStatus(B5, 0); #endif
+#ifdef B6 setStatus(B6, 0); #endif
+#ifdef B7 setStatus(B7, 0); #endif
+}
+
+V-ID/s:360
+{
+if( (i[0]==1) && ([H0.1]+10>[D0.1]) ) setStatus(B0, 1);
+
+#ifdef H1
+if( (i[1]==1) && ([H1.1]+10>[D1.1]) ) setStatus(B1, 1);
+#endif
+
+#ifdef H2
+if( (i[2]==1) && ([H2.1]+10>[D2.1]) ) setStatus(B2, 1);
+#endif
+
+#ifdef H3
+if( (i[3]==1) && ([H3.1]+10>[D3.1]) ) setStatus(B3, 1);
+#endif
+
+#ifdef H4
+if( (i[4]==1) && ([H4.1]+10>[D4.1]) ) setStatus(B4, 1);
+#endif
+
+#ifdef H5
+if( (i[5]==1) && ([H5.1]+10>[D5.1]) ) setStatus(B5, 1);
+#endif
+
+#ifdef H6
+if( (i[6]==1) && ([H1.6]+10>[D6.1]) ) setStatus(B6, 1);
+#endif
+
+#ifdef H7
+if( (i[7]==1) && ([H7.1]+10>[D7.1]) ) setStatus(B7, 1);
+#endif
+delayedCall(off, 120);
+}
+
+V-ID/H0
+{
+	if([H0.0]%2!=0 ) i[0]=1; else i[0]=0;
+}
+
+#ifdef H1
+V-ID/H1
+{
+	if([H1.0]%2!=0 ) i[1]=1; else i[1]=0;
+}
+#endif
+
+#ifdef H2
+V-ID/H2
+{
+	if([H2.0]%2!=0 ) i[2]=1; else i[2]=0;
+}
+#endif
+
+#ifdef H3
+V-ID/H3
+{
+	if([H3.0]%2!=0 ) i[3]=1; else i[3]=0;
+}
+#endif
+
+#ifdef H4
+V-ID/H4
+{
+	if([H4.0]%2!=0 ) i[4]=1; else i[4]=0;
+}
+#endif
+
+#ifdef H5
+V-ID/H5
+{
+	if([H5.0]%2!=0 ) i[5]=1; else i[5]=0;
+}
+#endif
+
+#ifdef H6
+V-ID/H6
+{
+	if([H6.0]%2!=0 ) i[6]=1; else i[6]=0;
+}
+#endif
+
+#ifdef H7
+V-ID/H7
+{
+	if([H7.0]%2!=0 ) i[7]=1; else i[7]=0;
+}
+#endif

@@ -1,0 +1,96 @@
+/*
+{
+	desc:"Ворота - обратная связь, полное управление",
+	tag:"import-script",
+	selectArea:true,
+
+        addItems:[
+		{tag:"item", id:"%TARGET%", name:"NAME", "sub-id":"%SUBID%", type:"virtual", "sub-type":"jalousie120", "length":"1"},
+	],
+	
+	vars:[
+{type:"comment",text:"Ввведите название для Ворот:"},
+{name:"NAME",type:"string",required:true,min:3,max:40},
+
+{name:"L0",type:"devices-list",required:true,width:900,filter:["lamp", "script"],desc:"Кнопка гаража",descWidth:100},
+{name:"H0",type:"devices-list",required:true,width:900,filter:["door-sensor"],desc:"Верхний геркон",descWidth:100},
+{name:"H1",type:"devices-list",required:true,width:900,filter:["door-sensor"],desc:"Нижний геркон",descWidth:100},
+{name:"J0",type:"hidden",value:"%TARGET%:%SUBID%"},
+	]
+}
+*/
+
+u8 JP = 4;
+u8 i=0;
+
+void openJalousie(){
+	JP = 1;
+	setStatus(J0, JP);
+}
+
+void closeJalousie(){
+	JP = 0;
+	setStatus(J0, JP);
+}
+
+
+void REV()
+{
+	setStatus(L0,1);
+}
+
+void REV1 ()
+{
+	setStatus(L0,1);
+}
+
+V-ID/
+{
+	if ([~H0.0]==0)
+		{JP=1;
+		cancelDelayedCall(openJalousie);
+		cancelDelayedCall(closeJalousie);
+		setStatus(J0,JP);
+		i=1;}
+	if ([~H1.0]==0)
+		{JP=0;
+		cancelDelayedCall(openJalousie);
+		cancelDelayedCall(closeJalousie);
+		setStatus(J0,JP);
+		i=0;}
+}
+
+
+V-ID/J0
+{
+	if ([J0.0]==1)
+		{if (JP==0 || JP==4)
+			{if(i==0)
+				{setStatus(L0,1);
+				i=1;}
+					else {setStatus(L0,1); delayedCallMs(REV,1500); delayedCallMs(REV1,2000);}
+			JP=3;
+			setStatus(J0,JP);
+			delayedCall(openJalousie, T);}
+				else if(JP==3 || JP==2)
+					{cancelDelayedCall(openJalousie);
+					cancelDelayedCall(closeJalousie);
+					setStatus(L0,1);
+					JP=4;
+					setStatus(J0, JP);}}
+	if ([J0.0]==0)
+		{if (JP==1 || JP==4)
+			{if (i==1)
+				{setStatus(L0,1);
+				i=0;}
+					else {setStatus(L0,1); delayedCallMs(REV,1500); delayedCallMs(REV1,2000);}
+			JP=2;
+			setStatus(J0,JP);
+			delayedCall(closeJalousie, T);}
+				else if(JP==3 || JP==2)
+					{cancelDelayedCall(openJalousie);
+					cancelDelayedCall(closeJalousie);
+					setStatus(L0,1);
+					JP=4;
+					setStatus(J0, JP);}}
+}

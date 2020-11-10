@@ -1,0 +1,232 @@
+/*
+{
+	desc:"Лог выключателей",
+	tag:"import-script",
+	selectArea:true,
+	
+	vars:[
+{name:"K0",type:"devices-list",required:true,width:1000,filter:["switch"],desc:"Кнопка 0",descWidth:200},
+{name:"K1",type:"devices-list",required:false,width:1000,filter:["switch"],desc:"Кнопка 1",descWidth:200},
+{name:"K2",type:"devices-list",required:false,width:1000,filter:["switch"],desc:"Кнопка 2",descWidth:200},
+{name:"K3",type:"devices-list",required:false,width:1000,filter:["switch"],desc:"Кнопка 3",descWidth:200},
+{name:"K4",type:"devices-list",required:false,width:1000,filter:["switch"],desc:"Кнопка 4",descWidth:200},
+{name:"K5",type:"devices-list",required:false,width:1000,filter:["switch"],desc:"Кнопка 5",descWidth:200},
+{name:"K6",type:"devices-list",required:false,width:1000,filter:["switch"],desc:"Кнопка 6",descWidth:200},
+{name:"K7",type:"devices-list",required:false,width:1000,filter:["switch"],desc:"Кнопка 7",descWidth:200},
+{name:"K8",type:"devices-list",required:false,width:1000,filter:["switch"],desc:"Кнопка 8",descWidth:200},
+{name:"K9",type:"devices-list",required:false,width:1000,filter:["switch"],desc:"Кнопка 9",descWidth:200},
+{name:"K10",type:"devices-list",required:false,width:1000,filter:["switch"],desc:"Кнопка 10",descWidth:200},
+{name:"K11",type:"devices-list",required:true,width:1000,filter:["switch"],desc:"Кнопка 11",descWidth:200},
+{name:"K12",type:"devices-list",required:false,width:1000,filter:["switch"],desc:"Кнопка 12",descWidth:200},
+{name:"K13",type:"devices-list",required:false,width:1000,filter:["switch"],desc:"Кнопка 13",descWidth:200},
+{name:"K14",type:"devices-list",required:false,width:1000,filter:["switch"],desc:"Кнопка 14",descWidth:200},
+{name:"K15",type:"devices-list",required:false,width:1000,filter:["switch"],desc:"Кнопка 15",descWidth:200},
+{name:"K16",type:"devices-list",required:false,width:1000,filter:["switch"],desc:"Кнопка 16",descWidth:200},
+{name:"K17",type:"devices-list",required:false,width:1000,filter:["switch"],desc:"Кнопка 17",descWidth:200},
+{name:"K18",type:"devices-list",required:false,width:1000,filter:["switch"],desc:"Кнопка 18",descWidth:200},
+{name:"K19",type:"devices-list",required:false,width:1000,filter:["switch"],desc:"Кнопка 19",descWidth:200},
+{name:"K20",type:"devices-list",required:false,width:1000,filter:["switch"],desc:"Кнопка 20",descWidth:200},
+{name:"K21",type:"devices-list",required:false,width:1000,filter:["switch"],desc:"Кнопка 21",descWidth:200},
+{name:"K22",type:"devices-list",required:true,width:1000,filter:["switch"],desc:"Кнопка 22",descWidth:200},
+{name:"K23",type:"devices-list",required:false,width:1000,filter:["switch"],desc:"Кнопка 23",descWidth:200},
+{name:"K24",type:"devices-list",required:false,width:1000,filter:["switch"],desc:"Кнопка 24",descWidth:200},
+{name:"K25",type:"devices-list",required:false,width:1000,filter:["switch"],desc:"Кнопка 25",descWidth:200},
+{name:"K26",type:"devices-list",required:false,width:1000,filter:["switch"],desc:"Кнопка 26",descWidth:200},
+{name:"K27",type:"devices-list",required:false,width:1000,filter:["switch"],desc:"Кнопка 27",descWidth:200},
+{name:"K28",type:"devices-list",required:false,width:1000,filter:["switch"],desc:"Кнопка 28",descWidth:200},
+{name:"K29",type:"devices-list",required:false,width:1000,filter:["switch"],desc:"Кнопка 29",descWidth:200},
+{name:"K30",type:"devices-list",required:false,width:1000,filter:["switch"],desc:"Кнопка 30",descWidth:200},
+
+	]
+}
+*/
+
+u8 i[31];
+
+V-ID/
+{
+if([~K0.0]==0xFC) srvError("Нажали кнопку %d", K0);
+if([~K0.0]==0xFD && i[0]==0) {i[0]=1; srvError("Зажата кнопка %d", [K0]);}
+if([~K0.0]==0xFF) {i[0]=0; srvError("Отжата кнопка %d", K0);}
+
+#ifdef K1
+if([~K1.0]==0xFC) srvError("Нажали кнопку %d", K1);
+if([~K1.0]==0xFD && i[1]==0) {i[1]=1; srvError("Зажата кнопка %d", K1);}
+if([~K1.0]==0xFF) {i[1]=0; srvError("Отжата кнопка %d", K1);}
+#endif
+
+#ifdef K2
+if([~K2.0]==0xFC) srvError("Нажали кнопку %d", K2);
+if([~K2.0]==0xFD && i[2]==0) {i[2]=1; srvError("Зажата кнопка %d", K2);}
+if([~K2.0]==0xFF) {i[2]=0; srvError("Отжата кнопка %d", K2);}
+#endif
+
+#ifdef K3
+if([~K3.0]==0xFC) srvError("Нажали кнопку %d", K3);
+if([~K3.0]==0xFD && i[3]==0) {i[3]=1; srvError("Зажата кнопка %d", K3);}
+if([~K3.0]==0xFF) {i[3]=0; srvError("Отжата кнопка %d", K3);}
+#endif
+
+#ifdef K4
+if([~K4.0]==0xFC) srvError("Нажали кнопку %d", K4);
+if([~K4.0]==0xFD && i[4]==0) {i[4]=1; srvError("Зажата кнопка %d", K4);}
+if([~K4.0]==0xFF) {i[4]=0; srvError("Отжата кнопка %d", K4);}
+#endif
+
+#ifdef K5
+if([~K5.0]==0xFC) srvError("Нажали кнопку %d", K5);
+if([~K5.0]==0xFD && i[5]==0) {i[5]=1; srvError("Зажата кнопка %d", K5);}
+if([~K5.0]==0xFF) {i[5]=0; srvError("Отжата кнопка %d", K5);}
+#endif
+
+#ifdef K6
+if([~K6.0]==0xFC) srvError("Нажали кнопку %d", K6);
+if([~K6.0]==0xFD && i[6]==0) {i[6]=1; srvError("Зажата кнопка %d", K6;}
+if([~K6.0]==0xFF) {i[6]=0; srvError("Отжата кнопка %d", K6);}
+#endif
+
+#ifdef K7
+if([~K7.0]==0xFC) srvError("Нажали кнопку %d", K7);
+if([~K7.0]==0xFD && i[7]==0) {i[7]=1; srvError("Зажата кнопка %d", K7;}
+if([~K7.0]==0xFF) {i[7]=0; srvError("Отжата кнопка %d", K7);}
+#endif
+
+#ifdef K8
+if([~K8.0]==0xFC) srvError("Нажали кнопку %d", K8);
+if([~K8.0]==0xFD && i[8]==0) {i[8]=1; srvError("Зажата кнопка %d", K8;}
+if([~K8.0]==0xFF) {i[8]=0; srvError("Отжата кнопка %d", K8);}
+#endif
+
+#ifdef K9
+if([~K9.0]==0xFC) srvError("Нажали кнопку %d", K9);
+if([~K9.0]==0xFD && i[9]==0) {i[9]=1; srvError("Зажата кнопка %d", K9;}
+if([~K9.0]==0xFF) {i[9]=0; srvError("Отжата кнопка %d", K9;}
+#endif
+
+#ifdef K10
+if([~K10.0]==0xFC) srvError("Нажали кнопку %d", K10);
+if([~K10.0]==0xFD && i[10]==0) {i[10]=1; srvError("Зажата кнопка %d", K10);}
+if([~K10.0]==0xFF) {i[10]=0; srvError("Отжата кнопка %d", K10);}
+#endif
+
+#ifdef K11
+if([~K11.0]==0xFC) srvError("Нажали кнопку 11");
+if([~K11.0]==0xFD && i[11]==0) {i[11]=1; srvError("Зажата кнопка %d", K11);}
+if([~K11.0]==0xFF) {i[11]=0; srvError("Отжата кнопка 11");}
+#endif
+
+#ifdef K12
+if([~K12.0]==0xFC) srvError("Нажали кнопку 12");
+if([~K12.0]==0xFD && i[12]==0) {i[12]=1; srvError("Зажата кнопка 12");}
+if([~K12.0]==0xFF) {i[12]=0; srvError("Отжата кнопка 12");}
+#endif
+
+#ifdef K13
+if([~K13.0]==0xFC) srvError("Нажали кнопку 13");
+if([~K13.0]==0xFD && i[13]==0) {i[13]=1; srvError("Зажата кнопка 13");}
+if([~K13.0]==0xFF) {i[13]=0; srvError("Отжата кнопка 13");}
+#endif
+
+#ifdef K14
+if([~K14.0]==0xFC) srvError("Нажали кнопку 14");
+if([~K14.0]==0xFD && i[14]==0) {i[14]=1; srvError("Зажата кнопка 14");}
+if([~K14.0]==0xFF) {i[14]=0; srvError("Отжата кнопка 14");}
+#endif
+
+#ifdef K15
+if([~K15.0]==0xFC) srvError("Нажали кнопку 15");
+if([~K15.0]==0xFD && i[15]==0) {i[15]=1; srvError("Зажата кнопка 15");}
+if([~K15.0]==0xFF) {i[15]=0; srvError("Отжата кнопка 15");}
+#endif
+
+#ifdef K16
+if([~K16.0]==0xFC) srvError("Нажали кнопку 16");
+if([~K16.0]==0xFD && i[16]==0) {i[16]=1; srvError("Зажата кнопка 16");}
+if([~K16.0]==0xFF) {i[16]=0; srvError("Отжата кнопка 16");}
+#endif
+
+#ifdef K17
+if([~K17.0]==0xFC) srvError("Нажали кнопку 17");
+if([~K17.0]==0xFD && i[17]==0) {i[17]=1; srvError("Зажата кнопка 17");}
+if([~K17.0]==0xFF) {i[17]=0; srvError("Отжата кнопка 17");}
+#endif
+
+#ifdef K18
+if([~K18.0]==0xFC) srvError("Нажали кнопку 18");
+if([~K18.0]==0xFD && i[18]==0) {i[18]=1; srvError("Зажата кнопка 18");}
+if([~K18.0]==0xFF) {i[18]=0; srvError("Отжата кнопка 18");}
+#endif
+
+#ifdef K19
+if([~K19.0]==0xFC) srvError("Нажали кнопку 19");
+if([~K19.0]==0xFD && i[19]==0) {i[19]=1; srvError("Зажата кнопка 19");}
+if([~K19.0]==0xFF) {i[19]=0; srvError("Отжата кнопка 19");}
+#endif
+
+#ifdef K20
+if([~K20.0]==0xFC) srvError("Нажали кнопку 20");
+if([~K20.0]==0xFD && i[20]==0) {i[20]=1; srvError("Зажата кнопка 20");}
+if([~K20.0]==0xFF) {i[20]=0; srvError("Отжата кнопка 20");}
+#endif
+
+#ifdef K21
+if([~K21.0]==0xFC) srvError("Нажали кнопку 21");
+if([~K21.0]==0xFD && i[21]==0) {i[21]=1; srvError("Зажата кнопка 21");}
+if([~K21.0]==0xFF) {i[21]=0; srvError("Отжата кнопка 21");}
+#endif
+
+#ifdef K22
+if([~K22.0]==0xFC) srvError("Нажали кнопку 22");
+if([~K22.0]==0xFD && i[22]==0) {i[22]=1; srvError("Зажата кнопка 22");}
+if([~K22.0]==0xFF) {i[22]=0; srvError("Отжата кнопка 22");}
+#endif
+
+#ifdef K23
+if([~K23.0]==0xFC) srvError("Нажали кнопку 23");
+if([~K23.0]==0xFD && i[23]==0) {i[23]=1; srvError("Зажата кнопка 23");}
+if([~K23.0]==0xFF) {i[23]=0; srvError("Отжата кнопка 23");}
+#endif
+
+#ifdef K24
+if([~K24.0]==0xFC) srvError("Нажали кнопку 24");
+if([~K24.0]==0xFD && i[24]==0) {i[24]=1; srvError("Зажата кнопка 24");}
+if([~K24.0]==0xFF) {i[24]=0; srvError("Отжата кнопка 24");}
+#endif
+
+#ifdef K25
+if([~K25.0]==0xFC) srvError("Нажали кнопку 25");
+if([~K25.0]==0xFD && i[25]==0) {i[25]=1; srvError("Зажата кнопка 25");}
+if([~K25.0]==0xFF) {i[25]=0; srvError("Отжата кнопка 25");}
+#endif
+
+#ifdef K26
+if([~K26.0]==0xFC) srvError("Нажали кнопку 26");
+if([~K26.0]==0xFD && i[26]==0) {i[26]=1; srvError("Зажата кнопка 26");}
+if([~K26.0]==0xFF) {i[26]=0; srvError("Отжата кнопка 26");}
+#endif
+
+#ifdef K27
+if([~K27.0]==0xFC) srvError("Нажали кнопку 27");
+if([~K27.0]==0xFD && i[27]==0) {i[27]=1; srvError("Зажата кнопка 27");}
+if([~K27.0]==0xFF) {i[27]=0; srvError("Отжата кнопка 27");}
+#endif
+
+#ifdef K28
+if([~K28.0]==0xFC) srvError("Нажали кнопку 28");
+if([~K28.0]==0xFD && i[28]==0) {i[28]=1; srvError("Зажата кнопка 28");}
+if([~K28.0]==0xFF) {i[28]=0; srvError("Отжата кнопка 28");}
+#endif
+
+#ifdef K29
+if([~K29.0]==0xFC) srvError("Нажали кнопку 29");
+if([~K29.0]==0xFD && i[29]==0) {i[29]=1; srvError("Зажата кнопка 29");}
+if([~K29.0]==0xFF) {i[29]=0; srvError("Отжата кнопка 29");}
+#endif
+
+#ifdef K30
+if([~K30.0]==0xFC) srvError("Нажали кнопку 30");
+if([~K30.0]==0xFD && i[30]==0) {i[30]=1; srvError("Зажата кнопка 30");}
+if([~K30.0]==0xFF) {i[30]=0; srvError("Отжата кнопка 30");}
+#endif
+
+}

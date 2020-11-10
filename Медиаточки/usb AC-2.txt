@@ -1,0 +1,18 @@
+/*
+{
+	desc-ru:"Включить вход USB",
+	tag:"item",
+	selectArea:true,
+	vars:[
+ {name:"MID01",type:"number",required:true,min:100,max:700,descWidth:150,desc:"ID медиаточка"},
+	]
+}
+*/
+
+
+
+V-ID/V-ADDR
+{
+if ( [V-ADDR.0]==1 ) setStatus(MID01:30,"src:'hw:1,0'"); else
+{setStatus(MID01:30,"src:'hw:0,0'"); setStatus(MID01:30, 0);}
+}
