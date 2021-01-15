@@ -1,0 +1,966 @@
+/*
+{
+  desc:"Полная охрана c дополнительными функциями по сработке",
+  tag:"item",
+  selectArea:false,
+  vars:[
+	  
+ 	{name:"TOOUT",type:"number",required:false,width:100,defaultValue:15,min:1,max:180,desc:"Время на выход в секундах"},
+ 	{name:"SCRTOOUT",type:"devices-list",required:true, filter:["script"],desc:"Скрипт при установки охраны",width:600},
+ 	{name:"TOWORK",type:"number",required:false,width:100,defaultValue:15,min:1,max:180,desc:"Время на снятие охраны"},
+ 	{name:"SCRTOWORK",type:"devices-list",required:true, filter:["script"],desc:"Скрипт при снятие охраны",width:600},
+   	{type:"comment",text:"выберите датчики движения",width:888, style:"color:red;"},
+   	{name:"MOTION0",type:"devices-list",required:true, filter:["motion-sensor"],desc:"Датчик движения0",width:888},
+   	{name:"TXTM00",type:"string",required:true,desc:"Текст при сработки Датчик движения0",width:880},
+   	{name:"MOTION1",type:"devices-list",required:false, filter:["motion-sensor"],desc:"Датчик движения1",width:888},
+   	{name:"TXTM01",type:"string",required:false,desc:"Текст при сработки Датчик движения1",width:880},
+	{name:"MOTION2",type:"devices-list",required:false, filter:["motion-sensor"],desc:"Датчик движения2",width:888},
+	{name:"TXTM02",type:"string",required:false,desc:"Текст при сработки Датчик движения2",width:880},
+   	{name:"MOTION3",type:"devices-list",required:false, filter:["motion-sensor"],desc:"Датчик движения3",width:888},
+   	{name:"TXTM03",type:"string",required:false,desc:"Текст при сработки Датчик движения3",width:880},
+   	{name:"MOTION4",type:"devices-list",required:false, filter:["motion-sensor"],desc:"Датчик движения4",width:888},
+   	{name:"TXTM04",type:"string",required:false,desc:"Текст при сработки Датчик движения4",width:880},
+   	{name:"MOTION5",type:"devices-list",required:false, filter:["motion-sensor"],desc:"Датчик движения5",width:888},
+   	{name:"TXTM05",type:"string",required:false,desc:"Текст при сработки Датчик движения5",width:880},
+   	{name:"MOTION6",type:"devices-list",required:false, filter:["motion-sensor"],desc:"Датчик движения6",width:888},
+   	{name:"TXTM06",type:"string",required:false,desc:"Текст при сработки Датчик движения6",width:880},
+   	{name:"MOTION7",type:"devices-list",required:false, filter:["motion-sensor"],desc:"Датчик движения7",width:888},
+   	{name:"TXTM07",type:"string",required:false,desc:"Текст при сработки Датчик движения7",width:880},
+   	{name:"MOTION8",type:"devices-list",required:false, filter:["motion-sensor"],desc:"Датчик движения8",width:888},
+   	{name:"TXTM08",type:"string",required:false,desc:"Текст при сработки Датчик движения8",width:880},
+   	{name:"MOTION9",type:"devices-list",required:false, filter:["motion-sensor"],desc:"Датчик движения9",width:888},
+   	{name:"TXTM09",type:"string",required:false,desc:"Текст при сработки Датчик движения9",width:880},
+   	{name:"MOTION10",type:"devices-list",required:false, filter:["motion-sensor"],desc:"Датчик движения10",width:888},
+   	{name:"TXTM10",type:"string",required:false,desc:"Текст при сработки Датчик движения10",width:880},
+   	{type:"comment",text:"выберите герконы при открытии которых сработает охрана",width:888, style:"color:red;"},
+   	{name:"G00",type:"devices-list",required:false,filter:["door-sensor"],width:888,desc:"Геркон 0"},
+   	{name:"TXTG00",type:"string",required:false,desc:"Текст при сработки Геркона 0",width:880},
+    {name:"G01",type:"devices-list",required:false,filter:["door-sensor"],width:888,desc:"Геркон 1"},
+    {name:"TXTG01",type:"string",required:false,desc:"Текст при сработки Геркона 1",width:880},
+    {name:"G02",type:"devices-list",required:false,filter:["door-sensor"],width:888,desc:"Геркон 2"},
+    {name:"TXTG02",type:"string",required:false,desc:"Текст при сработки Геркона 2",width:880},
+    {name:"G03",type:"devices-list",required:false,filter:["door-sensor"],width:888,desc:"Геркон 3"},
+    {name:"TXTG03",type:"string",required:false,desc:"Текст при сработки Геркона 3",width:880},
+    {name:"G04",type:"devices-list",required:false,filter:["door-sensor"],width:888,desc:"Геркон 4"},
+    {name:"TXTG04",type:"string",required:false,desc:"Текст при сработки Геркона 4",width:880},
+    {name:"G05",type:"devices-list",required:false,filter:["door-sensor"],width:888,desc:"Геркон 5"},
+    {name:"TXTG05",type:"string",required:false,desc:"Текст при сработки Геркона 5",width:880},
+    {name:"G06",type:"devices-list",required:false,filter:["door-sensor"],width:888,desc:"Геркон 6"},
+    {name:"TXTG06",type:"string",required:false,desc:"Текст при сработки Геркона 6",width:880},
+    {name:"G07",type:"devices-list",required:false,filter:["door-sensor"],width:888,desc:"Геркон 7"},
+    {name:"TXTG07",type:"string",required:false,desc:"Текст при сработки Геркона 7",width:880},
+    {name:"G08",type:"devices-list",required:false,filter:["door-sensor"],width:888,desc:"Геркон 8"},
+    {name:"TXTG08",type:"string",required:false,desc:"Текст при сработки Геркона 8",width:880},
+    {name:"G09",type:"devices-list",required:false,filter:["door-sensor"],width:888,desc:"Геркон 9"},
+    {name:"TXTG09",type:"string",required:false,desc:"Текст при сработки Геркона 9",width:880},
+    {name:"G10",type:"devices-list",required:false,filter:["door-sensor"],width:888,desc:"Геркон 10"},
+    {name:"TXTG10",type:"string",required:false,desc:"Текст при сработки Геркона 10",width:880},
+   	{name:"MRMR",type:"devices-list",required:false, filter:["speaker"],desc:"Точка на которую вещать"},
+	{name:"VOLUME",type:"number",required:false,width:100,defaultValue:125,min:1,max:250,desc:"Громкость оповещения"},
+	{type:"comment",text:"Выберите лампу и сирену",width:888, style:"color:red;"},
+	{name:"L00",type:"devices-list",required:false,filter:["lamp","script","item"],width:888,desc:"Лампа"},
+	{name:"S00",type:"devices-list",required:false,filter:["lamp","script","item"],width:888,desc:"Сирену"},
+	{type:"comment",text:"Настройка ТЕЛЕГРАММ",width:888, style:"color:red;"},
+	{name:"TELEGRAMM_ID",type:"string",required:false,desc:"Укажите id получателя в телеграмм-боте",width:880},
+	{name:"TELEGRAMM2_ID",type:"string",required:false,desc:"Укажите id получателя в телеграмм-боте",width:880},
+	]
+}
+*/
+
+u16 porog = 0x2800; // treshold
+u8 statutOn = 0;
+u8 alarm = 0;
+u8 ohrana = 0;
+u8 blink = 0;//мигание лампочкой 
+u16 exciter_id;//id того, кто ставит на охрану
+u8 moutionAr[10];//массив датчиков движения
+u8 gAr[10];//массив герконов
+
+void clearAR()
+{
+	for(u8 i=0;i<11;++i){
+	moutionAr[i]=0;
+	gAr[i]=0;
+	}
+}
+
+
+void restart()
+{ //повтораня постановка на охрану.
+    alarm = 0;
+    blink = 0;
+   	//setStatus(1967:32, {1,"Постановка на охрану после сработки"});   //Шлем Стасу
+   	#ifdef TELEGRAMM_ID
+   	setStatus(1000:90, "TELEGRAMM_ID||Постановка на охрану после сработки"); 
+   	#endif
+   	#ifdef TELEGRAMM2_ID
+   	setStatus(1000:90, "TELEGRAMM2_ID||Постановка на охрану после сработки"); 
+   	#endif
+   	
+ // setStatus(2047:32, {1,"Постановка на охрану после сработки"});    //Шлем ВСем 
+ 	delayedCall(clearAR,2);
+   	#ifdef L00
+   		setStatus(L00,1); //вкл лампочку
+   	#endif
+   		
+   	#ifdef S00
+   		setStatus(S00,0); //Выключаем сирену
+   	#endif
+}
+
+
+
+void alarm()
+{
+	if(moutionAr[0]==1)
+	{ 
+		setStatus(2047:32, {1,"TXTM00"});
+		#ifdef TELEGRAMM_ID
+			setStatus(1000:90, "TELEGRAMM_ID||TXTM00"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+		#ifdef TELEGRAMM2_ID
+			setStatus(1000:90, "TELEGRAMM2_ID||TXTM00"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+	}
+	
+	#ifdef TXTM01
+	if(moutionAr[1]==1)
+	{ 
+		setStatus(2047:32, {1,"TXTM01"});
+		#ifdef TELEGRAMM_ID
+			setStatus(1000:90, "TELEGRAMM_ID||TXTM01"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+		#ifdef TELEGRAMM2_ID
+			setStatus(1000:90, "TELEGRAMM2_ID||TXTM01"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+	}
+	#endif
+	
+	#ifdef TXTM02
+	if(moutionAr[2]==1)
+	{ 
+		setStatus(2047:32, {1,"TXTM02"});
+		#ifdef TELEGRAMM_ID
+			setStatus(1000:90, "TELEGRAMM_ID||TXTM02"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+		#ifdef TELEGRAMM2_ID
+			setStatus(1000:90, "TELEGRAMM2_ID||TXTM02"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+	}
+	#endif
+
+	#ifdef TXTM03
+	if(moutionAr[3]==1)
+	{ 
+		setStatus(2047:32, {1,"TXTM03"});
+		#ifdef TELEGRAMM_ID
+			setStatus(1000:90, "TELEGRAMM_ID||TXTM03"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+		#ifdef TELEGRAMM2_ID
+			setStatus(1000:90, "TELEGRAMM2_ID||TXTM03"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+	}
+	#endif
+
+	#ifdef TXTM04
+	if(moutionAr[4]==1)
+	{ 
+		setStatus(2047:32, {1,"TXTM04"});
+		#ifdef TELEGRAMM_ID
+			setStatus(1000:90, "TELEGRAMM_ID||TXTM04"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+		#ifdef TELEGRAMM2_ID
+			setStatus(1000:90, "TELEGRAMM2_ID||TXTM04"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+	}
+	#endif
+
+	#ifdef TXTM05
+	if(moutionAr[5]==1)
+	{ 
+		setStatus(2047:32, {1,"TXTM05"});
+		#ifdef TELEGRAMM_ID
+			setStatus(1000:90, "TELEGRAMM_ID||TXTM05"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+		#ifdef TELEGRAMM2_ID
+			setStatus(1000:90, "TELEGRAMM2_ID||TXTM05"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+	}
+	#endif
+
+	#ifdef TXTM06
+	if(moutionAr[6]==1)
+	{ 
+		setStatus(2047:32, {1,"TXTM06"});
+		#ifdef TELEGRAMM_ID
+			setStatus(1000:90, "TELEGRAMM_ID||TXTM06"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+		#ifdef TELEGRAMM2_ID
+			setStatus(1000:90, "TELEGRAMM2_ID||TXTM06"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+	}
+	#endif
+
+	#ifdef TXTM07
+	if(moutionAr[7]==1)
+	{ 
+		setStatus(2047:32, {1,"TXTM07"});
+		#ifdef TELEGRAMM_ID
+			setStatus(1000:90, "TELEGRAMM_ID||TXTM07"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+		#ifdef TELEGRAMM2_ID
+			setStatus(1000:90, "TELEGRAMM2_ID||TXTM07"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+	}
+	#endif
+
+	#ifdef TXTM08
+	if(moutionAr[8]==1)
+	{ 
+		setStatus(2047:32, {1,"TXTM08"});
+		#ifdef TELEGRAMM_ID
+			setStatus(1000:90, "TELEGRAMM_ID||TXTM08"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+		#ifdef TELEGRAMM2_ID
+			setStatus(1000:90, "TELEGRAMM2_ID||TXTM08"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+	}
+	#endif
+
+	#ifdef TXTM09
+	if(moutionAr[9]==1)
+	{ 
+		setStatus(2047:32, {1,"TXTM09"});
+		#ifdef TELEGRAMM_ID
+			setStatus(1000:90, "TELEGRAMM_ID||TXTM09"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+		#ifdef TELEGRAMM2_ID
+			setStatus(1000:90, "TELEGRAMM2_ID||TXTM09"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+	}
+	#endif
+
+	#ifdef TXTM10
+	if(moutionAr[10]==1)
+	{ 
+		setStatus(2047:32, {1,"TXTM10"});
+		#ifdef TELEGRAMM_ID
+			setStatus(1000:90, "TELEGRAMM_ID||TXTM10"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+		#ifdef TELEGRAMM2_ID
+			setStatus(1000:90, "TELEGRAMM2_ID||TXTM10"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+	}
+	#endif
+
+	#ifdef TXTG00
+	if(gAr[0]==1)
+	{ 
+		setStatus(2047:32, {1,"TXTG00"});
+		#ifdef TELEGRAMM_ID
+			setStatus(1000:90, "TELEGRAMM_ID||TXTG00"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+		#ifdef TELEGRAMM2_ID
+			setStatus(1000:90, "TELEGRAMM2_ID||TXTG00"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+	}
+	#endif
+
+	#ifdef TXTG01
+	if(gAr[1]==1)
+	{ 
+		setStatus(2047:32, {1,"TXTG01"});
+		#ifdef TELEGRAMM_ID
+			setStatus(1000:90, "TELEGRAMM_ID||TXTG01"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+		#ifdef TELEGRAMM2_ID
+			setStatus(1000:90, "TELEGRAMM2_ID||TXTG01"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+	}
+	#endif
+
+	#ifdef TXTG02
+	if(gAr[2]==1)
+	{ 
+		setStatus(2047:32, {1,"TXTG02"});
+		#ifdef TELEGRAMM_ID
+			setStatus(1000:90, "TELEGRAMM_ID||TXTG02"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+		#ifdef TELEGRAMM2_ID
+			setStatus(1000:90, "TELEGRAMM2_ID||TXTG02"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+	}
+	#endif
+
+	#ifdef TXTG03
+	if(gAr[3]==1)
+	{ 
+		setStatus(2047:32, {1,"TXTG03"});
+		#ifdef TELEGRAMM_ID
+			setStatus(1000:90, "TELEGRAMM_ID||TXTG03"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+		#ifdef TELEGRAMM2_ID
+			setStatus(1000:90, "TELEGRAMM2_ID||TXTG03"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+	}
+	#endif
+
+	#ifdef TXTG04
+	if(gAr[4]==1)
+	{ 
+		setStatus(2047:32, {1,"TXTG04"});
+		#ifdef TELEGRAMM_ID
+			setStatus(1000:90, "TELEGRAMM_ID||TXTG04"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+		#ifdef TELEGRAMM2_ID
+			setStatus(1000:90, "TELEGRAMM2_ID||TXTG04"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+	}
+	#endif
+
+	#ifdef TXTG05
+	if(gAr[5]==1)
+	{ 
+		setStatus(2047:32, {1,"TXTG05"});
+		#ifdef TELEGRAMM_ID
+			setStatus(1000:90, "TELEGRAMM_ID||TXTG05"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+		#ifdef TELEGRAMM2_ID
+			setStatus(1000:90, "TELEGRAMM2_ID||TXTG05"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+	}
+	#endif
+
+	#ifdef TXTG06
+	if(gAr[6]==1)
+	{ 
+		setStatus(2047:32, {1,"TXTG06"});
+		#ifdef TELEGRAMM_ID
+			setStatus(1000:90, "TELEGRAMM_ID||TXTG06"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+		#ifdef TELEGRAMM2_ID
+			setStatus(1000:90, "TELEGRAMM2_ID||TXTG06"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+	}
+	#endif
+
+	#ifdef TXTG07
+	if(gAr[7]==1)
+	{ 
+		setStatus(2047:32, {1,"TXTG07"});
+		#ifdef TELEGRAMM_ID
+			setStatus(1000:90, "TELEGRAMM_ID||TXTG07"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+		#ifdef TELEGRAMM2_ID
+			setStatus(1000:90, "TELEGRAMM2_ID||TXTG07"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+	}
+	#endif
+
+	#ifdef TXTG08
+	if(gAr[8]==1)
+	{ 
+		setStatus(2047:32, {1,"TXTG08"});
+		#ifdef TELEGRAMM_ID
+			setStatus(1000:90, "TELEGRAMM_ID||TXTG08"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+		#ifdef TELEGRAMM2_ID
+			setStatus(1000:90, "TELEGRAMM2_ID||TXTG08"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+	}
+	#endif
+
+	#ifdef TXTG09
+	if(gAr[9]==1)
+	{ 
+		setStatus(2047:32, {1,"TXTG09"});
+		#ifdef TELEGRAMM_ID
+			setStatus(1000:90, "TELEGRAMM_ID||TXTG09"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+		#ifdef TELEGRAMM2_ID
+			setStatus(1000:90, "TELEGRAMM2_ID||TXTG09"); //запуск 99.sh отсылаем в телеграмм
+		#endif
+	}
+	#endif
+
+	#ifdef TXTG10
+	if(gAr[10]==1)
+	{ 
+		setStatus(1000:90, "TXTG10");
+		
+		#ifdef TELEGRAMM_ID
+			setStatus(2047:32, {1,"TELEGRAMM_ID||TXTG10"});
+			 //запуск 99.sh отсылаем в телеграмм
+		#endif
+		#ifdef TELEGRAMM2_ID
+			setStatus(2047:32, {1,"TELEGRAMM2_ID||TXTG10"});
+			 //запуск 99.sh отсылаем в телеграмм
+		#endif
+	}
+	#endif																											
+	blink = 1;	
+	#ifdef MRMR
+		setStatus(MRMR,{1, VOLUME, 0, "http://192.168.1.125/alarm.mp3"});
+	#endif  	
+	#ifdef S00
+   		setStatus(S00,1); //Включаем сирену
+   	#endif
+   	
+   	clearAR();
+}
+
+//постановка
+void on()
+{
+    if(([MOTION0]<porog) 
+    	#ifdef MOTION1 && ([MOTION1]<porog) #endif
+    	#ifdef MOTION2 && ([MOTION2]<porog) #endif 
+    	#ifdef MOTION3 && ([MOTION3]<porog) #endif
+    	#ifdef MOTION4 && ([MOTION4]<porog) #endif
+    	#ifdef MOTION5 && ([MOTION5]<porog) #endif
+    	#ifdef MOTION6 && ([MOTION6]<porog) #endif
+    	#ifdef MOTION7 && ([MOTION7]<porog) #endif
+    	#ifdef MOTION8 && ([MOTION8]<porog) #endif
+    	#ifdef MOTION9 && ([MOTION9]<porog) #endif
+    	#ifdef MOTION10 && ([MOTION10]<porog) #endif
+    	#ifdef G00 && [G00.0]==0 #endif
+    	#ifdef G01 && [G01.0]==0 #endif
+    	#ifdef G02 && [G02.0]==0 #endif
+    	#ifdef G03 && [G03.0]==0 #endif
+    	#ifdef G04 && [G04.0]==0 #endif
+    	#ifdef G05 && [G05.0]==0 #endif
+    	#ifdef G06 && [G06.0]==0 #endif
+    	#ifdef G07 && [G07.0]==0 #endif
+    	#ifdef G08 && [G08.0]==0 #endif
+    	#ifdef G09 && [G09.0]==0 #endif
+    	#ifdef G10 && [G10.0]==0 #endif
+		)
+    {				
+		ohrana = 1;
+//		u16 exciter_id = exciterId();//id того, кто ставит на охрану
+//		setStatus(2047:32, {1,"Под охраной"});
+			#ifdef TELEGRAMM_ID
+				u8 strForMess[60];
+				sprintf(strForMess,"%d||Охрана установлена!",TELEGRAMM_ID);
+				setStatus(1000:90, &strForMess); //запуск 99.sh
+			#endif
+			#ifdef TELEGRAMM2_ID
+				//u8 strForMess[60];
+				sprintf(strForMess,"%d||Охрана установлена!",TELEGRAMM2_ID);
+				setStatus(1000:90, &strForMess); //запуск 99.sh
+			#endif
+			setStatus(@exciter_id:32, {5,"Охрана установлена! "}); //сообщение тому кто ставит
+			
+			//srvError (&strForMess);
+			blink = 0; //не мигать
+			
+			#ifdef SCRTOOUT
+				setStatus(SCRTOOUT,1);
+			#endif
+				
+			#ifdef MRMR 
+				setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/поставлено.wav"});
+			#endif
+	}else{
+        //setStatus(2047:32, {1,"Не успели выйти!"});
+//        u16 exciter_id = exciterId();//id того, кто ставит на охрану
+        
+        #ifdef TELEGRAMM_ID
+        	u8 strForMess[60];
+			sprintf(strForMess,"%d||Не успели выйти! - %d:", TELEGRAMM_ID, exciter_id);
+			setStatus(1000:90, &strForMess); //запуск 99.sh
+		#endif
+		#ifdef TELEGRAMM2_ID
+        	//u8 strForMess[60];
+			sprintf(strForMess,"%d||Не успели выйти! - %d:", TELEGRAMM2_ID, exciter_id);
+			setStatus(1000:90, &strForMess); //запуск 99.sh
+		#endif
+		setStatus(@exciter_id:32, {5,"Не успели выйти! "}); //сообщение тому кто ставит
+		//srvError (&strForMess);
+
+		blink = 1; //не мигать
+
+		setStatus(V-ADDR,0);			 
+			#ifdef MRMR 
+				setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/не_успели.wav"});
+			#endif
+	}
+}
+
+//снятие
+void off()
+{
+    if ([V-ADDR]==0)
+    {
+  	 	//setStatus(2047:32, {1,"Без охраны"});
+//  	 	u16 exciter_id = exciterId();//id того, кто ставит на охрану
+ 		#ifdef TELEGRAMM_ID
+ 			u8 strForMess_off[60];
+ 			sprintf(strForMess_off,"%d||Охрана снята!-%d:",TELEGRAMM_ID, exciter_id);
+ 			setStatus(1000:90, &strForMess_off); //запуск 99.sh
+		#endif
+		#ifdef TELEGRAMM2_ID
+ 			//u8 strForMess_off[60];
+ 			sprintf(strForMess_off,"%d||Охрана снята!-%d:",TELEGRAMM2_ID, exciter_id);
+ 			setStatus(1000:90, &strForMess_off); //запуск 99.sh
+		#endif
+		//setStatus(1967:32, {5, "Охрана снята!"}); //Шлем Стасу
+		setStatus(@exciter_id:32, {5, "Охрана снята!"});//Шлем тому кто снял
+		
+		cancelDelayedCall(on);
+		cancelDelayedCall(alarm);
+		//srvError("OFF");
+		delayedCall(clearAR,2);
+		cancelDelayedCall(restart);	
+			#ifdef MRMR 
+				setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/снято.wav"});
+			#endif
+			
+			#ifdef SCRTOWORK
+				setStatus(SCRTOWORK,1);
+			#endif
+	}
+}
+
+
+//сработака
+V-ID/
+{
+					//srvError("%02x", [G00]);
+					//srvError("%02x", [G00.0]);
+	if ([V-ADDR]==1 && ohrana==1)
+	{   
+					if (([~MOTION0:avgs:5]>porog))
+					{ 
+						if (alarm==0 && ohrana==1 ) {
+							delayedCallR (alarm, TOWORK); 
+							alarm=1; 
+							moutionAr[0]=1;
+							cancelDelayedCall(restart);
+							delayedCallM(restart,1); //вырубаем сирену переставляем на охрану
+
+						}
+						
+						#ifdef MRMR 
+							setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/снятие.wav"});         
+						#endif
+					}
+					
+					#ifdef MOTION1 
+					if (([~MOTION1:avgs:5]>porog))
+					{ 
+						if (alarm==0 && ohrana==1 ) {
+							delayedCallR (alarm, TOWORK); 
+							alarm=1; 
+							moutionAr[1]=1;
+							cancelDelayedCall(restart);
+							delayedCallM(restart,1); //вырубаем сирену переставляем на охрану
+
+						}
+						
+						#ifdef MRMR 
+							setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/снятие.wav"});         
+						#endif
+					}						
+						#endif
+					
+					#ifdef MOTION2 
+					if (([~MOTION1:avgs:5]>porog))
+					{ 
+						if (alarm==0 && ohrana==1 ) {
+							delayedCallR (alarm, TOWORK); 
+							alarm=1; 
+							moutionAr[2]=1;
+							cancelDelayedCall(restart);
+							delayedCallM(restart,1); //вырубаем сирену переставляем на охрану
+
+						}
+						
+						#ifdef MRMR 
+							setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/снятие.wav"});         
+						#endif
+					}						
+						#endif
+
+					#ifdef MOTION3 
+					if (([~MOTION3:avgs:5]>porog))
+					{ 
+						if (alarm==0 && ohrana==1 ) {
+							delayedCallR (alarm, TOWORK); 
+							alarm=1; 
+							moutionAr[3]=1;
+							cancelDelayedCall(restart);
+							delayedCallM(restart,1); //вырубаем сирену переставляем на охрану
+
+						}
+						
+						#ifdef MRMR 
+							setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/снятие.wav"});         
+						#endif
+					}						
+						#endif						
+
+					#ifdef MOTION4 
+					if (([~MOTION4:avgs:5]>porog))
+					{ 
+						if (alarm==0 && ohrana==1 ) {
+							delayedCallR (alarm, TOWORK); 
+							alarm=1; 
+							moutionAr[4]=1;
+							cancelDelayedCall(restart);
+							delayedCallM(restart,1); //вырубаем сирену переставляем на охрану
+
+						}
+						
+						#ifdef MRMR 
+							setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/снятие.wav"});         
+						#endif
+					}						
+						#endif
+					#ifdef MOTION5 
+					if (([~MOTION5:avgs:5]>porog))
+					{ 
+						if (alarm==0 && ohrana==1 ) {
+							delayedCallR (alarm, TOWORK); 
+							alarm=1; 
+							moutionAr[5]=1;
+							cancelDelayedCall(restart);
+							delayedCallM(restart,1); //вырубаем сирену переставляем на охрану
+
+						}
+						
+						#ifdef MRMR 
+							setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/снятие.wav"});         
+						#endif
+					}						
+						#endif
+
+					#ifdef MOTION6 
+					if (([~MOTION6:avgs:5]>porog))
+					{ 
+						if (alarm==0 && ohrana==1 ) {
+							delayedCallR (alarm, TOWORK); 
+							alarm=1; 
+							moutionAr[6]=1;
+							cancelDelayedCall(restart);
+							delayedCallM(restart,1); //вырубаем сирену переставляем на охрану
+
+						}
+						
+						#ifdef MRMR 
+							setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/снятие.wav"});         
+						#endif
+					}						
+						#endif
+					#ifdef MOTION7 
+					if (([~MOTION7:avgs:5]>porog))
+					{ 
+						if (alarm==0 && ohrana==1 ) {
+							delayedCallR (alarm, TOWORK); 
+							alarm=1; 
+							moutionAr[7]=1;
+							cancelDelayedCall(restart);
+							delayedCallM(restart,1); //вырубаем сирену переставляем на охрану
+
+						}
+						
+						#ifdef MRMR 
+							setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/снятие.wav"});         
+						#endif
+					}						
+						#endif
+					#ifdef MOTION8 
+					if (([~MOTION8:avgs:5]>porog))
+					{ 
+						if (alarm==0 && ohrana==1 ) {
+							delayedCallR (alarm, TOWORK); 
+							alarm=1; 
+							moutionAr[8]=1;
+							cancelDelayedCall(restart);
+							delayedCallM(restart,1); //вырубаем сирену переставляем на охрану
+
+						}
+						
+						#ifdef MRMR 
+							setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/снятие.wav"});         
+						#endif
+					}						
+						#endif
+						
+					#ifdef MOTION9 
+					if (([~MOTION9:avgs:5]>porog))
+					{ 
+						if (alarm==0 && ohrana==1 ) {
+							delayedCallR (alarm, TOWORK); 
+							alarm=1; 
+							moutionAr[9]=1;
+							cancelDelayedCall(restart);
+							delayedCallM(restart,1); //вырубаем сирену переставляем на охрану
+
+						}
+						
+						#ifdef MRMR 
+							setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/снятие.wav"});         
+						#endif
+					}						
+						#endif
+					#ifdef MOTION10 
+					if (([~MOTION10:avgs:5]>porog))
+					{ 
+						if (alarm==0 && ohrana==1 ) {
+							delayedCallR (alarm, TOWORK); 
+							alarm=1; 
+							moutionAr[10]=1;
+							cancelDelayedCall(restart);
+							delayedCallM(restart,1); //вырубаем сирену переставляем на охрану
+
+						}
+						
+						#ifdef MRMR 
+							setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/снятие.wav"});         
+						#endif
+					}						
+						#endif
+						
+					#ifdef G00 
+
+					//srvMessage("%02x", G00.1);
+					if (([~G00]==1))
+					{ 
+						if (alarm==0 && ohrana==1 ) {
+							delayedCallR (alarm, TOWORK); 
+							alarm=1; 
+							gAr[0]=1;
+							cancelDelayedCall(restart);
+							delayedCallM(restart,1); //вырубаем сирену переставляем на охрану
+
+						}
+						
+						#ifdef MRMR 
+							setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/снятие.wav"});         
+						#endif
+					}						
+						#endif
+						
+					#ifdef G01 
+					if (([~G01]==1))
+					{ 
+						if (alarm==0 && ohrana==1 ) {
+							delayedCallR (alarm, TOWORK); 
+							alarm=1; 
+							gAr[1]=1;
+							cancelDelayedCall(restart);
+							delayedCallM(restart,1); //вырубаем сирену переставляем на охрану
+
+						}
+						
+						#ifdef MRMR 
+							setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/снятие.wav"});         
+						#endif
+					}						
+						#endif
+						
+					#ifdef G02 
+					if (([~G02]==1))
+					{ 
+						if (alarm==0 && ohrana==1 ) {
+							delayedCallR (alarm, TOWORK); 
+							alarm=1; 
+							gAr[2]=1;
+							cancelDelayedCall(restart);
+							delayedCallM(restart,1); //вырубаем сирену переставляем на охрану
+
+						}
+						
+						#ifdef MRMR 
+							setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/снятие.wav"});         
+						#endif
+					}						
+						#endif
+						
+					#ifdef G03 
+					if (([~G03]==1))
+					{ 
+						if (alarm==0 && ohrana==1 ) {
+							delayedCallR (alarm, TOWORK); 
+							alarm=1; 
+							gAr[3]=1;
+							cancelDelayedCall(restart);
+							delayedCallM(restart,1); //вырубаем сирену переставляем на охрану
+
+						}
+						
+						#ifdef MRMR 
+							setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/снятие.wav"});         
+						#endif
+					}						
+						#endif					
+						
+					#ifdef G04 
+					if (([~G04]==1))
+					{ 
+						if (alarm==0 && ohrana==1 ) {
+							delayedCallR (alarm, TOWORK); 
+							alarm=1; 
+							gAr[4]=1;
+							cancelDelayedCall(restart);
+							delayedCallM(restart,1); //вырубаем сирену переставляем на охрану
+
+						}
+						
+						#ifdef MRMR 
+							setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/снятие.wav"});         
+						#endif
+					}						
+						#endif
+						
+					#ifdef G05 
+					if (([~G05]==1))
+					{ 
+						if (alarm==0 && ohrana==1 ) {
+							delayedCallR (alarm, TOWORK); 
+							alarm=1; 
+							gAr[5]=1;
+							cancelDelayedCall(restart);
+							delayedCallM(restart,1); //вырубаем сирену переставляем на охрану
+
+						}
+						
+						#ifdef MRMR 
+							setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/снятие.wav"});         
+						#endif
+					}						
+						#endif
+						
+					#ifdef G06 
+					if (([~G06]==1))
+					{ 
+						if (alarm==0 && ohrana==1 ) {
+							delayedCallR (alarm, TOWORK); 
+							alarm=1; 
+							gAr[6]=1;
+							cancelDelayedCall(restart);
+							delayedCallM(restart,1); //вырубаем сирену переставляем на охрану
+
+						}
+						
+						#ifdef MRMR 
+							setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/снятие.wav"});         
+						#endif
+					}						
+						#endif
+
+						
+					#ifdef G07 
+					if (([~G07]==1))
+					{ 
+						if (alarm==0 && ohrana==1 ) {
+							delayedCallR (alarm, TOWORK); 
+							alarm=1; 
+							gAr[7]=1;
+							cancelDelayedCall(restart);
+							delayedCallM(restart,1); //вырубаем сирену переставляем на охрану
+
+						}
+						
+						#ifdef MRMR 
+							setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/снятие.wav"});         
+						#endif
+					}						
+						#endif
+
+						
+					#ifdef G08 
+					if (([~G08]==1))
+					{ 
+						if (alarm==0 && ohrana==1 ) {
+							delayedCallR (alarm, TOWORK); 
+							alarm=1; 
+							gAr[8]=1;
+							cancelDelayedCall(restart);
+							delayedCallM(restart,1); //вырубаем сирену переставляем на охрану
+
+						}
+						
+						#ifdef MRMR 
+							setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/снятие.wav"});         
+						#endif
+					}						
+						#endif
+						
+					#ifdef G09 
+					if (([~G09]==1))
+					{ 
+						if (alarm==0 && ohrana==1 ) {
+							delayedCallR (alarm, TOWORK); 
+							alarm=1; 
+							gAr[9]=1;
+							cancelDelayedCall(restart);
+							delayedCallM(restart,1); //вырубаем сирену переставляем на охрану
+
+						}
+						
+						#ifdef MRMR 
+							setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/снятие.wav"});         
+						#endif
+					}						
+						#endif
+
+						
+					#ifdef G10 
+					if (([~G10]==1))
+					{ 
+						if (alarm==0 && ohrana==1 ) {
+							delayedCallR (alarm, TOWORK); 
+							alarm=1; 
+							gAr[10]=1;
+							cancelDelayedCall(restart);
+							delayedCallM(restart,1); //вырубаем сирену переставляем на охрану
+
+						}
+						
+						#ifdef MRMR 
+							setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/снятие.wav"});         
+						#endif
+					}						
+						#endif
+	}
+}
+
+
+V-ID/V-ADDR
+{
+	exciter_id = exciterId();//id того, кто ставит на охрану
+
+	if(opt(0)==1)
+	{		 
+		 statutOn = 1;
+		 delayedCall (on, TOOUT); //время на выход
+			#ifdef MRMR 
+				setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/постановка.wav"});
+			#endif
+	}else
+		if (statutOn==1)
+			{
+				statutOn=0;
+				ohrana=0;
+				alarm=0;
+				blink = 0;
+				off();
+				//cancelDelayedCall(alarm); 
+				//cancelDelayedCall(on);
+				 
+			}
+}
+
+
+V-ID/s:1 //таймер, событие раз в N секунд
+{
+		 #ifdef L00
+   			if (blink==1)
+	   		{
+   			setStatus(L00,0xff); //вкл лампочку
+   			}
+   		#endif
+
+}
