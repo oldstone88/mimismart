@@ -1,0 +1,196 @@
+/*
+{
+    desc-ru:"Выкл. весь всет",
+    tag:"item",
+    selectArea:true,
+    vars:[
+
+    {type:"comment",text:"Нужен ли возврат скрипта в состояние ВЫКЛ? 1 - ДА, 0 - НЕТ",width:200, style:"color:red;"},
+    {name:"DELTA",type:"number",required:true,min:0,max:1,defaultValue:1,descWidth:150,desc:"Внесите значение 1 или 0"},
+    {name:"TIME01",type:"number",required:true,min:1,max:100,defaultValue:3,descWidth:150,desc:"Время отскока в секундах, задайте любое значение если не нужно"},
+    
+    {type:"comment",text:"Группы света, RGB, скрипты - выключить, закрыть",width:200, style:"color:red;"},
+    {name:"U00",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U01",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U02",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U03",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U04",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U05",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U06",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U07",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U08",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U09",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U10",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U11",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U12",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U13",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U14",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U15",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U16",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U17",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U18",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U19",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U20",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U21",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U22",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U23",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U24",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U25",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U26",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U27",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U28",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U29",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U30",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U31",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U32",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U33",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U34",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U35",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U36",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U37",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U38",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U39",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U40",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U41",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U42",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U43",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U44",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U45",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U46",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U47",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U48",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U49",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+   
+    {type:"comment",text:"Группы света, RGB, скрипты - включить",width:200, style:"color:red;"},
+    {name:"L01",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L02",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L00",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L03",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L04",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L05",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L06",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L07",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L08",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L09",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L10",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L11",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L12",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L13",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L14",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L15",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L16",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L17",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L18",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L19",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L20",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L21",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L22",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L23",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L24",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L25",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L26",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L27",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L28",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+    {name:"L29",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp"],width:888,desc:"Устройство"},
+
+    ]
+}
+*/
+
+void OFF()
+{
+    setStatus(V-ADDR,0);
+}
+
+V-ID/V-ADDR
+{
+    if ([V-ADDR.0]==1)
+    {
+     
+        #ifdef U00 setStatus(U00, 1); #endif
+        #ifdef U01 setStatus(U01, 1); #endif
+        #ifdef U02 setStatus(U02, 1); #endif
+        #ifdef U03 setStatus(U03, 1); #endif
+        #ifdef U04 setStatus(U04, 1); #endif
+        #ifdef U05 setStatus(U05, 1); #endif
+        #ifdef U06 setStatus(U06, 1); #endif
+        #ifdef U07 setStatus(U07, 1); #endif
+        #ifdef U08 setStatus(U08, 1); #endif
+        #ifdef U09 setStatus(U09, 1); #endif
+        #ifdef U10 setStatus(U10, 1); #endif
+        #ifdef U11 setStatus(U11, 1); #endif
+        #ifdef U12 setStatus(U12, 1); #endif
+        #ifdef U13 setStatus(U13, 1); #endif
+        #ifdef U14 setStatus(U14, 1); #endif
+        #ifdef U15 setStatus(U15, 1); #endif
+        #ifdef U16 setStatus(U16, 1); #endif
+        #ifdef U17 setStatus(U17, 1); #endif
+        #ifdef U18 setStatus(U18, 1); #endif
+        #ifdef U19 setStatus(U19, 1); #endif
+        #ifdef U20 setStatus(U20, 1); #endif
+        #ifdef U21 setStatus(U21, 1); #endif
+        #ifdef U22 setStatus(U22, 1); #endif
+        #ifdef U23 setStatus(U23, 1); #endif
+        #ifdef U24 setStatus(U24, 1); #endif
+        #ifdef U25 setStatus(U25, 1); #endif
+        #ifdef U26 setStatus(U26, 1); #endif
+        #ifdef U27 setStatus(U27, 1); #endif
+        #ifdef U28 setStatus(U28, 1); #endif
+        #ifdef U29 setStatus(U29, 1); #endif
+        #ifdef U30 setStatus(U30, 1); #endif
+        #ifdef U31 setStatus(U31, 1); #endif
+        #ifdef U32 setStatus(U32, 1); #endif
+        #ifdef U33 setStatus(U33, 1); #endif
+        #ifdef U34 setStatus(U34, 1); #endif
+        #ifdef U35 setStatus(U35, 1); #endif
+        #ifdef U36 setStatus(U36, 1); #endif
+        #ifdef U37 setStatus(U37, 1); #endif
+        #ifdef U38 setStatus(U38, 1); #endif
+        #ifdef U39 setStatus(U39, 1); #endif
+        #ifdef U40 setStatus(U40, 1); #endif
+        #ifdef U41 setStatus(U41, 1); #endif
+        #ifdef U42 setStatus(U42, 1); #endif
+        #ifdef U43 setStatus(U43, 1); #endif
+        #ifdef U44 setStatus(U44, 1); #endif
+        #ifdef U45 setStatus(U45, 1); #endif
+        #ifdef U46 setStatus(U46, 1); #endif
+        #ifdef U47 setStatus(U47, 1); #endif
+        #ifdef U48 setStatus(U48, 1); #endif
+        #ifdef U49 setStatus(U49, 1); #endif
+
+        #ifdef L00 setStatus(L00, 1); #endif
+        #ifdef L01 setStatus(L01, 1); #endif
+        #ifdef L02 setStatus(L02, 1); #endif
+        #ifdef L03 setStatus(L03, 1); #endif
+        #ifdef L04 setStatus(L04, 1); #endif
+        #ifdef L05 setStatus(L05, 1); #endif
+        #ifdef L06 setStatus(L06, 1); #endif
+        #ifdef L07 setStatus(L07, 1); #endif
+        #ifdef L08 setStatus(L08, 1); #endif
+        #ifdef L09 setStatus(L09, 1); #endif
+        #ifdef L10 setStatus(L10, 1); #endif
+        #ifdef L11 setStatus(L11, 1); #endif
+        #ifdef L12 setStatus(L12, 1); #endif
+        #ifdef L13 setStatus(L13, 1); #endif
+        #ifdef L14 setStatus(L14, 1); #endif
+        #ifdef L15 setStatus(L15, 1); #endif
+        #ifdef L16 setStatus(L16, 1); #endif
+        #ifdef L17 setStatus(L17, 1); #endif
+        #ifdef L18 setStatus(L18, 1); #endif
+        #ifdef L19 setStatus(L19, 1); #endif
+        #ifdef L20 setStatus(L20, 1); #endif
+        #ifdef L21 setStatus(L21, 1); #endif
+        #ifdef L22 setStatus(L22, 1); #endif
+        #ifdef L23 setStatus(L23, 1); #endif
+        #ifdef L24 setStatus(L24, 1); #endif
+        #ifdef L25 setStatus(L25, 1); #endif
+        #ifdef L26 setStatus(L26, 1); #endif
+        #ifdef L27 setStatus(L27, 1); #endif
+        #ifdef L28 setStatus(L28, 1); #endif
+        #ifdef L29 setStatus(L29, 1); #endif
+
+        if (DELTA==1) delayedCall(OFF, TIME01);
+    } 
+
+}
+
