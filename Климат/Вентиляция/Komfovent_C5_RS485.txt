@@ -1,0 +1,220 @@
+/*
+{
+	desc:"Скрипт к вентиляции Komfovent C5 RS485",
+	tag:"import-script",
+	target:"RS485",
+	selectArea:true,
+	addItems:[
+		{tag:"item", id:"%TARGET%", name:"NAME", "sub-id":"%SUBID01%", "type":"conditioner", "t-min":"5", "t-delta":"35", "modes":"0x60", "vane-ver":"0x00", "vane-hor":"0x00", "funs":"0x0F"},
+		{tag:"item", id:"%TARGET%", name:"Мощность вентиляции", "sub-id":"%SUBID02%", "image":"air-fan", "length":"2", "sub-type":"dimer-lamp", "type":"virtual"},
+		{tag:"item", id:"%TARGET%", "sub-id":"%SUBID03%", "length":"0", "sub-type":"long-text", "type":"virtual"},
+		{tag:"item", id:"%TARGET%", "sub-id":"%SUBID04%", "length":"0", "sub-type":"sensor", "type":"virtual"},
+		{tag:"item", id:"%TARGET%", "sub-id":"%SUBID05%", "length":"0", "sub-type":"sensor", "type":"virtual"},
+		{tag:"item", id:"%TARGET%", "sub-id":"%SUBID06%", "length":"0", "sub-type":"sensor", "type":"virtual"},
+		{tag:"item", id:"%TARGET%", "sub-id":"%SUBID07%", "length":"0", "sub-type":"sensor", "type":"virtual"},
+	],
+	vars:[
+		{name:"RS485",type:"devices-list",required:true,filter:["com-port"],desc:"RS485"},
+		{name:"NAME",type:"string",required:true,min:3,max:40,desc:"Имя вентиляции",defaultValue:"Вентиляция"},
+		{name:"Vent",type:"hidden",value:"%TARGET%:%SUBID01%"},
+		{name:"Dimmer",type:"hidden",value:"%TARGET%:%SUBID02%"},
+		{name:"Textbox",type:"hidden",value:"%TARGET%:%SUBID03%"},
+		{name:"SupplyFlowSensor",type:"hidden",value:"%TARGET%:%SUBID04%"},
+		{name:"ExtractFlowSensor",type:"hidden",value:"%TARGET%:%SUBID05%"},
+		{name:"SupplyFlowCurrentSensor",type:"hidden",value:"%TARGET%:%SUBID06%"},
+		{name:"ExtractFlowCurrentSensor",type:"hidden",value:"%TARGET%:%SUBID07%"},
+	]
+}
+*/
+const u8 addr [6] = {0x00, 0x63, 0x68, 0x6D, 0x73, 0x78};
+u8 modes [] = {1,4,3,2};
+u8 CurrentModeInTextBox = 0xFF;
+u8 vent[2] = {0,0};
+u8 read = 0;
+u8 write = 0;
+u8 dim = 0;
+u16 Temp = 0;
+u8 ModeRS = 0;
+u8 Mode = 0;
+u8 Special=0;
+u8 NeedSendPower=0;
+
+void checkrs(){
+	const u8 addr [8] = {0x00,0x00,0x00,0x63,0x00,0x78,0x07,0xD1};
+	const u8 num  [4] = {0x01,0x15,0x05,0x04};
+	cancelDelayedCall(checkrs);
+	if(!write){
+		u8 breakpoint=0;
+		for(u8 i=0;(i<4) && (breakpoint==0);++i){
+			setStatus(RS485, {1, 3, addr[read*2],addr[1+read*2], 0, num[read], 0xcc16});
+			read = read==3 ? 0 : read+1;
+			breakpoint=1;
+		}
+	}
+}
+
+void onInit(){
+	vent[0]=[Vent.0];
+	vent[1] = [Vent.1];
+	checkrs();
+}
+
+V-ID/s:8{
+	checkrs();
+}
+
+void Write(){
+	write=0;
+}
+
+void SendSpecial(){
+	cancelDelayedCall(SendSpecial);
+	if(!Special) setStatus(RS485,{1,6,0,0x63,0,5,0xCC16});
+	delayedCallMs(Write,250);
+}
+
+void Send(){
+	write=1;
+	delayedCallMsR(Send,250);
+	u8 mas [] = {1,6,0,0xFF,0,0xFF,0xCC16};
+	if((vent[0]&1)!=([Vent.0]&1)){
+		vent[0] = mas[5] = [Vent.0]&1;
+		mas[3] = 0;
+	}
+	else if(Temp!=[Vent.1]){
+		mas[3] = 0x7C;
+		mas[4] = (([Vent.1]+5)*10)>>8;
+		mas[5] = (([Vent.1]+5)*10)&0xFF;
+		Temp = [Vent.1];
+	}
+	if(mas[3]==0xFF & mas[5]==0xFF){
+		cancelDelayedCall(Send);
+		delayedCallMs(SendSpecial,250);
+	}
+	else setStatus(RS485,mas);
+}
+
+V-ID/Vent{
+	Mode = opt(4);
+	u8 onoff = opt(0)&1;
+	if(ModeRS != CurrentModeInTextBox){
+		if(!onoff)			setStatus(Textbox,"Текущий режим: Вентиляция выключена");
+		else if(Special)	setStatus(Textbox,"Текущий режим: Special");
+		else if(ModeRS==1)	setStatus(Textbox,"Текущий режим: Comfort 1");
+		else if(ModeRS==2)	setStatus(Textbox,"Текущий режим: Comfort 2");
+		else if(ModeRS==3)	setStatus(Textbox,"Текущий режим: Economy 1");
+		else if(ModeRS==4)	setStatus(Textbox,"Текущий режим: Economy 2");
+	}
+	if(exciterId()!=ADDR2ID(RS485)){
+		write=1;
+		if(vent[1]!=opt(4)){
+			vent[1]=opt(4);
+				if(opt(4)==1)setStatus(Dimmer,{0xFE,78});
+				if(opt(4)==2)setStatus(Dimmer,{0xFE,172});
+				if(opt(4)==3)setStatus(Dimmer,{0xFE,250});
+		}
+		cancelDelayedCall(Send);
+		delayedCallMs(Send,1000);
+	}
+}
+
+void SetPower(){
+	u32 SupplyFlow = ([Dimmer.1] * 800 / 250) + 200;
+	u32 ExtractFlow = SupplyFlow-200;
+	write=1;
+	setStatus(RS485,{1,16,0,0x78,0,4,8,(SupplyFlow>>24)&0xFF,(SupplyFlow>>16)&0xFF,(SupplyFlow>>8)&0xFF,
+		SupplyFlow&0xFF,(ExtractFlow>>24)&0xFF,(ExtractFlow>>16)&0xFF,(ExtractFlow>>8)&0xFF,ExtractFlow&0xFF,0xCC16});
+	delayedCallMs(SendSpecial,250);
+}
+
+void DelaySync(){
+	cancelDelayedCall(DelaySync);
+}
+
+V-ID/Dimmer{
+	if (opt(0)==0xff)
+		setStatus(Dimmer,{1,dim});
+	else if (opt(0)==0xfe){
+		if(dim!=opt(1))NeedSendPower=1;
+		else NeedSendPower=0;
+		dim=opt(1);
+		setStatus(Dimmer,{1,dim});
+	}
+	else if(NeedSendPower){
+		cancelDelayedCall(SetPower);
+		delayedCallMs(SetPower,250);
+		delayedCallMs(DelaySync,250);
+	}
+}
+
+V-ID/RS485{
+		// u8 res[100]="";
+	 //    u8 *st = opt;
+	 //    u8 i = 0;
+	 //    sprintf(res,"%d ",optl);
+  //       for(i = 0; i < optl; ++i){
+  //           sprintf(res+strlen(res), "%.2X", st[i]);
+  //       }
+  //       sprintf(res+strlen(res), "\10");
+  //       srvError(&res);
+	
+	if(opt(1)&0x80) srvError("ERROR send");
+	if(optl==7){
+		vent[0]=opt(4)&1;
+		setStatus(Vent, {vent[0], [Vent.1],[Vent.2],[Vent.3],[Vent.4]});//onoff
+		delayedCallMs(checkrs,250);
+	}
+	else if(optl==47 || optl==15){
+		if(optl==47){
+			ModeRS = opt(4)>4 ? opt(4)-1 : opt(4);
+			Special = opt(4)>4 ? 1:0;
+		}
+		u8 breakpoint=0;
+		for(u8 i=0;(i<4) && !breakpoint;++i){
+			if(modes[i]==ModeRS){
+				Mode = i;
+				breakpoint=1;
+			}
+		}
+		u32 Flow = 0;
+		if(optl==47 && !Special){
+			u32 flow = 0;
+			u8 str1 [4], str2 [4];
+			for(u8 j=0;j<4;++j) Flow |= opt(5+j + (ModeRS-1)*10)<<(24-j*8);
+			ltoa(str1,Flow);
+			setStatus(SupplyFlowSensor,str1);
+			for(u8 j=0;j<4;++j) flow |= opt(9+j + (ModeRS-1)*10)<<(24-j*8);
+			ltoa(str2,flow);
+			setStatus(ExtractFlowSensor,str2);
+			Temp = ((opt(13 + (ModeRS-1)*10)<<8 | opt(14+(ModeRS-1)*10)) - 50)/10;
+			delayedCallMs(checkrs,250);
+		}
+		else if((optl==15) && Special){
+			u32 flow=0;
+			u8 str1 [4], str2 [4];
+			for(u8 j=0;j<4;++j) Flow |= opt(3+j)<<(24-j*8);
+			ltoa(str1,Flow);
+			setStatus(SupplyFlowSensor,str1);
+			for(u8 j=0;j<4;++j) flow |= opt(7+j)<<(24-j*8);
+			ltoa(str2,flow);
+			setStatus(ExtractFlowSensor,str2);			
+			Temp = ((opt(11)<<8 | opt(12)) - 50)/10;
+		}
+		if(Flow){
+			u8 DimState = ((Flow - 200) * 250 / 800)&0xFF;
+			if(DimState!=[Dimmer.1]) setStatus(Dimmer,{1,DimState});
+		}
+		if(!write) setStatus(Vent,{vent[0]&1,Temp,[Vent.2],[Vent.3],[Vent.4]});
+	}
+	else if(optl==13){
+		u32 flow = 0;
+		u8 str1 [4], str2 [4];
+		for(u8 j=0;j<4;++j)flow |= opt(3+j)<<(24-j*8);
+		ltoa(str1,flow);
+		setStatus(SupplyFlowCurrentSensor,str1);
+		flow=0;
+		for(u8 j=0;j<4;++j)flow |= opt(7+j)<<(24-j*8);
+		ltoa(str2,flow);
+		setStatus(ExtractFlowCurrentSensor,str2);
+	}
+}

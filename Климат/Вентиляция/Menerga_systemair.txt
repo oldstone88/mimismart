@@ -1,0 +1,205 @@
+/*
+{
+	desc:"Скрипт к вентиляции Menerga",
+	tag:"import-script",
+	target:"RS485",
+	selectArea:true,
+	addItems:[
+		{tag:"item", id:"%TARGET%", name:"NAME", "sub-id":"%SUBID01%", "type":"conditioner", "t-min":"12", "t-delta":"23", "modes":"0x00", "vane-ver":"0x00", "vane-hor":"0x00", "funs":"0x00"},
+		{tag:"item", id:"%TARGET%", name:"Ошибки", "sub-id":"%SUBID02%", "image":"air-fan", "length":"2", "sub-type":"dimer-lamp", "type":"virtual"},
+		{tag:"item", id:"%TARGET%", "sub-id":"%SUBID03%", "length"="0", "sub-type":"long-text", "type":"virtual"},
+	],
+	vars:[
+		{name:"RS485",type:"devices-list",required:true,filter:["com-port"],desc:"RS485"},
+		{name:"NAME",type:"string",required:true,min:3,max:40,desc:"Имя вентиляции",defaultValue:"Вентиляция"},
+		{name:"Vent",type:"hidden",value:"%TARGET%:%SUBID01%"},
+		{name:"Dimmer",type:"hidden",value:"%TARGET%:%SUBID02%"}
+		{name:"Textbox",type:"hidden",value:"%TARGET%:%SUBID03%"},
+    ]
+}
+*/
+	// 0x8908 - read temp
+
+	// 0xB126 - fault compressor
+
+	// 0x8948 - fault fan SA
+	// 0x894C - fault fan RA
+
+	// 0x89AA - SA filter blocked
+	// 0x89AD - OA filter blocked
+	// 0x89AE - RA filter blocked
+
+	// 0x898D - Fault humidifier
+
+	// 0xBD7F - fault E-heating
+
+u8 Errors [9] = {0,0,0,0,0,0,0,0,0};
+u8 state [] = {0,0};
+u8 write=0;
+u8 read=0;
+
+void temp(){
+	cancelDelayedCall(temp);
+	setStatus(RS485,{0x01,0x02,0x89,0xAA,0x00,0x03,0xCC16});
+}
+
+void checkRS(){
+	setStatus(RS485,{0x01,0x04,0x89,0x13,0x00,0x02,0xCC16});
+}
+
+void Set(){
+	u16 Humidity = state[1]*4;
+	setStatus(RS485,{1,6,0x8914,Humidity>>8,Humidity&0xFF,0xCC16});
+	write=0;
+}
+
+V-ID/Dimmer{
+	state[0] = 1;
+	if (opt(0)==0xff){
+		setStatus(Dimmer,state);
+	}
+	else if (opt(0)==0xfe){
+		state[1] = opt(1);
+		setStatus(Dimmer,state);
+	}
+	else{
+		write=1;
+		cancelDelayedCall(Set);
+		delayedCall(Set,1);
+	}
+}
+
+V-ID/s:1{
+	if(!write && !read){
+		cancelDelayedCall(checkRS);
+		delayedCallMs(checkRS,500);
+	}
+}
+
+void checkErrors(){
+	if(!write){
+		if(!read) read=1;
+		if(read==1) setStatus(RS485,{0x01,0x02,0xB1,0x26,0x00,0x01,0xCC16});
+		if(read==2) setStatus(RS485,{0x01,0x02,0x89,0x48,0x00,0x05,0xCC16});
+		if(read==3) setStatus(RS485,{0x01,0x02,0x89,0xAA,0x00,0x05,0xCC16});
+		if(read==4) setStatus(RS485,{0x01,0x02,0x89,0x8D,0x00,0x01,0xCC16});
+		if(read==5) setStatus(RS485,{0x01,0x02,0xBD,0x7F,0x00,0x01,0xCC16});
+	
+		delayedCallMs(checkErrors,500);
+	
+		if(read>=6){
+			cancelDelayedCall(checkErrors);
+			read=0;
+		}
+	}
+}
+
+V-ID/s:10{
+	checkErrors();	
+}
+
+void onInit(){
+	temp();
+	delayedCall(checkRS,3);
+}
+
+void Send(){
+	u16 temp = [Vent.1]*10;
+	temp+=120;
+	setStatus(RS485,{0x01,0x06,0x89,0x13,(temp>>8)&0xFF,temp&0xFF,0xCC16});
+}
+
+void Write(){
+	write=0;
+}
+
+V-ID/Vent{
+	write=1;
+	cancelDelayedCall(Write);
+	//if(exciterId()>=1000){
+	if((senderId()!=exciterId()) && (exciterSubId()!=20)){
+		if(opt(0)&1 == 0)
+			setStatus(Vent,{opt(0)|1,opt(1),opt(2),opt(3),opt(4),opt(5)});
+		else{
+			cancelDelayedCall(Send);
+			temp();
+			delayedCall(Send,1);
+		}
+	}
+	delayedCallMs(Write,1200);
+}
+
+void SendToTextBox(){
+	u8 Str [150] = "";
+	Str[0] = 0;
+	if(Errors[1]) sprintf(Str,"Fault compressor. ");
+	if(Errors[2]) sprintf(Str + strlen(Str),"Fault SA-fan. ");
+	if(Errors[3]) sprintf(Str + strlen(Str),"Fault RA-fan. ");
+	if(Errors[4]) sprintf(Str + strlen(Str),"SA-filter blocked. ");
+	if(Errors[5]) sprintf(Str + strlen(Str),"OA-filter blocked. ");
+	if(Errors[6]) sprintf(Str + strlen(Str),"RA-filter blocked. ");
+	if(Errors[7]) sprintf(Str + strlen(Str),"Fault humidifier. ");
+	if(Errors[8]) sprintf(Str + strlen(Str),"Fault E-heating. ");
+	u8 temp = 0;
+	for(u8 i=1;i<=8;++i) temp+= Errors[i];
+	if(temp>0){
+		sprintf(Str,"Error! %s", Str);
+		setStatus(Textbox,Str);
+	}
+	else setStatus(Textbox,Str);
+}
+
+V-ID/RS485{
+		// u8 res[100]="";
+		// u8 *st = opt;
+		// u8 i = 0;
+		// sprintf(res,"%d ",optl);
+	 //    for(i = 0; i < optl; ++i){
+	 //        sprintf(res+strlen(res), "%.2X", st[i]);
+	 //    }
+	 //    sprintf(res+strlen(res), "\10");
+	 //    srvError(&res);
+
+    if(opt(1)==6) write=0;
+	if(opt(1)&0x80) srvError("Error send!");
+	else if (read==0 && optl==9){
+		u8 temp = ((opt(3)<<8) | opt(4))/10;
+		temp-=12;
+		u8 dim = ((opt(5)<<8) | opt(6))/4;
+		if(!write){
+			setStatus(Vent,{1,temp,[Vent.2],[Vent.3],[Vent.4],[Vent.5]});
+			setStatus(Dimmer,{1,dim});
+		}
+	}
+	else if (read==1 && optl==6){
+		if(opt(3)) Errors[1] = 1;
+		else Errors[1] = 0;
+		++read;
+	}
+	else if (read==2 && optl==6){
+		if(opt(3)&1) Errors[2] = 1;
+		else Errors[2] = 0;
+		if((opt(3)&16)!=0) Errors[3] = 1;
+		else Errors[3] = 0;
+		++read;
+	}
+	else if (read==3 && optl==6){
+		u8 mas [] = {(opt(3)&1),(opt(3)&8),(opt(3)&16)};
+		for(u8 i=0;i<3;++i){
+			if(mas[i]!=0) Errors[i+4] = 1;
+			else Errors[i+4] = 0;
+		}
+		++read;
+	}
+	else if (read==4 && optl==6){
+		if(opt(3)) Errors[7] = 1;
+		else Errors[7] = 0;
+		++read;
+	}
+	else if (read==5 && optl==6){
+		if(opt(3)) Errors[8] = 1;
+		else Errors[8] = 0;
+		SendToTextBox();
+		++read;
+	}
+}
