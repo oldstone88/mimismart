@@ -1,0 +1,102 @@
+/*
+{
+    desc:"Скрипт для интеграции счетчика электроэнергии Makel T150",
+    tag:"import-script",
+    selectArea:true,
+    target:"VENT",
+    system:"yes",
+   
+    vars:[
+        {name:"PERIODinMinutes",type:"number",required:true,defaultValue:"2",min:1,max:60,desc:"Период опрашивания счетчика, в минутах",descWidth:370},
+        {name:"VirtualLong", type:"devices-list", required:true, filter:["virtual"], desc:"Виртуальный датчик для вывода информации", descWidth:370},
+        {name:"RS485", type:"devices-list", required:true, filter:["com-port"], desc:"Модуль RS485", descWidth:370}
+    ]
+}
+*/
+
+u8 counter = 2;
+void onInit()
+{
+    counter = 0;
+}
+
+
+V-ID/m:PERIODinMinutes{
+    u8 HHU[5];
+    HHU[0] = 0x2f; HHU[1] = 0x3f; HHU[2] = 0x21; HHU[3] = 0x0d; HHU[4] = 0x0a; //обязательный запрос 
+    setStatus(RS485, &HHU);
+    //srvMessage("Makel pnut");
+    counter = 1;
+    
+    
+}
+void FindBetween(u8 *border1,u8 *border2,u8 *str, u8 *returned){
+    
+    u8 nborder1 = strlen(str) - strlen(strstr(&str, &border1));
+    u8 nborder2 = strlen(str) - strlen(strstr(&str, &border2));
+    u8 tmp = nborder1+1;
+    //srvMessage("!2 %x", str[nborder2]);
+    u8 i = 0;
+    for(i=0;i<20;++i){
+        if(tmp < nborder2){
+            //srvMessage("1ds");
+            returned[i] = str[tmp];
+
+            ++tmp;
+        }
+        else{
+            //srvMessage("111: %s", returned);
+            str[nborder1]=0x2d; str[nborder2]=0x2d;
+            break;
+        }
+    }
+    //srvMessage("  0: %s", returned);
+}
+V-ID/RS485{
+    u8 res[200]="";
+    u8 *st = opt;
+    u8 i = 0;
+
+    //srvMessage("%d", optl);
+    for(i=0;i<optl-9;++i){
+        res[i] = opt[i]&0x7f; 
+    }
+    if(res[1]==0x30){
+        u8 LongText[240] = "";
+        u8 answer[15] = "";
+        FindBetween("(", ")", res, &answer);
+        strcat(&LongText, "Данные0: "); strcat(&LongText, &answer); strcat(&LongText, "\10");
+        for(i=0;i<15;++i) answer[i]=0;
+        FindBetween("(", ")", res, &answer);
+        strcat(&LongText, "Данные1: "); strcat(&LongText, &answer); strcat(&LongText, "\10");
+        for(i=0;i<15;++i) answer[i]=0;
+        FindBetween("(", ")", res, &answer);
+        strcat(&LongText, "Данные2: "); strcat(&LongText, &answer);strcat(&LongText, "\10");
+        for(i=0;i<15;++i) answer[i]=0;
+        FindBetween("(", ")", res, &answer);
+        strcat(&LongText, "Данные3: "); strcat(&LongText, &answer);strcat(&LongText, "\10");
+        for(i=0;i<15;++i) answer[i]=0;
+        FindBetween("(", ")", res, &answer);
+        strcat(&LongText, "Данные4: "); strcat(&LongText, &answer);strcat(&LongText, "\10");
+        for(i=0;i<15;++i) answer[i]=0;
+        FindBetween("(", ")", res, &answer);
+        strcat(&LongText, "Данные5: "); strcat(&LongText, &answer);strcat(&LongText, "\10");
+        for(i=0;i<15;++i) answer[i]=0;
+        FindBetween("(", ")", res, &answer);
+        strcat(&LongText, "Данные6: "); strcat(&LongText, &answer);strcat(&LongText, "\10");
+        for(i=0;i<15;++i) answer[i]=0;
+        FindBetween("(", ")", res, &answer);
+        strcat(&LongText, "Данные7: "); strcat(&LongText, &answer);strcat(&LongText, "\10");
+        for(i=0;i<15;++i) answer[i]=0;
+        FindBetween("(", ")", res, &answer);
+        strcat(&LongText, "Данные8: "); strcat(&LongText, &answer);strcat(&LongText, "\10");
+        for(i=0;i<15;++i) answer[i]=0;
+        setStatus(VirtualLong, LongText);
+        //srvMessage("  0: %s", LongText);
+    }
+    if(counter==1){ 
+        //srvMessage("send Request");
+        setStatus(RS485, {0x06, 0x30, 0x30, 0x30, 0x0d, 0x0a});
+        counter=3;
+    }
+}
