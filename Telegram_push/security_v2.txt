@@ -3,12 +3,14 @@
   desc:"Полная охрана c дополнительными функциями по сработке",
   tag:"item",
   selectArea:false,
-  vars:[
-	  
+  vars:[	  
  	{name:"TOOUT",type:"number",required:false,width:100,defaultValue:15,min:1,max:180,desc:"Время на выход в секундах"},
  	{name:"SCRTOOUT",type:"devices-list",required:true, filter:["script"],desc:"Скрипт при установки охраны",width:600},
+ 	{name:"TXTOUT",type:"string",required:true,desc:"Текст уведомления при постановки на охрану",width:880},
  	{name:"TOWORK",type:"number",required:false,width:100,defaultValue:15,min:1,max:180,desc:"Время на снятие охраны"},
  	{name:"SCRTOWORK",type:"devices-list",required:true, filter:["script"],desc:"Скрипт при снятие охраны",width:600},
+ 	{name:"TXTWORK",type:"string",required:true,desc:"Текст уведомления при снятии с охраны",width:880},
+ 	{name:"TXTERR",type:"string",required:true,desc:"Текст уведомления при поставноки на охрану, есть движения в помещениях",width:880},
    	{type:"comment",text:"выберите датчики движения",width:888, style:"color:red;"},
    	{name:"MOTION0",type:"devices-list",required:true, filter:["motion-sensor"],desc:"Датчик движения0",width:888},
    	{name:"TXTM00",type:"string",required:true,desc:"Текст при сработки Датчик движения0",width:880},
@@ -75,6 +77,7 @@ u8 blink = 0;//мигание лампочкой
 u16 exciter_id;//id того, кто ставит на охрану
 u8 moutionAr[10];//массив датчиков движения
 u8 gAr[10];//массив герконов
+u8 strForMess[60];//Массив текстовых сообщений
 
 void clearAR()
 {
@@ -84,12 +87,18 @@ void clearAR()
 	}
 }
 
+void clear_STR()
+{
+ 		for(u8 i=0;i<61;++i){
+ 		strForMess[i]=0;
+		}
+}
+
 
 void restart()
 { //повтораня постановка на охрану.
     alarm = 0;
     blink = 0;
-   	//setStatus(1967:32, {1,"Постановка на охрану после сработки"});   //Шлем Стасу
    	#ifdef TELEGRAMM_ID
    	setStatus(1000:90, "TELEGRAMM_ID||Постановка на охрану после сработки"); 
    	#endif
@@ -97,8 +106,8 @@ void restart()
    	setStatus(1000:90, "TELEGRAMM2_ID||Постановка на охрану после сработки"); 
    	#endif
    	
- // setStatus(2047:32, {1,"Постановка на охрану после сработки"});    //Шлем ВСем 
- 	delayedCall(clearAR,2);
+   	setStatus(2047:32, {1,"Постановка на охрану после сработки"});    //Шлем ВСем 
+ 	clearAR();
    	#ifdef L00
    		setStatus(L00,1); //вкл лампочку
    	#endif
@@ -412,6 +421,7 @@ void alarm()
 //постановка
 void on()
 {
+//	srvError("Отладка - ON");
     if(([MOTION0]<porog) 
     	#ifdef MOTION1 && ([MOTION1]<porog) #endif
     	#ifdef MOTION2 && ([MOTION2]<porog) #endif 
@@ -439,17 +449,18 @@ void on()
 		ohrana = 1;
 //		u16 exciter_id = exciterId();//id того, кто ставит на охрану
 //		setStatus(2047:32, {1,"Под охраной"});
-			#ifdef TELEGRAMM_ID
-				u8 strForMess[60];
-				sprintf(strForMess,"%d||Охрана установлена!",TELEGRAMM_ID);
+//srvError("Отладка - ON - 1");
+			clear_STR();
+			#ifdef TELEGRAMM_ID				
+				sprintf(strForMess,"%d||%s",TELEGRAMM_ID,"TXTOUT");
 				setStatus(1000:90, &strForMess); //запуск 99.sh
 			#endif
 			#ifdef TELEGRAMM2_ID
 				//u8 strForMess[60];
-				sprintf(strForMess,"%d||Охрана установлена!",TELEGRAMM2_ID);
+				sprintf(strForMess,"%d||%s",TELEGRAMM2_ID,"TXTOUT");
 				setStatus(1000:90, &strForMess); //запуск 99.sh
 			#endif
-			setStatus(@exciter_id:32, {5,"Охрана установлена! "}); //сообщение тому кто ставит
+			setStatus(@exciter_id:32, {5,"TXTOUT"}); //сообщение тому кто ставит
 			
 			//srvError (&strForMess);
 			blink = 0; //не мигать
@@ -457,29 +468,28 @@ void on()
 			#ifdef SCRTOOUT
 				setStatus(SCRTOOUT,1);
 			#endif
+			//Выключаем скрипт включения по охране
+			#ifdef SCRTOWORK
+				setStatus(SCRTOWORK,0);
+			#endif
+			
 				
 			#ifdef MRMR 
 				setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/поставлено.wav"});
 			#endif
 	}else{
-        //setStatus(2047:32, {1,"Не успели выйти!"});
-//        u16 exciter_id = exciterId();//id того, кто ставит на охрану
-        
+        clear_STR();
         #ifdef TELEGRAMM_ID
-        	u8 strForMess[60];
-			sprintf(strForMess,"%d||Не успели выйти! - %d:", TELEGRAMM_ID, exciter_id);
+        	//u8 strForMess[60];
+			sprintf(strForMess,"%d||%s - %d", TELEGRAMM_ID, "TXTERR", exciter_id);
 			setStatus(1000:90, &strForMess); //запуск 99.sh
 		#endif
 		#ifdef TELEGRAMM2_ID
-        	//u8 strForMess[60];
-			sprintf(strForMess,"%d||Не успели выйти! - %d:", TELEGRAMM2_ID, exciter_id);
+			sprintf(strForMess,"%d||%s - %d", TELEGRAMM2_ID, "TXTERR", exciter_id);
 			setStatus(1000:90, &strForMess); //запуск 99.sh
 		#endif
-		setStatus(@exciter_id:32, {5,"Не успели выйти! "}); //сообщение тому кто ставит
-		//srvError (&strForMess);
-
+		setStatus(@exciter_id:32, {5,"TXTERR"}); //сообщение тому кто ставит
 		blink = 1; //не мигать
-
 		setStatus(V-ADDR,0);			 
 			#ifdef MRMR 
 				setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/не_успели.wav"});
@@ -490,26 +500,19 @@ void on()
 //снятие
 void off()
 {
-    if ([V-ADDR]==0)
-    {
-  	 	//setStatus(2047:32, {1,"Без охраны"});
-//  	 	u16 exciter_id = exciterId();//id того, кто ставит на охрану
+		clear_STR();
  		#ifdef TELEGRAMM_ID
- 			u8 strForMess_off[60];
- 			sprintf(strForMess_off,"%d||Охрана снята!-%d:",TELEGRAMM_ID, exciter_id);
- 			setStatus(1000:90, &strForMess_off); //запуск 99.sh
+ 			sprintf(strForMess,"%d||%s - %d",TELEGRAMM_ID, "TXTWORK", exciter_id);
+ 			setStatus(1000:90, &strForMess); //запуск 90.sh
 		#endif
 		#ifdef TELEGRAMM2_ID
- 			//u8 strForMess_off[60];
- 			sprintf(strForMess_off,"%d||Охрана снята!-%d:",TELEGRAMM2_ID, exciter_id);
- 			setStatus(1000:90, &strForMess_off); //запуск 99.sh
+ 			sprintf(strForMess,"%d||%s - %d",TELEGRAMM2_ID, "TXTWORK", exciter_id);
+ 			setStatus(1000:90, &strForMess); //запуск 90.sh
 		#endif
-		//setStatus(1967:32, {5, "Охрана снята!"}); //Шлем Стасу
-		setStatus(@exciter_id:32, {5, "Охрана снята!"});//Шлем тому кто снял
-		
+		setStatus(@exciter_id:32, {5, "TXTWORK"});//Шлем тому кто снял		
 		cancelDelayedCall(on);
 		cancelDelayedCall(alarm);
-		//srvError("OFF");
+		//srvError("ОТЛАДКА OFF");
 		delayedCall(clearAR,2);
 		cancelDelayedCall(restart);	
 			#ifdef MRMR 
@@ -519,15 +522,18 @@ void off()
 			#ifdef SCRTOWORK
 				setStatus(SCRTOWORK,1);
 			#endif
-	}
+			//выключаем скрипт выключения по охране
+			#ifdef SCRTOOUT
+				setStatus(SCRTOOUT,0);
+			#endif
+	//}
 }
 
 
 //сработака
 V-ID/
 {
-					//srvError("%02x", [G00]);
-					//srvError("%02x", [G00.0]);
+
 	if ([V-ADDR]==1 && ohrana==1)
 	{   
 					if (([~MOTION0:avgs:5]>porog))
