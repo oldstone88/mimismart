@@ -1,0 +1,15 @@
+u16 counter = 0;
+void onInit(){
+	counter = 0;
+
+}
+V-ID/IMPULSE{
+	//srvMessage("opt(0): %x", opt(0));
+	if(opt(0)==1){
+		counter+=1;
+		if(counter >= VALUE_TO_SAVE){
+			setStatus(1000:85, {"add"});
+			counter = 0;
+		}
+	}
+}

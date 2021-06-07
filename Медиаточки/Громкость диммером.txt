@@ -1,0 +1,44 @@
+/*
+{
+	desc-ru:"Оптический вход АС-1",
+	tag:"import-script",
+	selectArea:true,
+	vars:[
+    
+    {type:"comment",text:"выбирите медиаточку AC-1:",width:200, style:"color:red;"},
+    {name:"MRID", type:"number", defaultValue:200, required:true, desc:"Введите ID медиаточки"},
+    {name:"DIM00",type:"devices-list",required:true, filter:["dimer-lamp"],descWidth:250, desc:"Димер управления"},
+	]
+}
+*/
+
+u8 VOLUME=0;
+
+V-ID/
+{
+    if ([~DIM00.0]==1)
+    {
+        VOLUME=[DIM00.1];
+        setStatus(MRID:30, 0);
+        setStatus(MRID:30, {1, VOLUME, 0, 'mr://MRID:33'});
+    }
+    else
+    {
+        setStatus(MRID:30, 0);
+        setStatus(2043:254, {231, 0, 30, "cmdpln"});
+    }
+}
+
+V-ID/s:1
+{
+    if ([DIM00.1]!=[MRID:30.1])
+    {
+        VOLUME=[DIM00.1];
+        setStatus(MRID:30, {4,VOLUME});
+    }
+}
+
+V-ID/s:5
+{
+srvError("Статус точки = %d", [MRID:30.1]);
+}

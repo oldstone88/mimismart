@@ -1,6 +1,6 @@
 /*
 {
-    desc:"Выкл. весь всет",
+    desc:"Выкл. весь cвет",
     tag:"item",
     selectArea:true,
     vars:[
