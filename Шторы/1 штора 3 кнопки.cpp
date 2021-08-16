@@ -5,9 +5,11 @@
   selectArea:true,
   vars:[
 	{name:"BLINDS0",type:"devices-list",required:true,filter:["virtual","jalousie"],desc:"Выберите шторы(гардины, жалюзи), которые нужно открывать/закрывать",descWidth:300,width:300},
+	{type:"comment",text:"Кнопки открыть",width:600, "style":"color:red; font-weight:bold"},
 	{name:"BUTTONUP1",type:"devices-list",required:true,filter:["switch"],desc:"Выберите кнопку, которая будет ОТКРЫВАТЬ шторы(гардины, жалюзи)",descWidth:300,width:300},
 	{name:"BUTTONUP2",type:"devices-list",required:false,filter:["switch"],desc:"Выберите кнопку, которая будет ОТКРЫВАТЬ шторы(гардины, жалюзи)",descWidth:300,width:300},
 	{name:"BUTTONUP3",type:"devices-list",required:false,filter:["switch"],desc:"Выберите кнопку, которая будет ОТКРЫВАТЬ шторы(гардины, жалюзи)",descWidth:300,width:300},
+	{type:"comment",text:"Кнопки закрыть",width:600, "style":"color:red; font-weight:bold"},
 	{name:"BUTTONDOWN1",type:"devices-list",required:true,filter:["switch"],desc:"Выберите кнопку, которая будет ЗАКРЫВАТЬ шторы(гардины, жалюзи)",descWidth:300,width:300},
 	{name:"BUTTONDOWN2",type:"devices-list",required:false,filter:["switch"],desc:"Выберите кнопку, которая будет ЗАКРЫВАТЬ шторы(гардины, жалюзи)",descWidth:300,width:300},
 	{name:"BUTTONDOWN3",type:"devices-list",required:false,filter:["switch"],desc:"Выберите кнопку, которая будет ЗАКРЫВАТЬ шторы(гардины, жалюзи)",descWidth:300,width:300},

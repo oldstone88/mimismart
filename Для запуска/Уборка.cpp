@@ -22,6 +22,10 @@
 {name:"ITEM113",type:"devices-list",required:false, filter:["leak-sensor"],desc:"Устройство 13"},
 {name:"ITEM114",type:"devices-list",required:false, filter:["leak-sensor"],desc:"Устройство 14"},
 {name:"ITEM114",type:"devices-list",required:false, filter:["leak-sensor"],desc:"Устройство 15"},
+{name:"K00",type:"devices-list",required:false, filter:["valve"],desc:"Клапан"},
+{name:"K01",type:"devices-list",required:false, filter:["valve"],desc:"Клапан"},
+{name:"K02",type:"devices-list",required:false, filter:["valve"],desc:"Клапан"},
+{name:"K03",type:"devices-list",required:false, filter:["valve"],desc:"Клапан"},
 
   ]                       
 }
@@ -35,10 +39,14 @@ void OTKL()
 
 V-ID/V-ADDR
 {
-  if (opt(0))
+  if ( (opt(0)&1)==1 )
   {
 
   setStatus(ITEM101,{TIME & 0xFF, TIME >> 8});
+  #ifdef K00 if(([K00.0]&1)==1) setStatus(K00, 0); #endif
+  #ifdef K01 if(([K00.0]&1)==1) setStatus(K01, 0); #endif
+  #ifdef K02 if(([K00.0]&1)==1) setStatus(K02, 0); #endif
+  #ifdef K03 if(([K00.0]&1)==1) setStatus(K03, 0); #endif
   #ifdef ITEM102 setStatus(ITEM102,{TIME & 0xFF, TIME >> 8}); #endif
   #ifdef ITEM103 setStatus(ITEM103,{TIME & 0xFF, TIME >> 8}); #endif
   #ifdef ITEM104 setStatus(ITEM104,{TIME & 0xFF, TIME >> 8}); #endif

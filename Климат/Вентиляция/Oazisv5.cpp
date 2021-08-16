@@ -43,7 +43,7 @@ V-ID/K00
     //Секция температуры
     if(on==1)
       {
-        if(opt(1)!=((temp/10)-15)) {temp=((opt(1)+15)*10); i[3]=0x1F; i[4]=temp>>8; i[5]=temp; setStatus(RS485,&i); write=1;} else
+        if(opt(1)!=((temp/10)-15)) {temp=((opt(1)+15)*10); i[3]=0x1F; i[4]=temp<<8; i[5]=temp; setStatus(RS485,&i); write=1;} else
         if(opt(4)!=obduv) {obduv=opt(4); i[3]=0x20; i[4]=0; i[5]=obduv; setStatus(RS485,&i); write=1;}
       }
   }
@@ -61,11 +61,11 @@ void check()
 }
 
 
-V-ID/s:5
+V-ID/s:10
 {
   if(write==0)
     {
-      if(zapr==0) {setStatus(RS485,{0x01, 0x04, 0x00, 0x02, 0x00, 0x01, 0xCC, 0x16}); zapr=1;} else //Вкл-Выкл
+      if(zapr==0) {setStatus(RS485,{0x01, 0x03, 0x00, 0x02, 0x00, 0x01, 0xCC, 0x16}); zapr=1;} else //Вкл-Выкл
       if(zapr==1) {setStatus(RS485,{0x01, 0x04, 0x00, 0x19, 0x00, 0x01, 0xCC, 0x16}); zapr=2;} else //Скорость
       if(zapr==2) {setStatus(RS485,{0x01, 0x03, 0x00, 0x1F, 0x00, 0x01, 0xCC, 0x16}); zapr=0;} //Температура
     }  else write=0;

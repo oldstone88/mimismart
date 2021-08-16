@@ -1,0 +1,321 @@
+/*
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+	<langs>
+		<tplvar name="DESC_TITLE"               en="eBus-Modbus gateway Nevoton BEG301W"                            ru="Шлюз eBus-Modbus Nevoton BEG301W"/>
+		<tplvar name="DESC_SPEC"                en="Boilers control and management with eBus protocol"              ru="Контроль и управление котлами с протоколом eBus (Protherm, Vaillant, Wolf)"/>
+		<tplvar name="VERSION_SCRIPT"           en="Version: 1.00"                                                  ru="Версия 1.00" />
+		
+		<tplvar name="ITEM_GATEWAY"             en="Control mode settings"                                          ru="Настройки режима управления"/>
+		<tplvar name="ITEM_TSENSOR_NAME"        en="Management control type"                                        ru="Тип регулирования"/>
+		<tplvar name="ITEM_RS485_SETUP"         en="Configuring the Gateway connection"                             ru="Настройка соединения со шлюзом"/>
+		<tplvar name="ITEM_GATEWAY_ADDRESS"     en="Gateway address"                                                ru="Адрес шлюза на шине RS485"/>
+		<tplvar name="ITEM_RS485"               en="RS-485 bus to which gateway is connected"                       ru="Шина RS-485, на которую подключен шлюз"/>
+		<tplvar name="ITEM_SENSOR_CHOICE"       en="Select the temperature sensor"                                  ru="Выберите датчик температуры"/>
+		<tplvar name="ITEM_CURVE_CHOICE"        en="Adjusting outdoor temperature, select the curve type"           ru="При регулировке по уличной температуре выберите тип кривой"/>
+		<tplvar name="ITEM_CURVE_TYPE"          en="Type"                                                           ru="Тип"/>
+		<tplvar name="ITEM_CURVE_OFFSET"        en="Curve offset degree"                                            ru="Смещение кривой, градусы"/>
+		<tplvar name="ITEM_ISOUTSENSOR"         en="Check if Outdoor sensor is connected"                           ru="Датчик наружной температуры подключен"/>
+		
+	</langs>
+	
+	<description>
+		<b>##DESC_TITLE##</b>
+		##VERSION_SCRIPT##
+		<br/> 
+		##DESC_SPEC##
+	</description>
+	
+	<tag value="import-script"/>
+	<selectArea value="1"/>
+	<target value="RS485"/>
+	
+	<item type="div"/>
+	<item type="comment" name="commentGateway" comment="" value="%%color:#393;%%##ITEM_GATEWAY##"/>
+	
+	<item type="div"/>
+    <line>
+	    <item type="list" name="SENSOR_CHOICE" value="1" comment="##ITEM_TSENSOR_NAME##" weight="4" required="1">
+            <option key="1" value="Только контроль параметров"/>
+	        <option key="2" value="По комнатной температуре"/>
+            <option key="3" value="По уличной температуре"/>
+            <option key="4" value="Задание температуры ЦО"/>
+	    </item>
+	    <item type="checkbox" name="ISOUTCONNECTED" weight="3"  comment="##ITEM_ISOUTSENSOR##" />
+	    <item type="devices-list"   name="TSENSOR" filter="temperature-sensor" required="1" comment="##ITEM_SENSOR_CHOICE##" weight="4"/> 
+    </line>
+    
+    <item type="div"/>
+    <line>
+	    <item type="list" name="CURVE_CHOICE" value="1" comment="##ITEM_CURVE_CHOICE##" weight="4">
+	        <option key="1" value="##ITEM_CURVE_TYPE## 1"/>
+            <option key="2" value="##ITEM_CURVE_TYPE## 2"/>
+            <option key="3" value="##ITEM_CURVE_TYPE## 3"/>
+            <option key="4" value="##ITEM_CURVE_TYPE## 4"/>
+            <option key="5" value="##ITEM_CURVE_TYPE## 5"/>
+            <option key="6" value="##ITEM_CURVE_TYPE## 6"/>
+            <option key="7" value="##ITEM_CURVE_TYPE## 7"/>
+            <option key="8" value="##ITEM_CURVE_TYPE## 8"/>
+            <option key="9" value="##ITEM_CURVE_TYPE## 9"/>
+            <option key="10" value="##ITEM_CURVE_TYPE## 10"/>
+            <option key="11" value="##ITEM_CURVE_TYPE## 11"/>
+            <option key="12" value="##ITEM_CURVE_TYPE## 12"/>
+            <option key="13" value="##ITEM_CURVE_TYPE## 13"/>
+            <option key="14" value="##ITEM_CURVE_TYPE## 14"/>
+            <option key="15" value="##ITEM_CURVE_TYPE## 15"/>
+            <option key="16" value="##ITEM_CURVE_TYPE## 16"/>
+            <option key="17" value="##ITEM_CURVE_TYPE## 17"/>
+            <option key="18" value="##ITEM_CURVE_TYPE## 18"/>
+            <option key="19" value="##ITEM_CURVE_TYPE## 19"/>
+	    </item>
+	    <item type="number" name="CURVE_OFFSET" value="0" required="1" min="0" max="50" comment="##ITEM_CURVE_OFFSET##" weight="4"/>
+    </line>
+	
+	<item type="div"/>
+	<item type="comment" name="commentRS485" comment="" value="%%color:#393;%%##ITEM_RS485_SETUP##"/>
+    <line>
+	    <item type="number" name="GATEWAY_ADDR" value="1" required="1" min="1" max="128" comment="##ITEM_GATEWAY_ADDRESS##" weight="4"/>
+	    <item type="devices-list"   name="RS485" filter="com-port" required="1" comment="##ITEM_RS485##" weight="4"/> 
+    </line>
+
+    <additems>
+        <additem tag="item" id="%TARGET%" sub-id="%SUBID10%" name="Комнатный термостат" temperature-sensors="%TSENSOR%" t-min="10" t-delta="25" modes="0x08" fans="0x02" type="AC"/>
+	    <additem tag="item" id="%TARGET%" sub-id="%SUBID11%" name="Контур ГВС" temperature-sensors="%TARGET%:%SUBID21%" t-min="20" t-delta="40" modes="0x08" fans="0x02" type="AC"/>
+	    <additem tag="item" id="%TARGET%" sub-id="%SUBID12%" name="Контур ЦО" temperature-sensors="%TARGET%:%SUBID24%" t-min="10" t-delta="70" modes="0x08" fans="0x02" type="AC"/>
+	
+        <additem tag="item" id="%TARGET%" sub-id="%SUBID21%" name="ГВС" type="temperature-sensor" virtual="yes"/>
+        <additem tag="item" id="%TARGET%" sub-id="%SUBID22%" name="Отопление" type="temperature-sensor" virtual="yes"/>
+        <additem tag="item" id="%TARGET%" sub-id="%SUBID23%" name="Обратка" type="temperature-sensor" virtual="yes"/>
+        <additem tag="item" id="%TARGET%" sub-id="%SUBID24%" name="ЦО уставка" type="temperature-sensor" virtual="yes"/>
+        <additem tag="item" id="%TARGET%" sub-id="%SUBID25%" name="Накопитель" type="temperature-sensor" virtual="yes"/>
+        <additem tag="item" id="%TARGET%" sub-id="%SUBID26%" name="Улица" type="temperature-sensor" virtual="yes"/>
+        <additem tag="item" id="%TARGET%" sub-id="%SUBID27%" name="NTC10k" type="temperature-sensor" virtual="yes"/>
+        <additem tag="item" id="%TARGET%" sub-id="%SUBID28%" name="ГВС уставка" type="temperature-sensor" virtual="yes"/>
+        <additem tag="item" id="%TARGET%" sub-id="%SUBID29%" name="Ошибка" type="door-sensor" sub-type="alarm" virtual="yes"/>
+        <additem tag="item" id="%TARGET%" sub-id="%SUBID30%" name="Код ошибки" sub-type="text" type="virtual" length="0" />
+        
+    </additems>
+    
+    <item type="hidden" name="THERMOSTAT_ROOM" value="%TARGET%:%SUBID10%"/>
+	<item type="hidden" name="THERMOSTAT_DHW" value="%TARGET%:%SUBID11%"/>
+	<item type="hidden" name="THERMOSTAT_CH" value="%TARGET%:%SUBID12%"/>
+
+	<item type="hidden" name="T_DHW_CURRENT" value="%TARGET%:%SUBID21%"/>
+	<item type="hidden" name="T_CH_CURRENT" value="%TARGET%:%SUBID22%"/>
+	<item type="hidden" name="T_RETURN" value="%TARGET%:%SUBID23%"/>
+	<item type="hidden" name="T_CH_SETP" value="%TARGET%:%SUBID24%"/>
+	<item type="hidden" name="T_BOILER" value="%TARGET%:%SUBID25%"/>
+	<item type="hidden" name="T_OUTDOOR" value="%TARGET%:%SUBID26%"/>
+	<item type="hidden" name="T_SENSOR_INorOUT" value="%TARGET%:%SUBID27%"/>
+	
+	
+	<item type="hidden" name="T_DHW_SETP" value="%TARGET%:%SUBID28%"/>
+	<item type="hidden" name="ALARM" value="%TARGET%:%SUBID29%"/>
+	<item type="hidden" name="ERROR" value="%TARGET%:%SUBID30%"/>
+	    
+
+</xml>
+*/
+
+u8 Read_Input_Command = 0x04;
+u8 Read_Holding_Command = 0x03;
+u8 Write_Holding_Command = 0x06;
+
+u16 regStartInputs = 1000;
+u8 regQntyInputs = 7;
+u16 regStartHoldings = 1002;
+u8 regQntyHoldings = 3;
+
+u8 ThermostatStatus[9];
+i8 TemperatureSensorStatus[3];
+
+u8 errorMSG[50];
+
+u16 DHWTemperatureCurrent;
+
+u8 Toff = 10;
+u8 Tmax = 80;
+u8 count = 0;
+u8 timeThermostatread = 0;
+
+u16 beg301wREG_CH = 1002;
+u16 beg301wREG_DHW = 1003;
+
+void setData (u16 ID, u8 SID, u16 data)
+{
+    setStatus(@ID:@SID, { 0,  data & 0xff });
+}
+
+void setData_f88 (u16 ID, u8 SID, u16 data)
+{
+    u8 tempFrac;
+    i8 tempInt;
+    
+    if (data > 2500)
+    {
+        tempInt = 0;
+        tempFrac = 0;
+    }
+    else
+    {
+        tempInt = data/10 - 100;
+        tempFrac = ((data%10) * 256)/10;
+    }
+    
+    setStatus(@ID:@SID, { tempFrac,  tempInt });
+}
+
+
+void setData_binary (u16 ID, u8 SID, u8 data)
+{
+    setStatus(@ID:@SID, { data });
+}
+
+void thermostatRoom()
+{
+    u8 CHsetp = Toff;
+
+    getStatus(THERMOSTAT_ROOM, &ThermostatStatus);
+    
+    if (ThermostatStatus[0]&0x01)
+    {
+        getStatus(TSENSOR, &TemperatureSensorStatus);
+        
+        CHsetp = (ThermostatStatus[2] > TemperatureSensorStatus[1]) ? ( ThermostatStatus[2] + ((ThermostatStatus[2] - TemperatureSensorStatus[1])*14)/(i8)10 + 5 ) : Toff;
+        
+        srvMessage("Temperature control by Room, setp %d, current %d, CH -> %d", ThermostatStatus[2], TemperatureSensorStatus[1], CHsetp);
+    }
+    else
+    {
+        srvMessage("Temperature control by Room -> off");
+        
+    }
+    setStatus(RS485, {GATEWAY_ADDR, Write_Holding_Command, beg301wREG_CH >> 8, beg301wREG_CH&0xff, 0, CHsetp & 0xff, 0xCC16});
+    
+    getStatus(THERMOSTAT_CH, &ThermostatStatus);
+    setStatus(THERMOSTAT_CH, { ThermostatStatus[0], 0,  CHsetp });
+}
+
+void thermostatOutdoor()
+{
+    u8 CHsetp = Toff;
+    i16 CHsetpCounted;
+    i16 a_koefficient, b_koefficient, c_koefficient, outsideT;
+    
+    getStatus(THERMOSTAT_CH, &ThermostatStatus);
+    getStatus(TSENSOR, &TemperatureSensorStatus);
+    
+    a_koefficient = -23 - 2*CURVE_CHOICE;
+    b_koefficient = 681 + 60*CURVE_CHOICE;
+    c_koefficient = 1401 - 51*CURVE_CHOICE;
+
+    outsideT = TemperatureSensorStatus[1]*(-2)/10 + 5;
+    
+    CHsetpCounted = (a_koefficient*outsideT*outsideT + b_koefficient*outsideT + c_koefficient)/100 + CURVE_OFFSET;
+    
+    if (CHsetpCounted < Toff) CHsetp = Toff;
+    else if (CHsetpCounted > Tmax) CHsetp = Tmax;
+    else CHsetp = CHsetpCounted;
+    
+    //srvMessage("Koeff %d %d %d %d", a_koefficient, b_koefficient, c_koefficient, outsideT);
+    srvMessage("Temperature control by Outside, outdoor %d, counted %d, CH -> %d", TemperatureSensorStatus[1], CHsetpCounted, CHsetp);
+    
+    setStatus(RS485, {GATEWAY_ADDR, Write_Holding_Command, beg301wREG_CH >> 8, beg301wREG_CH & 0xff, 0, CHsetp & 0xff, 0xCC16});
+    setStatus(THERMOSTAT_CH, { ThermostatStatus[0], 0,  CHsetp });
+}
+
+void thermostatCH(u16 Tcurrent)
+{
+    getStatus(THERMOSTAT_CH, &ThermostatStatus);
+    if (ThermostatStatus[0]&0x01)
+    {
+        setStatus(RS485, {GATEWAY_ADDR, Write_Holding_Command, beg301wREG_CH >> 8, beg301wREG_CH & 0xff, 0, ThermostatStatus[2] & 0xff, 0xCC16});
+        srvMessage("Temperature control by CH, setp %d, current %d", ThermostatStatus[2], Tcurrent);
+    }
+    else
+    {
+        setStatus(RS485, {GATEWAY_ADDR, Write_Holding_Command, beg301wREG_CH >> 8, beg301wREG_CH & 0xff, 0, Toff & 0xff, 0xCC16});
+        srvMessage("Temperature control by CH -> off");
+    }
+    
+}
+
+V-ID/THERMOSTAT_ROOM
+{
+
+}
+
+V-ID/THERMOSTAT_DHW
+{
+    u8 ThermostatDHWStatus[9];
+    getStatus(THERMOSTAT_DHW, &ThermostatDHWStatus);
+    if (ThermostatDHWStatus[0]&0x01)
+    {
+        setStatus(RS485, {GATEWAY_ADDR, Write_Holding_Command, beg301wREG_DHW >> 8, beg301wREG_DHW & 0xff, 0, ThermostatDHWStatus[2] & 0xff, 0xCC16});
+        srvMessage("Temperature DHW, setp %d, current %d", ThermostatDHWStatus[2], DHWTemperatureCurrent);
+    }
+}
+
+V-ID/THERMOSTAT_CH
+{
+
+}
+
+V-ID/s:2
+{
+    if (count)
+    {
+        count = 0;
+        setStatus(RS485, {GATEWAY_ADDR, Read_Input_Command, regStartInputs >> 8, regStartInputs & 0xff, regQntyInputs >> 8, regQntyInputs & 0xff, 0xCC16});
+    }
+    else
+    {
+        count = 1;
+        setStatus(RS485, {GATEWAY_ADDR, Read_Holding_Command, regStartHoldings >> 8, regStartHoldings & 0xff, regQntyHoldings >> 8, regQntyHoldings & 0xff, 0xCC16});
+    }
+}
+
+V-ID/RS485
+{
+    u8 errorCode = 0;
+    
+    if ( (opt(0) == GATEWAY_ADDR) && (opt(1) == Read_Input_Command) )
+    {
+        DHWTemperatureCurrent = (opt[7] << 8) | opt[8];
+
+        setData(ADDR2ID(T_CH_CURRENT), ADDR2SID(T_CH_CURRENT), ((opt[5] << 8) | opt[6]));
+        setData(ADDR2ID(T_DHW_CURRENT), ADDR2SID(T_DHW_CURRENT), DHWTemperatureCurrent);
+        setData(ADDR2ID(T_RETURN), ADDR2SID(T_RETURN), ((opt[9] << 8) | opt[10]));
+        setData(ADDR2ID(T_BOILER), ADDR2SID(T_BOILER), ((opt[11] << 8) | opt[12]));
+        
+        setData_f88(ADDR2ID(T_OUTDOOR), ADDR2SID(T_OUTDOOR), ((opt[13] << 8) | opt[14]));
+        setData_f88(ADDR2ID(T_SENSOR_INorOUT), ADDR2SID(T_SENSOR_INorOUT), ((opt[15] << 8) | opt[16]));
+
+        if ( opt[4] == 255 ) errorCode = 0;
+        
+        #ifndef ISOUTCONNECTED
+            if ( opt[4] == 159 ) errorCode = 0;
+        #endif
+        
+        if (errorCode > 0) setData_binary(ADDR2ID(ALARM), ADDR2SID(ALARM), 1);
+        else setData_binary(ADDR2ID(ALARM), ADDR2SID(ALARM), 0);
+        
+        sprintf(errorMSG, "%d", errorCode);
+        setStatus(ERROR, &errorMSG);
+        
+        if (++timeThermostatread == 7)
+        {
+            timeThermostatread = 0;
+            if (SENSOR_CHOICE == 2) thermostatRoom();
+            else if (SENSOR_CHOICE == 3) thermostatOutdoor();
+            else if (SENSOR_CHOICE == 4) thermostatCH( (opt[5] << 8) | opt[6] );
+        }
+        
+    }
+    else if ( (opt(0) == GATEWAY_ADDR) && (opt(1) == Read_Holding_Command) )
+    {
+
+        setData(ADDR2ID(T_CH_SETP), ADDR2SID(T_CH_SETP), ((opt[3] << 8) | opt[4]));
+        setData(ADDR2ID(T_DHW_SETP), ADDR2SID(T_DHW_SETP), ((opt[5] << 8) | opt[6]));
+    }
+}

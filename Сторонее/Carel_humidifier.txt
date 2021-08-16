@@ -1,0 +1,258 @@
+/*
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+	<langs>
+		<tplvar name="DESC_TITLE"               en="Carel humidifier"                         						ru="Carel увлажнитель"/>
+		<tplvar name="DESC_SPEC"                en="Carel humidifier control and management Modbus"           		ru="Контроль и управление Carel увлажнителем по протоколу Modbus"/>
+		<tplvar name="VERSION_SCRIPT"           en="Version: 1.00"                                                  ru="Версия 1.00" />
+		
+		<tplvar name="ITEM_RS485_SETUP"         en="Configuring the Carel connection"                           	ru="Настройка соединения с Carel"/>
+		<tplvar name="ITEM_RS485"         		en="RS-485 bus to which Carel is connected"                     	ru="Шина RS-485, на которую подключен Carel"/>
+		<tplvar name="ITEM_GATEWAY_ADDRESS"     en="Carel address"                                              	ru="Адрес Carel на шине RS485"/>
+		<tplvar name="ITEM_CLIMATE_CONTROL"     en="Climate control"                                                ru="Влажность контроль"/>
+
+	</langs>
+	
+	<description>
+		<b>##DESC_TITLE##</b>
+		##VERSION_SCRIPT##
+		<br/> 
+		##DESC_SPEC##
+	</description>
+	
+	<tag value="import-script"/>
+	<selectArea value="1"/>
+	<target value="RS485"/>
+	
+	<item type="div"/>
+	<item type="devices-list" name="WIDGET_SLAVE_CLIMATE" required="0" filter="climate-control" comment="##ITEM_CLIMATE_CONTROL##" weight="4"/>
+	<item type="comment" name="commentRS485" comment="" value="%%color:#393;%%##ITEM_RS485_SETUP##"/>
+    <line>
+	    <item type="number" name="GATEWAY_ADDR" value="1" required="1" min="1" max="128" comment="##ITEM_GATEWAY_ADDRESS##" weight="4"/>
+		<item type="devices-list"   name="RS485" filter="com-port" required="1" comment="##ITEM_RS485##" weight="4"/> 
+    </line>
+    
+    <additems>
+        <additem tag="item" id="%TARGET%" sub-id="%SUBID20%" name="Авария" type="door-sensor" sub-type="alarm" virtual="yes"/>
+        <additem tag="item" id="%TARGET%" sub-id="%SUBID21%" name="Установить вл." image="humidity-sensor" type="dimer-lamp" scale="0:100" virtual="yes"/>
+        <additem tag="item" id="%TARGET%" sub-id="%SUBID22%" name="Влаж.уставка" type="humidity-sensor" scale="0:100" virtual="yes"/>
+        <additem tag="item" id="%TARGET%" sub-id="%SUBID23%" name="Влаж.в канале" type="humidity-sensor" scale="0:100" virtual="yes"/>
+        <additem tag="item" id="%TARGET%" sub-id="%SUBID24%" name="Макс.произв." type="illumination-sensor" scale="auto" virtual="yes"/>
+        <additem tag="item" id="%TARGET%" sub-id="%SUBID25%" name="Статус увлажнителя" sub-type="long-text" type="virtual" length="0" />
+        <additem tag="item" id="%TARGET%" sub-id="%SUBID26%" name="Паровой цилиндр" sub-type="long-text" type="virtual" length="0" />
+        <additem tag="item" id="%TARGET%" sub-id="%SUBID27%" name="Тип управления" sub-type="long-text" type="virtual" length="0" />
+    </additems>
+
+    <item type="hidden" name="ALARM" value="%TARGET%:%SUBID20%"/>
+	<item type="hidden" name="SETPOINT" value="%TARGET%:%SUBID21%"/>
+	<item type="hidden" name="HUMSETPOINT" value="%TARGET%:%SUBID22%"/>
+	<item type="hidden" name="HUMCURRENT" value="%TARGET%:%SUBID23%"/>
+	<item type="hidden" name="PRODUCTIVITY" value="%TARGET%:%SUBID24%"/>
+	<item type="hidden" name="STATUS" value="%TARGET%:%SUBID25%"/>
+	<item type="hidden" name="CILINDER" value="%TARGET%:%SUBID26%"/>
+	<item type="hidden" name="TYPECONTROL" value="%TARGET%:%SUBID27%"/>
+	
+</xml>
+*/
+
+u8 Read_Coil_Command = 0x02;
+u8 Read_Input_Command = 0x04;
+u8 Read_Holding_Command = 0x03;
+u8 Write_Holding_Command = 0x06;
+
+u8 errorMSG[200];
+
+u8 stateMachine = 0;
+
+u16 addr_setpoint = 15;
+
+u16 regStart[3] = {1, 136, 1};
+u8 regCommand[3] = {Read_Holding_Command, Read_Holding_Command, Read_Coil_Command};
+u8 regQnty[3] = {15, 8, 8};
+
+u8 forbidden = 0;
+u16 Hsetpoint = 0;
+u16 humidity = 0;
+
+u8 delay = 0;
+
+void setData_f88 (u16 ID, u8 SID, u16 data)
+{
+    i8 tempInt;
+    u8 tempFrac;
+
+    if (data >> 15)
+    {
+        data = 0x10000 - data;
+        tempInt = data/10;
+        tempFrac = ((data - tempInt*10)*256)/10;
+        tempInt = tempInt*(-1);
+
+    }
+    else
+    {
+        tempInt = data/10;
+        tempFrac = ((data - tempInt*10)*256)/10;
+    }
+    
+    setStatus(@ID:@SID, { tempFrac,  tempInt });
+}
+
+//#ifdef WIDGET_SLAVE_CLIMATE
+/*V-ID/284:238 ///WIDGET_SLAVE_CLIMATE
+{
+    srvMessage("Climate %d, %d, %d, %d, %d, %d, %d", opt[0], opt[1], opt[2], opt[3], opt[4], opt[5], opt[6]);
+
+}*/
+//#endif
+
+V-ID/SETPOINT
+{
+    humidity = 4*opt[1]; //10/2,5
+    
+    //if ( Hsetpoint != humidity )
+    {
+        srvMessage("Set humidity %d", humidity);
+        forbidden = 1;
+        delay = 0;
+        setStatus(RS485, {GATEWAY_ADDR, Write_Holding_Command, addr_setpoint >> 8, addr_setpoint&0xff, humidity >> 8, humidity&0xff, 0xCC16});
+    }
+}
+
+V-ID/s:2
+{
+    setStatus(RS485, {GATEWAY_ADDR, regCommand[stateMachine], regStart[stateMachine] >> 8, regStart[stateMachine]&0xff, regQnty[stateMachine] >> 8, regQnty[stateMachine]&0xff, 0xCC16});
+
+    if (++stateMachine == 2) stateMachine = 0;
+
+}
+
+V-ID/RS485
+{
+    if ( (opt(0) == GATEWAY_ADDR) && (opt(1) == regCommand[stateMachine]) )
+    {
+        //srvMessage("Data %d, %d, %d, %d, %d, %d, %d", opt[0], opt[1], opt[2], opt[3], opt[4], opt[5], opt[6]);
+        if (opt(2) == (2*regQnty[0]))
+        {
+            Hsetpoint = (opt[31] << 8)| opt[32];
+            setStatus(PRODUCTIVITY, {0, opt[30] });
+            setData_f88(ADDR2ID(HUMSETPOINT), ADDR2SID(HUMSETPOINT), Hsetpoint);
+            setData_f88(ADDR2ID(HUMCURRENT), ADDR2SID(HUMCURRENT), (opt[3] << 8)| opt[4]);
+            /*if (forbidden == 0) setStatus(SETPOINT, {1, Hsetpoint/10, 1});
+            else
+            {
+                if (++delay == 2) forbidden = 0;
+            }*/
+        }
+        else if (opt(2) == (2*regQnty[1]))
+        {
+            if (opt[4] == 1) setStatus(ALARM, 1);
+            else setStatus(ALARM, 0);
+            
+            if (opt[4] == 0)
+            {
+                sprintf(errorMSG, "В работе"); setStatus(STATUS,&errorMSG);
+            }
+            else if (opt[4] == 1)
+            {
+                sprintf(errorMSG, "Присутствуют аварийные сигналы"); setStatus(STATUS,&errorMSG);
+            }
+            else if (opt[4] == 2)
+            {
+                sprintf(errorMSG, "Выкл. по сети"); setStatus(STATUS,&errorMSG);
+            }
+            else if (opt[4] == 3)
+            {
+                sprintf(errorMSG, "Выкл. по таймеру"); setStatus(STATUS,&errorMSG);
+            }
+            else if (opt[4] == 4)
+            {
+                sprintf(errorMSG, "Выкл. по дистанцион. сигналу"); setStatus(STATUS,&errorMSG);
+            }
+            else if (opt[4] == 5)
+            {
+                sprintf(errorMSG, "Выкл. через клавиатуру"); setStatus(STATUS,&errorMSG);
+            }
+            else if (opt[4] == 6)
+            {
+                sprintf(errorMSG, "Ручное управление"); setStatus(STATUS,&errorMSG);
+            }
+            else if (opt[4] == 7)
+            {
+                sprintf(errorMSG, "Нет запроса"); setStatus(STATUS,&errorMSG);
+            }
+            
+            //
+            if (opt[10] == 0)
+            {
+                sprintf(errorMSG, "Не активно"); setStatus(CILINDER,&errorMSG);
+            }
+            else if (opt[10] == 1)
+            {
+                sprintf(errorMSG, "Плавный запуск"); setStatus(CILINDER,&errorMSG);
+            }
+            else if (opt[10] == 2)
+            {
+                sprintf(errorMSG, "Запуск"); setStatus(CILINDER,&errorMSG);
+            }
+            else if (opt[10] == 3)
+            {
+                sprintf(errorMSG, "Паропроизводительность на стабильном уровне"); setStatus(CILINDER,&errorMSG);
+            }
+            else if (opt[10] == 4)
+            {
+                sprintf(errorMSG, "Сокращенная паропроизводительность"); setStatus(CILINDER,&errorMSG);
+            }
+            else if (opt[10] == 5)
+            {
+                sprintf(errorMSG, "Отложенный останов производительности"); setStatus(CILINDER,&errorMSG);
+            }
+            else if (opt[10] == 6)
+            {
+                sprintf(errorMSG, "Полная промывка"); setStatus(CILINDER,&errorMSG);
+            }
+            else if (opt[10] == 7)
+            {
+                sprintf(errorMSG, "Быстрый запуск"); setStatus(CILINDER,&errorMSG);
+            }
+            else if (opt[10] == 8)
+            {
+                sprintf(errorMSG, "Испытание на вспенивание"); setStatus(CILINDER,&errorMSG);
+            }
+            else if (opt[10] == 9)
+            {
+                sprintf(errorMSG, "Ожидание закипания"); setStatus(CILINDER,&errorMSG);
+            }
+            
+            //
+            if (opt[18] == 0)
+            {
+                sprintf(errorMSG, "Вкл/выкл"); setStatus(TYPECONTROL,&errorMSG);
+            }
+            else if (opt[18] == 1)
+            {
+                sprintf(errorMSG, "Ведомый 0-100"); setStatus(TYPECONTROL,&errorMSG);
+            }
+            else if (opt[18] == 2)
+            {
+                sprintf(errorMSG, "Ведомый 0-100 + датчик-ограничитель"); setStatus(TYPECONTROL,&errorMSG);
+            }
+            else if (opt[18] == 3)
+            {
+                sprintf(errorMSG, "RH управление от внешнего датчика без датчика-ограничителя"); setStatus(TYPECONTROL,&errorMSG);
+            }
+            else if (opt[18] == 4)
+            {
+                sprintf(errorMSG, "RH управление с внешним датчиком + датчик-ограничитель"); setStatus(TYPECONTROL,&errorMSG);
+            }
+            else if (opt[18] == 5)
+            {
+                sprintf(errorMSG, "Управление по температуре"); setStatus(TYPECONTROL,&errorMSG);
+            }
+        }
+        /*else if (opt(2) == (regQnty[2]))
+        {
+            
+        }*/
+    }
+}
