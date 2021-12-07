@@ -13,3 +13,8 @@ V-ID/IMPULSE{
 		}
 	}
 }
+
+void onInit()
+{
+	setStatus(1000:85, {"aaa"});
+}

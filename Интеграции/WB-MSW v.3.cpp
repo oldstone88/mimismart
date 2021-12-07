@@ -11,7 +11,7 @@
   vars:
   [
     {name:"RS485",type:"devices-list",required:true,width:600,filter:["com-port"],desc:"РСка",descWidth:100},
-    {name:"ID", type:"number", defaultValue:190, min:0, max:250, required:true, desc:"Дельта первой скорости умножте на 10"},
+    {name:"ID", type:"number", defaultValue:190, min:0, max:250, required:true, desc:"ID датчика"},
     {name:"D00",type:"hidden",value:"%TARGET%:%SUBID01%"},
   ]
 }

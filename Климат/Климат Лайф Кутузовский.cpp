@@ -1,0 +1,73 @@
+/*
+{
+  desc:"Климат",
+  tag:"import-script",
+  selectArea:true,
+  addItems:[
+    {tag:"item", id:"%TARGET%", name:"NAME", "sub-id":"%SUBID%", type:"conditioner", "t-delta":"12", "t-min":"18", "vane-hor":"0x00", "vane-ver":"0x00"},
+  ],
+  vars:[
+  {name:"AUTO",type:"hidden",value:"%TARGET%:%SUBID%"},
+  {name:"COND", type:"devices-list", required:true, filter:["conditioner"], descWidth:370, desc:"Кондиционер"},
+  {name:"VALVE", type:"devices-list", required:true, filter:["valve-heating"], desc:"Отопление", descWidth:370},
+  {name:"KOMHATA", type:"devices-list", required:true, filter:["temperature-sensor"], desc:"Датчик температуры в комнате", descWidth:370},
+  {name:"YLITSA", type:"devices-list", required:true, filter:["temperature-sensor", "virtual"], desc:"Датчик температуры улицы", descWidth:370},
+  ]
+}
+*/
+
+u8 i=0; //Маркер 0-выкл 1-нагрев 2-охлаждение
+i32 tempAuto = 0;
+i32 tempK = 0;
+u8 k[5];
+
+V-ID/s:5
+{
+  if ([AUTO.0]%2!=0)
+  {
+    //Отопление
+    if( ([AUTO.1]+18)!=[VALVE.2] ) {u8 buff=([AUTO.1]+19); setStatus(1000:102, {"VALVE\0t:"A, buff,0});}
+    //Кондиционирование
+    i32 n = flt2i32(-10);
+    srvError("n=%d, Y=%d", n, [YLITSA]);
+    if( [YLITSA]>n )
+    {
+        tempAuto = [AUTO.1]*10;
+        tempK=( [KOMHATA.1]*10 );
+        tempK=tempK+([KOMHATA.0]*10)/250;
+    
+        getStatus(COND, &k);
+    
+        if( (tempAuto+190 < tempK) && i!=2 ) {i=2; k[0]=17; k[4]=0; k[1]=([AUTO.1]); setStatus(COND, &k);} else 
+        if( (tempAuto+170 > tempK) && i!=1 ) {i=1; k[0]=49; k[4]=0; k[1]=([AUTO.1]); setStatus(COND, &k);} else
+        if( (i==2) && (tempK<tempAuto+180) ) {i=0; k[0]=(k[0]&0xFE); setStatus(COND,&k);} else
+        if( (i==1) && (tempK>tempAuto+180) ) {i=0; k[0]=(k[0]&0xFE); setStatus(COND,&k);}
+    }
+  }
+}
+
+void start()
+{
+  if( tempAuto+180 < tempK ) {i=2; k[0]=17; k[4]=0; k[1]=([AUTO.1]); setStatus(COND, &k);} else 
+  if( tempAuto+180 > tempK ) {i=1; k[0]=49; k[4]=0; k[1]=([AUTO.1]); setStatus(COND, &k);} else
+  {i=0; getStatus(COND, &k); k[0]=(k[0]&0xFE); setStatus(COND,&k);} 
+}
+
+V-ID/AUTO
+{
+  if ([AUTO.0]%2!=0)
+  {
+    i=0;
+    start();
+    setStatus(1000:102, "VALVE\0АВТО");
+  } else
+  if ([AUTO.0]%2==0)
+  {
+    i=0;
+    getStatus(COND, &k);
+    k[0]=k[0]&0xFE;
+    setStatus(1000:102,"VALVE\0as:-2");
+    setStatus(COND, &k);
+  }
+}
+

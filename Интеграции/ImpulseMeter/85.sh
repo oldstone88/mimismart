@@ -3,7 +3,7 @@
 	$IdLongText = 512;
 	$SidLongText = 150;
 	$IP_gateway = "192.168.1.135";
-	$AddedValue = 0.1;
+	$AddedValue = 0.01;
 	$filename = "/home/sh2/exe/meter.txt";
 
 	function ReadCurrentValue(){
@@ -39,5 +39,11 @@
 		$CurrentValue = ReadCurrentValue();
 		WriteNewValue($CurrentValue+$AddedValue);
 		SendDataToLongText($IdLongText, $SidLongText, " Показания счетчика: ".strval($CurrentValue+$AddedValue));
+	}
+	if(strncmp(hex2bin($argv[3]),"aaa", 3) == 0){
+
+		$CurrentValue = ReadCurrentValue();
+		WriteNewValue($CurrentValue);
+		SendDataToLongText($IdLongText, $SidLongText, " Показания счетчика: ".strval($CurrentValue));
 	}
 ?>

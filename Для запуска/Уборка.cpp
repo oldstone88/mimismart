@@ -21,7 +21,7 @@
 {name:"ITEM112",type:"devices-list",required:false, filter:["leak-sensor"],desc:"Устройство 12"},
 {name:"ITEM113",type:"devices-list",required:false, filter:["leak-sensor"],desc:"Устройство 13"},
 {name:"ITEM114",type:"devices-list",required:false, filter:["leak-sensor"],desc:"Устройство 14"},
-{name:"ITEM114",type:"devices-list",required:false, filter:["leak-sensor"],desc:"Устройство 15"},
+{name:"ITEM115",type:"devices-list",required:false, filter:["leak-sensor"],desc:"Устройство 15"},
 {name:"K00",type:"devices-list",required:false, filter:["valve"],desc:"Клапан"},
 {name:"K01",type:"devices-list",required:false, filter:["valve"],desc:"Клапан"},
 {name:"K02",type:"devices-list",required:false, filter:["valve"],desc:"Клапан"},

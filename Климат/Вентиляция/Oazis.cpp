@@ -33,6 +33,24 @@ u8 res[100]="";
         srvError(&res);
 }
 
+//Скорость в приложении в скорость установки(Если более 3х скоростей, иначе равны)
+void progtoust(u8 j)
+{
+  u8 k=0;
+  if (j==1) {k=0x02; return(k);}
+  if (j==2) {k=0x06; return(k);}
+  if (j==3) {k=0x0A; return(k);}
+}
+
+//Скорость установки в скорость приложения(Обратная операция)
+void usttoprog(u8 j)
+{
+  u8 k=0;
+  if (j==0x02) {k=1; return(k);}
+  if (j==0x06) {k=2; return(k);}
+  if (j==0x0A) {k=3; return(k);}
+}
+
 V-ID/K00
 {
   if(write!=2)
@@ -43,8 +61,8 @@ V-ID/K00
     //Секция температуры
     if(on==1)
       {
-        if(opt(1)!=((temp/10)-15)) {temp=((opt(1)+15)*10); i[3]=0x1F; i[4]=temp>>8; i[5]=temp; setStatus(RS485,&i); write=1;} else
-        if(opt(4)!=obduv) {obduv=opt(4); i[3]=0x20; i[4]=0; i[5]=obduv; setStatus(RS485,&i); write=1;}
+        if(opt(1)!=((temp/10)-5)) {temp=((opt(1)+5)*10); i[3]=0x1F; i[4]=temp>>8; i[5]=temp; setStatus(RS485,&i); write=1;} else
+        if(opt(4)!=usttoprog(obduv)) {obduv=progtoust(opt(4)); i[3]=0x20; i[4]=0; i[5]=obduv; setStatus(RS485,&i); write=1;}
       }
   }
 }
@@ -55,8 +73,8 @@ void check()
 {
   if(on==1 && ([K00.0]%2==0)) {write=2; getStatus(K00, &kond); kond[0]=1; setStatus(K00, &kond); srvError("Включение");} else
   if(on==0 && ([K00.0]%2!=0)) {write=2; getStatus(K00, &kond); kond[0]=0; setStatus(K00, &kond); srvError("Выключение");} else
-  if(on==1 && (obduv!=[K00.4])) { write=2; getStatus(K00, &kond); kond[4]=obduv; setStatus(K00, &kond); srvError("Обдув");} else
-  if(on==1 && (temp!=([K00.1]+15)*10)) {write=2; getStatus(K00, &kond); kond[1]=((temp/10)-15); setStatus(K00, &kond); srvError("Температура");} else
+  if(on==1 && (obduv!=progtoust([K00.4]))) { write=2; getStatus(K00, &kond); kond[4]=usttoprog(obduv); setStatus(K00, &kond); srvError("Обдув");} else
+  if(on==1 && (temp!=([K00.1]+5)*10)) {write=2; getStatus(K00, &kond); kond[1]=((temp/10)-5); setStatus(K00, &kond); srvError("Температура");} else
   write=0;
 }
 
@@ -79,3 +97,4 @@ V-ID/RS485
   if (zapr==0 && write==0) {temp=(opt(3)<<8|opt(4));}
   check();
 }
+

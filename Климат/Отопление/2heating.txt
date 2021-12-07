@@ -1,0 +1,20 @@
+/*
+{
+desc:"Отопление",
+tag:"import-script",
+selectArea:true,
+
+vars:[
+{name:"I00",type:"devices-list",required:false,width:800,filter:["valve-heating"],desc:"Отопление",descWidth:100},
+{name:"I01",type:"devices-list",required:false,width:800,filter:["valve-heating"],desc:"Отопление",descWidth:100},
+]
+}
+*/
+
+V-ID/s:5
+{
+ if(([I00.0]&1)==1 && ([I01.0]&1)!=1) {setStatus(1000:102,"I01\0as:-4"); setStatus(I01, 1);}
+ else if(([I00.0]&1)==0 && ([I01.0]&1)!=0)
+    {setStatus(1000:102,"I01\0as:-4"); setStatus(I01, 0);}
+}
+
