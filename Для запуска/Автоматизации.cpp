@@ -2,6 +2,7 @@
 {
     desc:"Автоматизация",
     tag:"item",
+    name:"Автоматизации",
     selectArea:true,
     vars:[
     

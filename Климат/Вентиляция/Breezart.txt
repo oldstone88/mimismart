@@ -1,22 +1,22 @@
 /*
 {
-  desc:"Скрипт к вентиляции Breezart Управление вентустановками на контроллере JL204C5, JL205 или JL206 (для электрического нагревателя, диапазон температур 5-35)",
-  tag:"import-script",
-  target:"RS485",
-  selectArea:true,
-  addItems:[
-    {tag:"item", id:"%TARGET%", name:"NAME", "sub-id":"%SUBID01%", "type":"conditioner", "t-min":"5", "t-delta":"30", "modes":"0x00", "vane-ver":"0x00", "vane-hor":"0x00", "funs":"0x0F"},
-    {tag:"item", id:"%TARGET%", name:"Сброс ошибки", "sub-id":"%SUBID02%", "type":"script"},
-    {tag:"item", id:"%TARGET%", "sub-id":"%SUBID03%", "type":"virtual", sub-type:"long-text", length:"0"},
-  ],
-  vars:[
-    {name:"RS485",type:"devices-list",required:true,filter:["com-port"],desc:"RS485"},
-    {name:"DIMER",type:"devices-list",required:false,filter:["dimer-lamp"],desc:"Увлажнитель"},
-    {name:"NAME",type:"string",required:true,min:3,max:40,desc:"Имя вентиляции",defaultValue:"Вентиляция"},
-    {name:"VENT",type:"hidden",value:"%TARGET%:%SUBID01%"},
-    {name:"RESETERR", type:"hidden",value:"%TARGET%:%SUBID02%"},
-    {name:"TEXT", type:"hidden",value:"%TARGET%:%SUBID03%"},
-  ]
+	desc:"Скрипт к вентиляции Breezart Управление вентустановками на контроллере JL204C5, JL205 или JL206 (для электрического нагревателя, диапазон температур 5-35)",
+	tag:"import-script",
+	target:"RS485",
+	selectArea:true,
+	addItems:[
+		{tag:"item", id:"%TARGET%", name:"NAME", "sub-id":"%SUBID01%", "type":"conditioner", "t-min":"5", "t-delta":"30", "modes":"0x00", "vane-ver":"0x00", "vane-hor":"0x00", "funs":"0x0F"},
+		{tag:"item", id:"%TARGET%", name:"Сброс ошибки", "sub-id":"%SUBID02%", "type":"script"},
+		{tag:"item", id:"%TARGET%", "sub-id":"%SUBID03%", "type":"virtual", sub-type:"long-text", length:"0"},
+	],
+	vars:[
+		{name:"RS485",type:"devices-list",required:true,filter:["com-port"],desc:"RS485"},
+		{name:"DIMER",type:"devices-list", required:false,filter:["dimer-lamp"],desc:"Увлажнитель"},
+		{name:"NAME",type:"string",required:true,min:3,max:40,desc:"Имя вентиляции",defaultValue:"Вентиляция"},
+		{name:"VENT",type:"hidden",value:"%TARGET%:%SUBID01%"},
+		{name:"RESETERR", type:"hidden",value:"%TARGET%:%SUBID02%"},
+		{name:"TEXT", type:"hidden",value:"%TARGET%:%SUBID03%"},
+	]
 }
 */
 
@@ -32,139 +32,145 @@ u16 dim = 0;
 u8 x=0;
 
 #ifndef DIMER
-  u16 DimerValue=0;
+	u16 DimerValue=0;
 #endif
 
 V-ID/RESETERR {
-  if(CodeErr!=0)
-    setStatus(RS485, {0x01, 0x10, 0x0054, 0x0002, 0x04, 0xFFFF, 0xFFFF, 0xcc16});
+	if(CodeErr!=0)
+		setStatus(RS485, {0x01, 0x10, 0x0054, 0x0002, 0x04, 0xFFFF, 0xFFFF, 0xcc16});
 }
 
 
 u16 fans(u16 fan){
-     if(fan>=8000) return 3;
-  else if(fan>=6000) return 2;
-  else if(fan>=4000) return 1;
-  else if(fan>=2000) return 0;
-  else if(fan==0) return 2000;
-  else if(fan==1) return 4000;
-  else if(fan==2) return 6000;
-  else if(fan==3) return 8000;
+ 		 if(fan>=10000) return 3;
+	else if(fan>=8000) return 2;
+	else if(fan>=4000) return 1;
+	else if(fan>=2000) return 0;
+	else if(fan==0) return 2000;
+	else if(fan==1) return 4000;
+	else if(fan==2) return 8000;
+	else if(fan==3) return 10000;
 }
 
 void checkrs(){ 
-  // cancelDelayedCall(checkrs);
-  if(!read)    setStatus(RS485, {0x01, 0x03,0,0, 0,4, 0xcc16});
-  else if(read==1) setStatus(RS485, {0x01, 0x04, 0x14,0x50, 0,1, 0xcc16});
-  else if(read==2) setStatus(RS485, {0x01, 0x03, 0,0x13, 0,2, 0xcc16});
-  else cancelDelayedCall(checkrs);
+	// cancelDelayedCall(checkrs);
+	if(!read)		 setStatus(RS485, {0x01, 0x03,0,0, 0,4, 0xcc16});
+	else if(read==1) setStatus(RS485, {0x01, 0x04, 0x14,0x50, 0,1, 0xcc16});
+	else if(read==2) setStatus(RS485, {0x01, 0x03, 0,0x13, 0,2, 0xcc16});
+	else cancelDelayedCall(checkrs);
 }
 
-void onInit(){  
-  vent[0]=[VENT.0];
-  vent[1]=[VENT.1];
-  vent[2]=[VENT.2];
-  vent[3]=[VENT.3];
-  vent[4]=[VENT.4];
-  vent[5]=[VENT.5];
-  checkrs();
+void onInit(){	
+	vent[0]=[VENT.0];
+	vent[1]=[VENT.1];
+	vent[2]=[VENT.2];
+	vent[3]=[VENT.3];
+	vent[4]=[VENT.4];
+	vent[5]=[VENT.5];
+	checkrs();
 }
 
 V-ID/s:5{
-  currentArray[0] = 0xFFFF;
-  currentArray[1] = 0xFFFF;
-  currentArray[2] = 0xFFFF;
-  if(read>2) read=0;
-  if(action==0) checkrs();
+	currentArray[0] = 0xFFFF;
+	currentArray[1] = 0xFFFF;
+	currentArray[2] = 0xFFFF;
+	if(read>2) read=0;
+	if(action==0) checkrs();
 }
 
 void Action(){
-  action=0;
+	action=0;
 }
 
 void Send(){
-  mas[7] = fans(([VENT.3]<<8)|[VENT.4])>>8;
-  mas[8] = fans(([VENT.3]<<8)|[VENT.4])&0xFF;
-  mas[9] = (([VENT.1]+5)*10)>>8;
-  mas[10] = (([VENT.1]+5)*10)&0xff;
-  #ifdef DIMER
-    dim = ([DIMER.1]*2)+300;
-    mas[11] = dim>>8;
-    mas[12] = dim&0xFF;
-  #else
-    mas[11] = DimerValue>>8;
-    mas[12] = DimerValue&0xFF;
-  #endif
-  mas[14] = [VENT.0]&1;
-  delayedCallMs(Action, 500);
+	mas[7] = fans(([VENT.3]<<8)|[VENT.4])>>8;
+	mas[8] = fans(([VENT.3]<<8)|[VENT.4])&0xFF;
+	mas[9] = (([VENT.1]+5)*10)>>8;
+	mas[10] = (([VENT.1]+5)*10)&0xff;
+	#ifdef DIMER
+		dim = ([DIMER.1]*2)+300;
+		mas[11] = dim>>8;
+		mas[12] = dim&0xFF;
+	#else
+		mas[11] = DimerValue>>8;
+		mas[12] = DimerValue&0xFF;
+	#endif
+	mas[14] = [VENT.0]&1;
+	delayedCallMs(Action, 500);
 
-  setStatus(RS485, &mas);
+	setStatus(RS485, &mas);
 }
 
 V-ID/VENT{
-  if(exciterId()!=senderId()){
-    action=1;
-    cancelDelayedCall(Send);
-    delayedCall(Send,2);
-  }
+	if(exciterId()!=senderId()){
+		action=1;
+		cancelDelayedCall(Send);
+		delayedCall(Send,2);
+	}
 }
 
 #ifdef DIMER
-  V-ID/DIMER{
-    if(!dimer){
-      action=1;
-      cancelDelayedCall(Send);
-      delayedCall(Send, 2);
-    }
-    else dimer=0;
-  }
+	V-ID/DIMER{
+		if(!dimer){
+			action=1;
+			cancelDelayedCall(Send);
+			delayedCall(Send, 2);
+		}
+		else dimer=0;
+	}
 #endif
 
-V-ID/RS485{
-  // u8 res[100]="";
- //    u8 *st = opt;
- //    sprintf(res,"%d ",optl);
- //    for(u8 i = 0; i < optl; ++i){
- //        sprintf(res+strlen(res), "%.2X", st[i]);
- //    }
- //    sprintf(res+strlen(res), "\10");
- //    srvError(&res);
-
-  if((opt(1)==3) && (optl==13) && !action){
-    ++read;
-    u16 dim = (opt(7)<<8)|opt(8);
-    currentArray[0] = opt(10)&0x00FF;
-    currentArray[1] = (((opt(5)<<8)|opt(6))/10)-5;
-    currentArray[2] = fans((opt(3)<<8)|opt(4));
-    #ifdef DIMER
-      if(((dim-300)/2) != [DIMER.1]){
-        dimer=1;
-        setStatus(DIMER, {1,(dim-300)/2,0});
-      }
-    #else
-      DimerValue = dim;
-    #endif
-    setStatus(VENT, {currentArray[0], currentArray[1],vent[2],vent[3],currentArray[2],vent[5]});
-  }
-  else if (opt(1)==4 && optl==7 && read==1){
-    ++read;
-    u8 value[10];
-    ltoa(&value,((opt(3)<<8)|opt(4))/100);
-    sprintf(&value + strlen(&value),",");
-    ltoa(&value + strlen(&value),((opt(3)<<8)|opt(4))%100);
-    u8 buff[50] = "Загрязнение фильтров: ";
-    sprintf(&buff+strlen(&buff), &value);
-    sprintf(&buff+strlen(&buff), "%%");
-    setStatus(TEXT, buff);
-  }
-  else if(opt(1)==3 && optl==9 && read==2){
-    ++read;
-    CodeErr = (opt(3)<<8)|opt(4);
-    if(CodeErr&0x00000100 == 0x100){
-      u8 buff[50] = "Авария фильтра";
-      setStatus(TEXT, buff);
-      setStatus(RESETERR, 1);
-    }
-  }
+void stat()
+{
+u8 res[100]="";
+        u8 *st = opt;
+        u8 i = 0;
+        sprintf(res,"%d ",optl);
+        for(i = 0; i < optl; ++i){
+            sprintf(res+strlen(res), " %x", st[i]);
+        }
+        sprintf(res+strlen(res), "\10");
+        srvError(&res);
 }
+
+V-ID/RS485{
+//stat();
+	if((opt(1)==3) && (optl==13) && !action){
+		++read;
+		u16 dim = (opt(7)<<8)|opt(8);
+		currentArray[0] = opt(10)&0x00FF;
+		currentArray[1] = (((opt(5)<<8)|opt(6))/10)-5;
+		currentArray[2] = fans((opt(3)<<8)|opt(4));
+		#ifdef DIMER
+			if(((dim-300)/2) != [DIMER.1]){
+				dimer=1;
+				setStatus(DIMER, {1,(dim-300)/2,0});
+			}
+		#else
+			DimerValue = dim;
+		#endif
+		setStatus(VENT, {currentArray[0], currentArray[1],vent[2],vent[3],currentArray[2],vent[5]});
+	}
+	else if (opt(1)==4 && optl==7 && read==1){
+		++read;
+		u8 value[10];
+		ltoa(&value,((opt(3)<<8)|opt(4))/100);
+		sprintf(&value + strlen(&value),",");
+		ltoa(&value + strlen(&value),((opt(3)<<8)|opt(4))%100);
+		u8 buff[50] = "Загрязнение фильтров: ";
+		sprintf(&buff+strlen(&buff), &value);
+		sprintf(&buff+strlen(&buff), "%%");
+		setStatus(TEXT, buff);
+	}
+	else if(opt(1)==3 && optl==9 && read==2){
+		++read;
+		CodeErr = (opt(3)<<8)|opt(4);
+		if(CodeErr&0x00000100 == 0x100){
+			u8 buff[50] = "Авария фильтра";
+			setStatus(TEXT, buff);
+			setStatus(RESETERR, 1);
+		}
+	}
+}
+
 

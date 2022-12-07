@@ -6,7 +6,7 @@ selectArea:true,
 
 vars:[
 {type:"comment",text:"Уборка:",width:200, style:"color:red;"},
-{name:"I00",type:"devices-list",required:false,width:800,filter:["script"],desc:"Кран",descWidth:100},
+{name:"I00",type:"devices-list",required:false,width:800,filter:["script"],desc:"Уборка",descWidth:100},
 {type:"comment",text:"Кран к датчикам:",width:200, style:"color:red;"},
 {name:"V00",type:"devices-list",required:false,width:800,filter:["valve"],desc:"Кран",descWidth:100},
 {name:"V01",type:"devices-list",required:false,width:800,filter:["valve"],desc:"Кран",descWidth:100},

@@ -1,0 +1,72 @@
+/*
+{
+	desc:"Скрипт к пульту DAIKIN",
+	tag:"import-script",
+	target:"IRT",
+	selectArea:true,
+	addItems:[
+		{tag:"item", id:"%TARGET%", name:"NAME", "sub-id":"%SUBID%", type:"conditioner", "t-delta":"20", "t-min":"10" ,"vane-ver":"0x41","vane-hor":"0x00"},
+	],
+	vars:[
+		{name:"IRT",type:"devices-list",required:true,filter:["ir-transmitter"],desc:"ИК-передатчик"},
+		{name:"NAME",type:"string",required:true,min:3,max:40,desc:"Имя кондиционера",defaultValue:"DAIKIN ARC470A1"},
+		{name:"COND",type:"hidden",value:"%TARGET%:%SUBID%"}
+	]
+}
+*/
+
+V-ID/COND
+{
+
+	u8 statusForIrCm9[] = {0x196408000200C60601011000000305108D0D000102800390104B510340108E0D11DA2700C50000D70102802D25104A510340108E0D11DA2700420000540102802D25104B510398108E0D11DA2700003932007F000006600000C18000A3	};				
+	
+	// состояние кондиционера
+	u8 onOff = (opt(0) & 0x01);
+	u8 mode = (opt(0) >> 4);
+	u8 temp = (opt(1));
+	u8 fan = (opt(4) & 0x03);
+	u8 dir = (opt(3) >> 4);
+	
+	//srvMessage("Mode = %d",opt(0) >> 4);
+	//srvMessage("TEMP = %x",opt(1) & 0x0f);
+	
+	// массивы статусов
+	u8 sttOnOff[] = {0x08,  0x09};
+	u8 sttDir[] = {0x00, 0x0F};
+	u8 sttMode[] = {0x20, 0x30, 0x40, 0x60, 0x00};
+	u8 sttFan[] = {0xA0,0x30,0x50,0x70};
+	
+	// установка onOff и mode
+	if(mode != 3 && temp < 0x08)
+	{
+		//srvMessage("TEMP ERROR");
+		statusForIrCm9[80] = 0x24;
+		setStatus(COND,{[COND.0],8,[COND.2],[COND.3],[COND.4]});
+	}
+	
+	statusForIrCm9[79] = sttMode[mode] | sttOnOff[onOff];
+
+	
+	//Установка Temp 
+	if(mode == 3)
+		statusForIrCm9[80] = 0x14 + (temp * 2);
+	else
+		statusForIrCm9[80] = 0x14 + (temp * 2) + 8;
+
+	//Установка Fan и Swing
+	statusForIrCm9[82] = sttFan[fan] | sttDir[dir];
+	
+	
+	
+	//Контрольная сумма
+	u8 sum = 0x00;
+	
+	for(u8 i=74;i<92;i=i+1)
+	{
+		sum = sum + statusForIrCm9[i];
+	}
+	statusForIrCm9[92] = sum;
+	
+	// отправка сигнала
+	setStatus(IRT, &statusForIrCm9);
+}

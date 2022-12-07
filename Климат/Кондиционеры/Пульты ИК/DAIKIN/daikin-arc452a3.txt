@@ -1,0 +1,67 @@
+//		<item id="313" name="cond" sub-id="50" type="conditioner"/>
+//              <import-script id="313" path="script/daikin-arc447a1.txt"/>
+
+u8 v = 0;
+u8 vs = 0;
+u8 g = 0;
+u8 gs = 0;
+
+V-ID/V-ID:50
+{
+	u8 isOn = (opt(0) & 0x01);
+	u8 m = (opt(0) >> 4);
+	u8 t = (opt(1) & 0x0f);
+	u8 f = (opt(4) & 0x03);
+
+	u8 b[142] = {0x18640B006C03C7060000, 0x01000100, 0x01000000, 0x040006000000, 0x000003003900, 0x01000D00FF100000, //37
+		     0x04004000, 0x11DA2700, 0xC5500027, 0x03003A00, 0x01000D00FF100000, //61
+		     0x04004000, 0x11DA2700, 0x42E10237, 0x03003A00, 0x01000D00FF100000, //85
+			         //90          94          98                          108
+		     0x04009800, 0x11DA2700, 0x00082400, 0xA0000006, 0x600000C10001, 0x0600};
+
+
+  if (isOn)			//on
+  {
+	const u8 mode[4] = {0x09, 0x29, 0x39, 0x49};
+	const u8 fun[4] = {0xa0, 0x30, 0x50, 0x70};
+	u8 c = 0;
+	 
+					//galuzi v
+	 if ( v != (opt(3) >> 4) )
+	 {
+	  v = (opt(3) >> 4);
+	  vs = ((~vs) & 0x0f);
+	  b[98] = vs;
+	 }
+					//end galuzi v
+
+					//galuzi g
+	if ( g != (opt(3) & 0x0f) )
+	{
+	 g = (opt(3) & 0x0f);
+	 gs = ((~gs) & 0x0f);
+	 b[99] = gs;
+	}
+					//end galuzi g
+
+	if ((t < 2) && (m == 1)) t=2;
+	if (t == 0x0f) t=0x0e;
+	b[96] = ((t+16) << 1);		//T
+	b[98] += fun[f];		//fun
+	b[95] = mode[m];		//mode
+	if(m == 2)
+	{
+ 	 b[96] = 0xc0;
+	 //b[97] = 0x32;
+	}
+
+	for (u8 i=90;i<=107;++i)
+	 {
+	  c += b[i];
+	 }
+	b[108] = c;
+  }
+
+	setStatus(313:41, &b);
+
+}

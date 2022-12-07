@@ -1,0 +1,56 @@
+/*
+{
+  desc:"Скрипт для пульта DAIKIN ARC466A6",
+  tag:"import-script",
+  target:"IRT",
+  selectArea:true,
+  addItems:[
+    {tag:"item", id:"%TARGET%", name:"NAME", "sub-id":"%SUBID%", type:"conditioner", "t-delta":"12", "t-min":"18", "vane-hor":"0", "vane-ver":"0x41"},
+  ],
+  vars:[
+ {name:"IRT",type:"devices-list",required:true,filter:["ir-transmitter"],desc:"ИК-передатчик"},
+ {name:"NAME",type:"string",required:true,min:3,max:40,desc:"Имя кондиционера",defaultValue:"Кондиционер"},
+ {name:"COND",type:"hidden",value:"%TARGET%:%SUBID%"}
+  ]
+}
+*/
+
+V-ID/COND
+{
+	u8 isOn = (opt(0) & 0x01);
+	u8 t = (opt(1) & 0x0f);
+	u8 m = (opt(0) >> 4);
+	u8 v = (opt(3) >> 4);
+	u8 f = (opt(4) & 0x03);
+	u8 c = 0;
+
+	u8 b[115] = {0x18640B006303C5060000, 0x01000100, 0x01000100, 0x04000500, 0x00000000, 0x03003A00, 0x01000D00, 0xFF100000, 0x04004000, 0x11DA2700, 0xC51000E7, 0x03005200, 0x01000D00, 0xFF100000, 0x04004000, 0x11DA2700, 0x42001064, 0x03005200, 0x01000D00, 0xFF100000, 0x04009800, 0x11DA, 0x2700, 0x0039, 0x2400, 0xA000, 0x0006, 0x6000, 0x00C1, 0x8000, 0xB600};
+	
+	const u8 temp[13] = {0x24, 0x26, 0x28, 0x2A, 0x2C, 0x2E, 0x30, 0x32, 0x34, 0x36, 0x38, 0x3A, 0x3C}; // байт номер 96
+	const u8 fan[4] = {0xA0, 0x50, 0x60, 0x70}; // байт номер 98.1
+	const u8 mode[4] = {0x60, 0x30, 0x20, 0x40}; // байт номер 95.1
+	
+	if(m == 0)
+	{
+		b[96] = 0x32;
+		b[98] = v?(fan[f] | 0x0F):(fan[f] | 0x00);
+	}
+	else if(m == 2)
+	{
+		b[96] = 0xC0;
+		b[98] = v?(fan[0] | 0x0F):(fan[0] | 0x00);
+	}
+	else
+	{
+		b[96] = temp[t];
+		b[98] = v?(fan[f] | 0x0F):(fan[f] | 0x00);
+	}
+	
+	b[95] = isOn?(mode[m] | 0x09):(mode[m] | 0x08);
+	
+	for (u8 i=90;i<=107;++i)
+		c += b[i];
+	b[108] = c; // Контрольная сумма
+	
+	setStatus(IRT, &b);
+}

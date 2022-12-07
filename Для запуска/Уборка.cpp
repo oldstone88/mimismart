@@ -2,6 +2,7 @@
 {
   desc:"Уборка",
   tag:"item",
+  name:"Уборка",
   selectArea:true,
   vars:[
   {name:"TIME", type:"number", required:true, defaultValue:10800, min:1800, max:21600, desc:"Задержка, мин", descWidth:370},

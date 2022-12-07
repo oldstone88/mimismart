@@ -1,0 +1,80 @@
+/*
+{
+  desc:"Скрипт для пульта DAIKIN BRC4C154",
+  tag:"import-script",
+  target:"IRT",
+  selectArea:true,
+  addItems:[
+    {tag:"item", id:"%TARGET%", name:"NAME", "sub-id":"%SUBID%", type:"conditioner", "t-delta":"16", "t-min":"16", "type":"conditioner", "vane-hor":"0", "vane-ver":"0", "funs":"10", "modes":"7"},
+  ],
+  vars:[
+ {name:"IRT",type:"devices-list",required:true,filter:["ir-transmitter"],desc:"ИК-передатчик"},
+ {name:"NAME",type:"string",required:true,min:3,max:40,desc:"Имя кондиционера",defaultValue:"Кондиционер"},
+ {name:"COND",type:"hidden",value:"%TARGET%:%SUBID%"}
+  ]
+}
+*/
+
+u8 tempMode = 0;
+
+// статус
+	u8 b[] = {		0x1964050002007A07, // 7
+					0x0102, // 9
+					0xA70000, // 12
+					0x0C2470, // 15
+					0x03380CD410, // 20
+					0x11DA171804001E, // 27
+					0x00021DD2, // 31
+					0x0102, // 33
+					0xA80000, // 36
+					0x0C2370, // 39
+					0x03780CD410, // 44				//mode		//mode		//mode&onOff				 	//t		//fan
+					0x11, 0xDA, 0x17, 0x18, 0x00, 	0x00, 		0x00, 		0x00, 			0x00, 0x0F, 	0x00, 	0x00, 0x00, 0x20, 0x00
+				};
+void set() {
+	setStatus(IRT, &b);
+}
+
+
+V-ID/COND
+{
+	cancelDelayedCall(set);
+
+	// считываем статус события кондиционера 
+	u8 isOn = (opt(0) & 0x01);
+	u8 t = (opt(1) & 0x1f);
+	u8 m = (opt(0) >> 4);
+	u8 f = (opt(4) & 0x03);
+	
+	const u8 temp[17] = {0x0E, 0x10, 0x12, 0x14, 0x16, 0x18, 0x1A, 0x1C, 0x1E, 0x20, 0x22, 0x24, 0x26, 0x28, 0x2A, 0x2C, 0x2E}; // 55 байт
+	srvError("%d", t);
+	const u8 mode1[3] = {0x43, 0x53, 0x03}; // байт номер 50
+	const u8 mode2[3] = {0x04, 0x04, 0x04}; // байт номер 51
+	const u8 mode3[3] = {0x00, 0x21, 0x70}; // байт номер 52
+	
+	(f == 0) ? (b[56] = 0x16) : (b[56] = 0x36); // установка fan
+	(isOn == 0) ? (b[52] = 0x00) : (b[52] = 0x01); // установка вкл.выкл
+	b[55] = temp[t]; // установка температуры
+	
+	// ограничение - в режиме fan и dry температура 16
+ 	if((m == 0 || m == 2) && (t != 0)) {
+		setStatus(COND, {opt(0), 0, opt(2), opt(3), opt(4)});		
+		return;
+	}
+	
+	// установка mode
+	b[50] = mode1[m];
+	b[52] = mode3[m] | b[52];
+	if(tempMode != m) {
+		b[51] = mode2[m];
+		tempMode = m;
+	} else {
+		b[51] = 0;
+	}
+	
+	b[59] = 0;
+	for (u8 i = 45; i < 59; ++i)
+		b[59] += b[i];
+	
+	delayedCall(set, 1);
+}

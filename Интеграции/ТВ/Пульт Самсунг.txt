@@ -1,0 +1,43 @@
+/*
+{
+  vars:[
+    {name:"%NAME%",type:"text",require:true,defaultValue:"Пульт Samsung",desc:"Имя пульта"},
+    {name:"%IRT%",type:"devices-list",required:true,filter:["ir-transmitter"],desc:"ИК-передатчик"}
+  ]
+}
+*/
+ 
+<xml>
+		<item addr="2048:" name="%NAME%" type="remote-control">
+      <remote-signal identifier="signal-power" transmitter-addr="%IRT%" value="196403010200E1060102A9000015FA8C0320158511070702FD00020FE5"/>
+      <remote-signal identifier="signal-1" transmitter-addr="%IRT%" value="19640301020098060102A4000014FC8C0320158611070704FB000230E5"/>
+      <remote-signal identifier="signal-2" transmitter-addr="%IRT%" value="196403010200AE060102A9000014FB8C0320158511070705FA00A619BC"/>
+      <remote-signal identifier="signal-3" transmitter-addr="%IRT%" value="1964030102008B060102A7000015018D0320158611070706F9000217E5"/>
+      <remote-signal identifier="signal-4" transmitter-addr="%IRT%" value="196403010200A9060102A8000014038D0320158511070708F7000220E5"/>
+      <remote-signal identifier="signal-5" transmitter-addr="%IRT%" value="19640301020098060102AA000015FB8C0320158511070709F6000211E5"/>
+      <remote-signal identifier="signal-6" transmitter-addr="%IRT%" value="19640301020098060102A5000015F98C032015851107070AF5000209E5"/>
+      <remote-signal identifier="signal-7" transmitter-addr="%IRT%" value="19640301020098060102AA000015018D032015861107070CF3000222E5"/>
+      <remote-signal identifier="signal-8" transmitter-addr="%IRT%" value="196403010200EC060102A1000014048D032015861107070DF2000244E5"/>
+      <remote-signal identifier="signal-9" transmitter-addr="%IRT%" value="196403010200F0060102A5000014FB8C032015861107070EF1000238E5"/>
+      <remote-signal identifier="signal-0" transmitter-addr="%IRT%" value="196403010200DC060102A9000015FD8C0320158511070711EE000204E5"/>
+      <remote-signal identifier="signal-mute" transmitter-addr="%IRT%" value="196402000200B5060102A8000014FF8C032015861107070FF0"/>
+      <remote-signal identifier="signal-src" transmitter-addr="%IRT%" value="19640200020098060102AC000015FE8C0320158611070701FE"/>
+      <remote-signal identifier="signal-info" transmitter-addr="%IRT%" value="1964030102009B060102A7000015058D032015861107071FE0000223E5"/>
+      <remote-signal identifier="signal-exit" transmitter-addr="%IRT%" value="196403010200A0060102A8000014FE8C032015851107072DD2000217E5"/>
+      <remote-signal identifier="signal-up" transmitter-addr="%IRT%" value="196403010200C2060102A7000015FF8C03201585110707609F000223E5"/>
+      <remote-signal identifier="signal-left" transmitter-addr="%IRT%" value="196403010200B1060102A9000015FA8C03201585110707659A000212E5"/>
+      <remote-signal identifier="signal-down" transmitter-addr="%IRT%" value="19640301020099060102AA000014FB8C03201586110707619E000246E5"/>
+      <remote-signal identifier="signal-right" transmitter-addr="%IRT%" value="196403010200A3060102AA000015008D03201585110707629D00022AE5"/>
+      <remote-signal identifier="signal-ok" transmitter-addr="%IRT%" value="196403010200E2060102A7000015FC8C032015861107076897000227E5"/>
+      <remote-signal identifier="signal-vol-down" transmitter-addr="%IRT%" value="196403010200BE060102A8000015FE8C032015861107070BF4000221E5"/>
+      <remote-signal identifier="signal-ch-up" transmitter-addr="%IRT%" value="196403010200D8060102A4000014008D0320158611070712ED00025CE5"/>
+      <remote-signal identifier="signal-ch-down" transmitter-addr="%IRT%" value="196403010200F3060102A2000015FB8C0320158511070710EF000229E5"/>
+      <remote-signal identifier="signal-F1" transmitter-addr="%IRT%" value="196403010200CC060102A4000013008D032015861107071AE5000219E5"/>
+      <remote-signal identifier="signal-F2" transmitter-addr="%IRT%" value="196403010200E6060102A7000015F98C0320158611070749B6000234E5"/>
+      <remote-signal identifier="signal-F3" transmitter-addr="%IRT%" value="196403010200D9060102A5000015028D0320158611070758A700022DE5"/>
+      <remote-signal identifier="signal-F4" transmitter-addr="%IRT%" value="196402000200C4060102A4000013FA8C032015861107074FB0"/>
+      <remote-signal identifier="signal-vol-up" transmitter-addr="%IRT%" value="196403010200CA060102A4000014FE8C0320158511070707F800021DE5"/>
+      <remote-signal identifier="signal-menu" transmitter-addr="%IRT%" value="196402000200A9060102A8000015F88C032015851107077986"/>
+    </item>
+</xml>
+		

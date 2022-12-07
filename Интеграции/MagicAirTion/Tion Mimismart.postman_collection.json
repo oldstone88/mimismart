@@ -1,0 +1,73 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Tion Mimismart",
+		"_postman_id": "0848a322-5319-b202-df0e-574488a1bf6f",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Getting data",
+			"request": {
+				"url": "https://api2.magicair.tion.ru/location",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer da0f8b854b9849239c68f480d00d8a6abe0a840ea944401b8e88a7d22012e875",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Authorization_",
+			"request": {
+				"url": "https://api2.magicair.tion.ru/idsrv/oauth2/token",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "username",
+							"value": "os@mimismart.ru",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "Pfregrb77",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "cd594955-f5ba-4c20-9583-5990bb29f4ef",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "syRxSrT77P",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "password",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

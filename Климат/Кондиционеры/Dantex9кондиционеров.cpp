@@ -41,6 +41,11 @@ u8 res[100]="";
         srvError(&res);
 }
 
+void OFF()
+{
+  write=0;
+}
+
 //Функция режима
 void rezimw(u8 k)
 {
@@ -95,6 +100,7 @@ V-ID/K00
     w[3]=0x01;
     w[8]=0x00;
     setStatus(RS485, &w);
+    cancelDelayedCall(OFF);
     write=1;
   } else
   if( (opt(0)%2!=0) && write!=2)
@@ -105,6 +111,7 @@ V-ID/K00
     w[10]=speedw(opt(4)); 
     w[12]=[K00.1]+16;
     setStatus(RS485, &w);
+    cancelDelayedCall(OFF);
     write=1;
   }
 }
@@ -117,6 +124,7 @@ V-ID/K01
     w[3]=0x21;
     w[8]=0x00;
     setStatus(RS485, &w); srvError("OFF");
+    cancelDelayedCall(OFF);
     write=1;
   } else
   if( (opt(0)%2!=0) && write!=2)
@@ -127,6 +135,7 @@ V-ID/K01
     w[10]=speedw(opt(4));
     w[12]=[K01.1]+16;
     setStatus(RS485, &w);
+    cancelDelayedCall(OFF);
     write=1;
   }
 }
@@ -139,6 +148,7 @@ V-ID/K02
     w[3]=0x41;
     w[8]=0x00;
     setStatus(RS485, &w);
+    cancelDelayedCall(OFF);
     write=1;
   } else
   if( (opt(0)%2!=0) && write!=2)
@@ -149,6 +159,7 @@ V-ID/K02
     w[10]=speedw(opt(4));
     w[12]=[K02.1]+16;
     setStatus(RS485, &w);
+    cancelDelayedCall(OFF);
     write=1;
   }
 }
@@ -161,6 +172,7 @@ V-ID/K03
     w[3]=97;
     w[8]=0x00;
     setStatus(RS485, &w);
+    cancelDelayedCall(OFF);
     write=1;
   } else
   if( (opt(0)%2!=0) && write!=2)
@@ -171,6 +183,7 @@ V-ID/K03
     w[10]=speedw(opt(4));
     w[12]=[K03.1]+16;
     setStatus(RS485, &w);
+    cancelDelayedCall(OFF);
     write=1;
   }
 }
@@ -183,6 +196,7 @@ V-ID/K04
     w[3]=129;
     w[8]=0x00;
     setStatus(RS485, &w);
+    cancelDelayedCall(OFF);
     write=1;
   } else
   if( (opt(0)%2!=0) && write!=2)
@@ -193,6 +207,7 @@ V-ID/K04
     w[10]=speedw(opt(4));
     w[12]=[K04.1]+16;
     setStatus(RS485, &w);
+    cancelDelayedCall(OFF);
     write=1;
   }
 }
@@ -205,7 +220,8 @@ V-ID/K05
     w[3]=0xA1;
     w[8]=0x00;
     setStatus(RS485, &w);
-    write=1; srvError("OFF");
+    cancelDelayedCall(OFF);
+    write=1;
   } else
   if( (opt(0)%2!=0) && write!=2)
   {
@@ -215,6 +231,7 @@ V-ID/K05
     w[10]=speedw(opt(4));
     w[12]=[K05.1]+16;
     setStatus(RS485, &w);
+    cancelDelayedCall(OFF);
     write=1;
   }
 }
@@ -227,6 +244,7 @@ V-ID/K06
     w[3]=193;
     w[8]=0x00;
     setStatus(RS485, &w);
+    cancelDelayedCall(OFF);
     write=1;
   } else
   if( (opt(0)%2!=0) && write!=2)
@@ -237,6 +255,7 @@ V-ID/K06
     w[10]=speedw(opt(4));
     w[12]=[K06.1]+16;
     setStatus(RS485, &w);
+    cancelDelayedCall(OFF);
     write=1;
   }
 }
@@ -249,6 +268,7 @@ V-ID/K07
     w[3]=225;
     w[8]=0x00;
     setStatus(RS485, &w);
+    cancelDelayedCall(OFF);
     write=1;
   } else
   if( (opt(0)%2!=0) && write!=2)
@@ -259,6 +279,7 @@ V-ID/K07
     w[10]=speedw(opt(4));
     w[12]=[K07.1]+16;
     setStatus(RS485, &w);
+    cancelDelayedCall(OFF);
     write=1;
   }
 }
@@ -271,6 +292,7 @@ V-ID/K08
     w[3]=1;
     w[8]=0x00;
     setStatus(RS485, &w);
+    cancelDelayedCall(OFF);
     write=1;
   } else
   if( (opt(0)%2!=0) && write!=2)
@@ -281,6 +303,7 @@ V-ID/K08
     w[10]=speedw(opt(4));
     w[12]=[K08.1]+16;
     setStatus(RS485, &w);
+    cancelDelayedCall(OFF);
     write=1;
   }
 }
@@ -288,11 +311,6 @@ V-ID/K08
 void tepmscan()
 {
   setStatus(RS485, &rt);
-}
-
-void OFF()
-{
-  write=0;
 }
 
 V-ID/s:3
@@ -322,8 +340,8 @@ void check(u8 vkl, u8 ckopoct)
   if (marker==6) getStatus(K06, &prov); else
   if (marker==7) getStatus(K07, &prov); else
   if (marker==8) getStatus(K08, &prov);
-  if(rezimr(vkl)!=prov[0] && rezimr(vkl)!=0) {write=2; prov[0]=rezimr(vkl);} else if(rezimr(vkl)==0 && prov[0]%2!=0) {write=2; prov[0]=(prov[0]&0xFE);}
-  if(speedr(ckopoct)!=prov[4] && speedr(ckopoct)!=0) {write=2; prov[4]=speedr(ckopoct);}
+  if(rezimr(vkl)!=prov[0] && rezimr(vkl)!=0) {cancelDelayedCall(OFF); write=2; prov[0]=rezimr(vkl);} else if(rezimr(vkl)==0 && prov[0]%2!=0) {write=2; prov[0]=(prov[0]&0xFE);}
+  if(speedr(ckopoct)!=prov[4] && speedr(ckopoct)!=0) {cancelDelayedCall(OFF); write=2; prov[4]=speedr(ckopoct);}
 
   if(write==2 && marker==0) {setStatus(K00, &prov); srvError("Sync0");} else
   if(write==2 && marker==1) {setStatus(K01, &prov); srvError("Sync1");} else
@@ -349,7 +367,7 @@ void checkt(u8 temp)
   if (marker==7) getStatus(K07, &prov); else
   if (marker==8) getStatus(K08, &prov);
   if (temp<16) temp=16;
-  if((temp-16)!=prov[1]) {write=2; prov[1]=temp-16;}
+  if((temp-16)!=prov[1]) {cancelDelayedCall(OFF); write=2; prov[1]=temp-16;}
 
   if(write==2 && marker==0) {setStatus(K00, &prov); srvError("TEMP0");} else
   if(write==2 && marker==1) {setStatus(K01, &prov); srvError("TEMP1");} else
@@ -375,7 +393,7 @@ V-ID/RS485
   {
     checkt(opt(4));
   }
-  stat();
+  //stat();
 }
 
 

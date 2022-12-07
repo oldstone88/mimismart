@@ -1,0 +1,54 @@
+/*
+{
+  desc:"Скрипт для пульта DAIKIN ARC433B69",
+  tag:"import-script",
+  target:"IRT",
+  selectArea:true,
+  addItems:[
+	{tag:"item", id:"%TARGET%", name:"NAME", "sub-id":"%SUBID%", type:"conditioner", "t-delta":"16", "t-min":"16", "vane-hor":"0", "vane-ver":"0", "funs":"0x0E"},
+  ],
+  vars:[
+ {name:"IRT",type:"devices-list",required:true,filter:["ir-transmitter"],desc:"ИК-передатчик"},
+ {name:"NAME",type:"string",required:true,min:3,max:40,desc:"Имя кондиционера",defaultValue:"Кондиционер"},
+ {name:"COND",type:"hidden",value:"%TARGET%:%SUBID%"}
+  ]
+}
+*/
+
+u8 firstOn = 0;	//чтобы не отправлять сигналы в состоянии ВЫКЛ
+u8 pm = 0;
+const u8 mode[4] = {0x00, 0x20, 0x70, 0x10}; 
+const u8 fan[3] = {0x16, 0x36, 0x56};
+	
+V-ID/COND
+{
+	u8 isOn = (opt(0) & 0x01);
+	u8 t = (opt(1) & 0x1F);
+	u8 m = (opt(0) >> 4);
+	u8 f = (opt(4) & 0x03);
+
+	u8 b[62] = {0x18640500BF036C080000, 0x01000E00, 0xFF21, 0x0000, 0x04003800, 0x11DA, 0x1718, 0x0400, 0x1E00, 0x03003700, 0x01000E00, 0xFF21, 0x0000, 0x04007800, 0x11DA, 0x1718, 0x0053, 0x0020, 0x0000, 0x0E16, 0x0020, 0xD100};
+	
+	if (isOn)
+		firstOn = 1;
+	else
+	{
+		if (!firstOn)
+			return;
+		firstOn = 0;
+	}
+	
+	if (pm != m)
+		b[52] = 0x04;
+	pm = m;
+	if (m == 0x00)
+		b[51] = 0x43;
+	if (m == 0x02)
+		b[51] = 0x03;
+	b[53] = isOn ? (mode[m] | 0x01) : (mode[m] | 0x00);
+	b[56] = ((m == 0) || (m == 2)) ? 0x10 : (t * 2 + 0x0E);
+	b[57] = fan[f];
+	b[60] = 0x3A + b[52] + b[51] + b[53] + b[56] + b[57]; // Контрольная сумма
+
+	setStatus(IRT, &b);
+}

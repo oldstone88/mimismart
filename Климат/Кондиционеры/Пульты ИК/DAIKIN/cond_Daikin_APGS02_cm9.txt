@@ -1,0 +1,66 @@
+/*
+{
+  desc:"Скрипт для пульта Daikin_APGS02",
+  tag:"import-script",
+  target:"IRT",
+  selectArea:true,
+  addItems:[
+    {tag:"item", id:"%TARGET%", name:"NAME", "sub-id":"%SUBID%", type:"conditioner", "t-delta":"14", "t-min":"16","modes":"0x1f", "vane-ver":"0x41", "vane-hor":"0"},
+  ],
+  vars:[
+ {name:"IRT",type:"devices-list",required:true,filter:["ir-transmitter"],desc:"ИК-передатчик"},
+ {name:"NAME",type:"string",required:true,min:3,max:40,desc:"Имя кондиционера",defaultValue:"Кондиционер"},
+ {name:"COND",type:"hidden",value:"%TARGET%:%SUBID%"}
+  ]
+}
+*/
+
+u8 vane = 0;
+u8 isOn =  0;
+u8 temp = 0;
+
+
+V-ID/COND
+{
+	u8 b[] = {0x1964040002008B060106FF0000769867FF01CA779867B0D1620ED86E03400EF70A162121001010274C0002B6410101B00000}; //on
+	u8 m = (opt(0) >> 4);
+	u8 t = (opt(1) & 0x0f);
+	u8 f = (opt(4) & 0x03);	
+	u8 v = (opt(3) >> 4);
+	u8 c = 0;
+	u8 min = 0;
+	u8 hour = 0;
+	    
+	const u8 mode[] = {0x04, 0x02, 0x01, 0x08, 0x0a};
+	const u8 fan[] 	= {0x10, 0x80, 0x40, 0x20};
+	const u8 stat[] = {0x0c, 0x04, 0x05};
+		
+		temp = ((t+16)%0x0a) + (((t+16)/0x0a)<<4);
+		min = min() % 0x0a + ((min() / 0x0a)<<4 );
+		hour = hour() % 0x0a + ((hour() / 0x0a)<<4 );
+		b[34]   =  m==4?(0x10 | mode[m]):(fan[f] | mode[m]);
+		b[35]	= min;
+		b[36]	= hour;
+		b[39]	= (m==0 || m==2)? 0x25:temp;
+	
+		if(isOn != (opt(0) & 0x01)){
+			b[40]	= stat[0];
+			isOn = (opt(0) & 0x01);
+			}
+		else
+			b[40]	= v?stat[2]:stat[1];
+		
+		for(u8 i=33;i<=39;++i)
+			c += (b[i] >> 4) + (b[i] & 0x0f);
+			
+		b[40] = ((c + b[40]) << 4) | b[40];
+		
+		setStatus(IRT, &b);
+}	
+	
+	
+	
+	
+	
+
+ 

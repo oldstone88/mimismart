@@ -33,6 +33,7 @@ u8 res[100]="";
         srvError(&res);
 }
 
+//Впишите какие скорости ставить, обычно или 1-3 или 1-10
 void readspeed(u8 ckopost)
 {
   u8 t=0;

@@ -1,0 +1,250 @@
+/*
+{
+    desc:"Проврека протечки при ложном срабатывании с открытием клапана",
+    tag:"import-script",
+    vars:[
+        {name:"LEAKTIME",type:"string",required:true,width:130,filter:"0-9",min:1,max:2,defaultValue:"5",desc:"Задержка при сработке датчика протечки (мин.- 5 сек., макс.- 58 сек.)",descWidth:230},
+        {name:"LEAK1",type:"devices-list",required:false,width:200,filter:["leak-sensor"],desc:"Датчик протечки 1"},
+        {name:"LEAK2",type:"devices-list",required:false,width:200,filter:["leak-sensor"],desc:"Датчик протечки 2"},
+        {name:"LEAK3",type:"devices-list",required:false,width:200,filter:["leak-sensor"],desc:"Датчик протечки 3"},
+        {name:"LEAK4",type:"devices-list",required:false,width:200,filter:["leak-sensor"],desc:"Датчик протечки 4"},
+        {name:"LEAK5",type:"devices-list",required:false,width:200,filter:["leak-sensor"],desc:"Датчик протечки 5"},
+        {name:"LEAK6",type:"devices-list",required:false,width:200,filter:["leak-sensor"],desc:"Датчик протечки 6"},
+        {name:"LEAK7",type:"devices-list",required:false,width:200,filter:["leak-sensor"],desc:"Датчик протечки 7"},
+        {name:"LEAK8",type:"devices-list",required:false,width:200,filter:["leak-sensor"],desc:"Датчик протечки 8"},
+        {name:"LEAK9",type:"devices-list",required:false,width:200,filter:["leak-sensor"],desc:"Датчик протечки 9"},
+        {name:"LEAK10",type:"devices-list",required:false,width:200,filter:["leak-sensor"],desc:"Датчик протечки 10"},
+        {name:"LEAK11",type:"devices-list",required:false,width:200,filter:["leak-sensor"],desc:"Датчик протечки 11"},
+        {name:"LEAK12",type:"devices-list",required:false,width:200,filter:["leak-sensor"],desc:"Датчик протечки 12"},
+        {name:"LEAK13",type:"devices-list",required:false,width:200,filter:["leak-sensor"],desc:"Датчик протечки 13"},
+        {name:"TODO1",type:"devices-list",required:false, filter:["lamp","script","valve"],descWidth:170, desc:"Клапана воды"},
+	    {name:"ACT1",type:"list",required:false,data:{"1":"Закрыть","0":"Открыть"},desc:"Выберите действие для клапана воды при ложной протечке",descWidth:170},
+        {"name":"NUMBER1","type":"string","required":true,"width":130,"filter":"0-9\\+","min":3,"max":15,"defaultValue":"","desc":"Номер телефона для отправки СМС","descWidth":230},
+        {"name":"NUMBER2","type":"string","required":false,"width":130,"filter":"0-9\\+","min":3,"max":15,"defaultValue":"","desc":"Номер телефона для отправки СМС","descWidth":230},
+    ]
+}
+*/
+
+u8 prot = 0;
+
+//Сброс временных переменных
+void reset (){
+    prot = 0;
+}
+
+void resetLeak()
+{
+setStatus(LEAK1,0); 
+    #ifdef LEAK2 setStatus(LEAK2,0); #endif
+    #ifdef LEAK3 setStatus(LEAK3,0);#endif 
+    #ifdef LEAK4 setStatus(LEAK4,0); #endif
+    #ifdef LEAK5 setStatus(LEAK5,0); #endif 
+    #ifdef LEAK6 setStatus(LEAK6,0); #endif 
+    #ifdef LEAK7 setStatus(LEAK7,0); #endif 
+    #ifdef LEAK8 setStatus(LEAK8,0); #endif
+    #ifdef LEAK9 setStatus(LEAK9,0); #endif
+    #ifdef LEAK10 setStatus(LEAK10,0); #endif
+    #ifdef LEAK11 setStatus(LEAK11,0); #endif
+    #ifdef LEAK12 setStatus(LEAK12,0); #endif
+    #ifdef LEAK13 setStatus(LEAK13,0); #endif
+}
+
+void realLeak()
+{   
+srvError("Повторная проверка протечки");
+        if ( (prot==1) && ( ([LEAK1]==1) 
+        #ifdef LEAK2 
+            || ([LEAK2]==1) 
+        #endif
+        #ifdef LEAK3 
+            || ([LEAK3]==1) 
+        #endif 
+        #ifdef LEAK4 
+            || ([LEAK4]==1) 
+        #endif
+        #ifdef LEAK5 
+            || ([LEAK5]==1) 
+        #endif 
+        #ifdef LEAK6 
+            || ([LEAK6]==1) 
+        #endif 
+        #ifdef LEAK7 
+            || ([LEAK7]==1) 
+        #endif 
+        #ifdef LEAK8 
+            || ([LEAK8]==1) 
+        #endif 
+        #ifdef LEAK9 
+            || ([LEAK9]==1) 
+        #endif
+        #ifdef LEAK10 
+            || ([LEAK10]==1) 
+        #endif
+        #ifdef LEAK11 
+            || ([LEAK11]==1) 
+        #endif
+        #ifdef LEAK12 
+            || ([LEAK12]==1) 
+        #endif
+        #ifdef LEAK13 
+            || ([LEAK13]==1) 
+        #endif
+            )) 
+    {
+        srvError("Может быть реальная протечка. Проверьте...");
+        delayedCallM(reset, 120);
+        setStatus(2047:32, {1,"Может быть реальная протечка. Проверьте!"});
+        #ifdef NUMBER1
+            setStatus(1055:17, {1, 0, 0, 'NUMBER1#'A, toUcs2(65001, "Может быть реальная протечка. Проверьте!")});		
+        #endif
+
+        #ifdef NUMBER2
+            setStatus(1055:17, {1, 0, 0, 'NUMBER2#'A, toUcs2(65001, "Может быть реальная протечка. Проверьте!")});		
+        #endif
+    }
+    else if ((prot==1) && ( ([LEAK1.0]==0)
+        #ifdef LEAK2 
+            && ([LEAK2.0]==0) 
+        #endif 
+        #ifdef LEAK3 
+            && ([LEAK3.0]==0) 
+        #endif 
+        #ifdef LEAK4 
+            && ([LEAK4.0]==0)  
+        #endif 
+        #ifdef LEAK5 
+            && ([LEAK5.0]==0) 
+        #endif 
+        #ifdef LEAK6 
+            && ([LEAK6.0]==0) 
+        #endif 
+        #ifdef LEAK7 
+            && ([LEAK7.0]==0) 
+        #endif 
+        #ifdef LEAK8 
+            && ([LEAK8.0]==0) 
+        #endif 
+        #ifdef LEAK9 
+            && ([LEAK9.0]==0) 
+        #endif
+        #ifdef LEAK10 
+            && ([LEAK10.0]==0) 
+        #endif
+        #ifdef LEAK11 
+            && ([LEAK11.0]==0) 
+        #endif
+        #ifdef LEAK12 
+            && ([LEAK12.0]==0) 
+        #endif
+        #ifdef LEAK13 
+            && ([LEAK13.0]==0) 
+        #endif
+        ))
+    {
+        srvError("Ложная протечка, клапан открыт.");
+        reset();
+        setStatus(2047:32, {1,"Ложная протечка, клапан открыт."});
+        #ifdef TODO1 #ifdef ACT1
+			if ([TODO1]!=ACT1) setStatus(TODO1,ACT1);
+		#endif #endif
+        #ifdef NUMBER1
+            setStatus(1055:17, {1, 0, 0, 'NUMBER1#'A, toUcs2(65001, "Ложная протечка, клапан открыт.")});		
+        #endif
+
+        #ifdef NUMBER2
+            setStatus(1055:17, {1, 0, 0, 'NUMBER2#'A, toUcs2(65001, "Ложная протечка, клапан открыт.")});		
+        #endif
+    }
+    
+}
+
+V-ID/s:60{
+    #ifdef LEAK1 //Проверка на LEAK
+        if ( (prot==0) && ( ([LEAK1]==1) 
+        #ifdef LEAK2 
+            || ([LEAK2]==1) 
+        #endif
+        #ifdef LEAK3 
+            || ([LEAK3]==1) 
+        #endif 
+        #ifdef LEAK4 
+            || ([LEAK4]==1) 
+        #endif
+        #ifdef LEAK5 
+            || ([LEAK5]==1) 
+        #endif 
+        #ifdef LEAK6 
+            || ([LEAK6]==1) 
+        #endif 
+        #ifdef LEAK7 
+            || ([LEAK7]==1) 
+        #endif 
+        #ifdef LEAK8 
+            || ([LEAK8]==1) 
+        #endif 
+        #ifdef LEAK9 
+            || ([LEAK9]==1) 
+        #endif
+        #ifdef LEAK10 
+            || ([LEAK10]==1) 
+        #endif
+        #ifdef LEAK11 
+            || ([LEAK11]==1) 
+        #endif
+        #ifdef LEAK12 
+            || ([LEAK12]==1) 
+        #endif
+        #ifdef LEAK13 
+            || ([LEAK13]==1) 
+        #endif
+            )){
+            prot = 1;
+            srvError("Произошла протечка, попытка сбросить.");
+            delayedCall(resetLeak, LEAKTIME-1);
+            delayedCall(realLeak, LEAKTIME);
+        } 
+        else if ((prot==1) && ( ([LEAK1.0]==0) 
+        #ifdef LEAK2 
+            && ([LEAK2.0]==0) 
+        #endif 
+        #ifdef LEAK3 
+            && ([LEAK3.0]==0) 
+        #endif 
+        #ifdef LEAK4 
+            && ([LEAK4.0]==0)  
+        #endif 
+        #ifdef LEAK5 
+            && ([LEAK5.0]==0) 
+        #endif 
+        #ifdef LEAK6 
+            && ([LEAK6.0]==0) 
+        #endif 
+        #ifdef LEAK7 
+            && ([LEAK7.0]==0) 
+        #endif 
+        #ifdef LEAK8 
+            && ([LEAK8.0]==0) 
+        #endif 
+        #ifdef LEAK9 
+            && ([LEAK9.0]==0) 
+        #endif
+        #ifdef LEAK10 
+            && ([LEAK10.0]==0) 
+        #endif
+        #ifdef LEAK11 
+            && ([LEAK11.0]==0) 
+        #endif
+        #ifdef LEAK12 
+            && ([LEAK12.0]==0) 
+        #endif
+        #ifdef LEAK13 
+            && ([LEAK13.0]==0) 
+        #endif
+        ))
+        {
+            prot = 0; 
+            srvError("Сброс протечки");
+        }
+    #endif //Проверка на LEAK
+
+}

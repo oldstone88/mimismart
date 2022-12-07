@@ -1,0 +1,65 @@
+/*
+{
+      desc:"Скрипт для пульта RLA502A700S",
+      name:"RLA502A700S",
+      tag:"import-script",
+      selectArea:true,
+      addItems:[
+            {tag:"item", id:"%TARGET%", name:"NAME", "sub-id":"%SUBID%", type:"conditioner", "t-delta":"12", "t-min":"18", "modes":"0x10","funs":"0x01","vane-hor":"0x00", "vane-ver":"0x00"},
+      ],
+      vars:[
+            {name:"IRT", type:"devices-list",filter:["ir-transmitter"], required:true,  desc:"ИК-передатчик"},
+            {name:"NAME",type:"string",required:"true",min:3,max:40,desc:"Имя кондиционера",defaultValue:"RLA502A700S"},
+            {name:"COND",type:"hidden",value:"%TARGET%:%SUBID%"}
+      ]
+}
+*/
+u8 prev_stateonoff = 0;
+void OnInit(){
+      prev_stateonoff = 0;
+}
+
+void cmdOff(){
+      u8 off[]={0x196402000200930601027900000F6C4A03980F680C52AEC31AE5FE01F906FF003FC037C8FF007F80};
+      setStatus(IRT, &off);
+}
+V-ID/COND{
+
+      u8 mas [] = {0x196402000200940601027900000F6A4A03980F680C52AEC31AE5F609FE01FF003FC037C8FF007F80};
+      u8 temp = opt(1);
+      u8 onoff= opt(0)&0x01;
+if(opt(0)==1){mas[26]=0xF6; mas[27]=0x09;} else
+if(opt(0)==17){mas[26]=0xF3; mas[27]=0x0C;}
+if(temp == 1){mas[6]=0x93;mas[28]=0xFD;mas[29]=0x02;}
+if(temp == 2){mas[6]=0x93;mas[14]=0x6B;mas[28]=0xFC;mas[29]=0x03;}
+if(temp == 3){mas[14]=0x6F;mas[28]=0xFB;mas[29]=0x04;}
+if(temp == 4){mas[6]=0x93;mas[28]=0xFA;mas[29]=0x05;}
+if(temp == 5){mas[14]=0x69;mas[28]=0xF9;mas[29]=0x06;}
+if(temp == 6){mas[14]=0x69;mas[28]=0xF8;mas[29]=0x07;}
+if(temp == 7){mas[6]=0x93;mas[14]=0x68;mas[28]=0xF7;mas[29]=0x08;}
+if(temp == 8){mas[28]=0xF6;mas[29]=0x09;}
+if(temp == 9){mas[6]=0xC8;mas[10]=0x75;mas[28]=0xF5;mas[29]=0x0A;}
+if(temp == 10){mas[28]=0xF4;mas[29]=0x0B;}
+if(temp == 11){mas[6]=0x93;mas[14]=0x6B;mas[28]=0xF3;mas[29]=0x0C;}
+if(temp == 12){mas[6]=0x93;mas[14]=0x6F;mas[28]=0xF2;mas[29]=0x0D;}
+
+
+      if(!prev_stateonoff && onoff){
+            setStatus(IRT, &mas);
+            prev_stateonoff = 1;
+            return 0;
+      }
+      if(!onoff){
+            cancelDelayedCall(cmdOff);
+            delayedCallMs(cmdOff, 50);
+            prev_stateonoff = 0;
+            return 0;
+      }
+      // u8 str [150] = "";
+      // for(u8 i=0;i<46;++i){
+      //    sprintf(str + strlen(&str),"%02X", mas[i]);
+      // }
+      // srvMessage("%s", &str);
+
+      setStatus(IRT, &mas);
+}

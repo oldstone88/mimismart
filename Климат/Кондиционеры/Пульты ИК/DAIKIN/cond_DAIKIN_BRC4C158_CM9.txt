@@ -1,0 +1,65 @@
+/*
+{
+	desc:"DAIKIN BRC4C158 под CM9",
+	tag:"import-script",
+	target:"IRT",
+	selectArea:true,
+	addItems:[
+		{tag:"item", addr:"%TARGET%:%SUBID%", name:"DAIKIN_BRC4C158_CM9", type:"conditioner", "funs":"0x0E", "t-min":"16", "vane-ver":"0", "vane-hor":"0"}
+	],
+	vars:[
+		{name:"IRT",type:"devices-list",required:true,filter:["ir-transmitter"],desc:"ИК-передатчик"},
+		{name:"COND",type:"hidden",value:"%TARGET%:%SUBID%"}
+	]
+}
+*/
+
+u8 b[60] = {0x1964050002009C07, 0x0102, 0xA90000, 0x0D6C70, 0x03380DDE10, 0x11DA171804001E, 0x000200D0, 
+// 																						 M52P  T5556F	59CRC 
+								0x0102, 0xA90000, 0x0D6C70, 0x03780DDE10, 0x11DA171800430000000010160020A3 }; // off
+void send()
+{
+	setStatus(IRT, b);
+}									
+
+u8 mx = 0;
+
+V-ID/COND
+{
+	u8 isOn = (opt(0) & 0x01);	// Питание
+	u8 m = (opt(0) >> 4);		// Режим
+	u8 t = (opt(1) & 0x1f);		// Температуру
+	u8 f = (opt(4) & 0x03);		// Вентилятор
+
+	const u8 mode[4] = {0x00, 0x20, 0x70, 0x10};
+	const u8 funs[3] = {0x16, 0x36, 0x56};
+
+	b[52] = mode[m] | isOn;
+	b[56] = funs[f];
+	if (mx != m)
+	b[51] = 4;
+	else
+	b[51] = 0;
+	mx = m;
+	if (m == 0)
+	b[50] = 0x43;
+	else
+	if (m == 2)
+	b[50] = 0x03;
+	else
+	b[50] = 0x53;
+	if (m == 0)
+	{
+		b[55] = 0x10;
+		b[59] = 0x8D + b[51] + b[52] + b[56];
+	}
+	else
+	{
+		b[55] = 0x0E + t*2;
+		b[59] = 0x8D + b[51] + b[52] + b[55] + b[56];
+	}
+	
+	cancelDelayedCall(send);
+	delayedCall(send, 1);
+}
+

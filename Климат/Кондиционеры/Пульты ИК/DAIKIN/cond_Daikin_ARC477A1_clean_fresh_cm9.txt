@@ -1,0 +1,84 @@
+/*
+{
+  desc:"Скрипт для пульта Daikin_ARC477A1",
+  tag:"item",
+  target:"IRT",
+  selectArea:true,
+  addItems:[
+    {tag:"item", id:"%TARGET%", name:"NAME", "sub-id":"%SUBID%", type:"conditioner", "t-delta":"12", "t-min":"18","modes":"0x1f", "funs":"0x0f","vane-ver":"0x41", "vane-hor":"0x60"},
+  ],
+  vars:[
+ {name:"IRT",type:"devices-list",required:true,filter:["ir-transmitter"],desc:"ИК-передатчик"},
+ {name:"NAME",type:"string",required:true,min:3,max:40,desc:"Имя кондиционера",defaultValue:"Кондиционер"},
+ {name:"COND",type:"hidden",value:"%TARGET%:%SUBID%"}
+  ]
+}
+*/
+u8 count = 0;
+
+V-ID/V-ADDR{
+if(opt(0)){
+u8 state[]={[COND.0], [COND.1], count, [COND.3], [COND.4]};
+setStatus(COND, &state);
+if(count == 1)
+	setStatus(2047:32, {4, "Включен режим FRESH"});
+if(count == 2)
+	setStatus(2047:32, {4, "Включен режим FRESH HI"});
+if(count == 3)
+	setStatus(2047:32, {4, "Включен режим CLEAN"});
+if(count == 0)
+	setStatus(2047:32, {4, "Выключен режим FRESH/CLEAN"});
+if(++count==4) count  = 0;
+setStatus(V-ADDR, 0);
+}
+
+}
+
+u8 b[] = {0x19640B000200C10601011000000306108A0D0000023F8A010280000010F6500340108A0D11DA2700C55000270002428B010280000010F6500340108B0D11DA2700420000540002608C010280000010F5500398108B0D11DA27000049C032A0000006600000C1000014}; //on
+u8 isOn	= 0;
+
+void send(){
+	setStatus(IRT, &b);}
+	
+V-ID/COND
+{
+	cancelDelayedCall(send);
+	
+	u8 m 	= (opt(0) >> 4);
+	u8 t 	= (opt(1) & 0x0f);
+	u8 f 	= (opt(4) & 0x03);	
+	u8 v 	= (opt(3) >> 4);
+	u8 h	= (opt(3) & 0x0f);
+	u8 c 	= 0;
+	const u8 temp[] = {0x24, 0x26, 0x28, 0x2a, 0x2c, 0x2e, 0x30, 0x32, 0x34, 0x36, 0x38, 0x3a, 0x3c};
+	const u8 mode[] = {0x40, 0x30, 0x20, 0x40, 0x00};
+	const u8 fan[] 	= {0xa0, 0x30, 0x50, 0x70};
+
+			b[91]	= (isOn != (opt(0) & 0x01))?(mode[m] | 0x09):(mode[m] | 0x08);
+			b[92]   = (m == 0 || m == 2)?0xc0:(temp[t]);
+			b[93]	= (m == 0 || m == 2)?0x32:0x00;
+			b[94]	= v?(fan[f] | 0x0f):(fan[f] | 0x00);
+			b[95]	= h?0x0f:0x00;
+			if(opt(0) & 0x01){
+				if(opt(2) == 0)
+					b[103]	= 0x00;
+				else
+					b[103]	= 0x08;}
+			else
+				b[103]	= 0x01;
+			
+			for(u8 i=86; i<=103; ++i)
+				c += b[i];
+			b[104] = c;
+		
+		delayedCallMs(send, 550);
+}
+	
+	
+	
+	
+	
+	
+	
+
+ 

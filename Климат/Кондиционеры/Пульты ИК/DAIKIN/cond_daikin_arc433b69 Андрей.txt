@@ -1,0 +1,55 @@
+//	<item id="311" name="cond" sub-id="50" type="conditioner"/>
+//	<import-script id="311" IRT="42" path="Cond-Scripts/cond_daikin_arc433b69.txt"/>
+
+u8 v50 = 0;
+u8 h50 = 0;
+u8 p50 = 0;
+
+V-ID/:50
+{
+	u8 isOn = (opt(0) & 0x01);
+	u8 m = (opt(0) >> 4);
+	u8 t = (opt(1) & 0x1f);
+	u8 f = (opt(4) & 0x03);
+				//00				
+	u8 b[67] = {0x186405005F03BE060000, 0x01000D00, 0xFF10, 0x0000, 0x04004000, 0x11DA, 0x27F0, 0x0000, 0x0002, 0x03004500, 0x01,
+				//														 M51P	52TTx2 F54										 64
+				0x000D00, 0xFF10, 0x0000, 0x04009800, 0x11DA, 0x2700, 0x0000, 0x3200, 0xA000, 0x0000, 0x0000, 0x00C0, 0x0000, 0x0400};
+
+	u8 v = opt(3) >> 4;	// Вертикальный поток воздуха	
+	u8 h = opt(3) << 4;	// Горизонтальный поток воздуха
+	
+	if ((isOn) && (!p50))
+	{
+		p50 = 1;
+		v50 = v;
+		h50 = h;
+	}
+	else
+	if (!isOn) p50 = 0;
+	if ((isOn) && ((h != h50) || (v != v50))) // (Горизонтальные и вертикальные шторки, а также свифт не поддерживаются)
+	{
+		h50 = h;
+		v50 = v;
+		return;
+	}
+	
+	const u8 mode[4] = {0x60, 0x30, 0x20, 0x40};
+	const u8 fan[4] = {0xA0, 0x30, 0x50, 0x70};
+
+	if (m == 0) t = 0x09; else
+	if (m == 2) t = 0xD0; else
+	if ((t == 0x0f) || (t == 0x10)) t = 0x0E; else
+	if ((m != 3) && (t < 2)) t = 2;
+	
+	b[51] = mode[m] | (isOn & 0x01);
+	b[52] = 0x20+(t*0x02);
+	if (m == 2)
+	b[54] = 0xA0; else
+	b[54] = fan[f];
+
+	b[64] = 0xD2 + b[51] + b[52] + b[54];
+
+	b[66] = 0x00;
+	setStatus(:IRT, &b);
+}

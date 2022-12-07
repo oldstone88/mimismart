@@ -1,0 +1,125 @@
+/*
+{
+  desc:"Скрипт для пульта DAIKIN ARC466A1",
+  tag:"import-script",
+  target:"IRT",
+  selectArea:true,
+  addItems:[
+    {tag:"item", id:"%TARGET%", name:"NAME", "sub-id":"%SUBID%", type:"conditioner", "t-delta":"12", "t-min":"18", "vane-hor":"0", "vane-ver":"0x41"},
+  ],
+  vars:[
+ {name:"IRT",type:"devices-list",required:true,filter:["ir-transmitter"],desc:"ИК-передатчик"},
+ {name:"NAME",type:"string",required:true,min:3,max:40,desc:"Имя кондиционера",defaultValue:"Кондиционер"},
+ {name:"COND",type:"hidden",value:"%TARGET%:%SUBID%"}
+  ]
+}
+*/
+
+V-ID/COND
+{
+	u8 isOn = (opt(0) & 0x01);
+	u8 t = (opt(1) & 0x0f);
+	u8 m = (opt(0) >> 4);
+	u8 v = (opt(3) >> 4);
+	u8 f = (opt(4) & 0x03);
+	u16 c = 0;
+	
+	u8 b[114] = {0x19640A000204C3060106,0x10000010840D10830D10,0x830D10840D10830D0002,0xC28A0102800000101551,0x034010710D11DA2700C5,0x1000E70003EE2C010280,
+	             0x0000101651034010710D,0x11DA2700428518F10003,0xEE2C0102800000101551,0x039810710D11DA270000,0x38240000000006600000,0xC1800015};
+
+	const u8 temp[13] = {0x24, 0x26, 0x28, 0x2A, 0x2C, 0x2E, 0x30, 0x32, 0x34, 0x36, 0x38, 0x3A, 0x3C}; // байт номер 96
+	const u8 fan[4] = {0xA0, 0x30, 0x60, 0x70}; // байт номер 103.1
+	const u8 mode[5] = {0x68, 0x38, 0x28, 0x48, 0x08}; // байт номер 100.1
+	
+	if (isOn) b[100]=mode[m] | 0x01;
+	else b[100]=mode[m] & 0xFE;
+	
+	if(m == 0)
+	{
+		b[101] = 0x32;
+		if (v) b[103] = (fan[f] | 0x0F);
+	    else b[103]= (fan[f] | 0x00);
+	}
+	else if(m == 2)
+	{
+		b[101] = 0xC0;
+		if (v) b[103] = (fan[0] | 0x0F);
+	    else b[103]= (fan[0] | 0x00);
+	}
+	else
+	{
+		b[101] = temp[t];
+		if (v) b[103] = (fan[f] | 0x0F);
+	    else b[103]= (fan[f] | 0x00);
+	}
+	
+	
+	for (u8 i=95;i<=112;++i)
+		c += b[i];
+	b[113] = c & 0xff; // Контрольная сумма
+	
+		
+	setStatus(IRT, &b);
+}/*
+{
+  desc:"Скрипт для пульта DAIKIN ARC466A1",
+  tag:"import-script",
+  target:"IRT",
+  selectArea:true,
+  addItems:[
+    {tag:"item", id:"%TARGET%", name:"NAME", "sub-id":"%SUBID%", type:"conditioner", "t-delta":"12", "t-min":"18", "vane-hor":"0", "vane-ver":"0x41"},
+  ],
+  vars:[
+ {name:"IRT",type:"devices-list",required:true,filter:["ir-transmitter"],desc:"ИК-передатчик"},
+ {name:"NAME",type:"string",required:true,min:3,max:40,desc:"Имя кондиционера",defaultValue:"Кондиционер"},
+ {name:"COND",type:"hidden",value:"%TARGET%:%SUBID%"}
+  ]
+}
+*/
+
+V-ID/COND
+{
+	u8 isOn = (opt(0) & 0x01);
+	u8 t = (opt(1) & 0x0f);
+	u8 m = (opt(0) >> 4);
+	u8 v = (opt(3) >> 4);
+	u8 f = (opt(4) & 0x03);
+	u16 c = 0;
+	
+	u8 b[114] = {0x19640A000204C3060106,0x10000010840D10830D10,0x830D10840D10830D0002,0xC28A0102800000101551,0x034010710D11DA2700C5,0x1000E70003EE2C010280,
+	             0x0000101651034010710D,0x11DA2700428518F10003,0xEE2C0102800000101551,0x039810710D11DA270000,0x38240000000006600000,0xC1800015};
+
+	const u8 temp[13] = {0x24, 0x26, 0x28, 0x2A, 0x2C, 0x2E, 0x30, 0x32, 0x34, 0x36, 0x38, 0x3A, 0x3C}; // байт номер 96
+	const u8 fan[4] = {0xA0, 0x30, 0x60, 0x70}; // байт номер 103.1
+	const u8 mode[5] = {0x68, 0x38, 0x28, 0x48, 0x08}; // байт номер 100.1
+	
+	if (isOn) b[100]=mode[m] | 0x01;
+	else b[100]=mode[m] & 0xFE;
+	
+	if(m == 0)
+	{
+		b[101] = 0x32;
+		if (v) b[103] = (fan[f] | 0x0F);
+	    else b[103]= (fan[f] | 0x00);
+	}
+	else if(m == 2)
+	{
+		b[101] = 0xC0;
+		if (v) b[103] = (fan[0] | 0x0F);
+	    else b[103]= (fan[0] | 0x00);
+	}
+	else
+	{
+		b[101] = temp[t];
+		if (v) b[103] = (fan[f] | 0x0F);
+	    else b[103]= (fan[f] | 0x00);
+	}
+	
+	
+	for (u8 i=95;i<=112;++i)
+		c += b[i];
+	b[113] = c & 0xff; // Контрольная сумма
+	
+		
+	setStatus(IRT, &b);
+}

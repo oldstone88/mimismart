@@ -1,0 +1,34 @@
+/*
+{
+  desc:"Скрипт изменения короткого адреса драйверу на шине DALI",
+  tag:"import-script",
+  selectArea:true,
+  target:"PORT",
+  vars:[
+    {name:"PORT",type:"devices-list",required:true,filter:["com-port"],desc:"Comport DALI шлюза"},
+    {name:"ADDR",type:"number",required:true, min:1, max:63, defaultValue:1, desc:"Новый адрес"},
+    {name:"OLD_ADDR",type:"number",required:true, min:1, max:63, defaultValue:1, desc:"Старый адрес"}
+  ]
+}
+*/
+
+void FROM_DTR1()
+{
+        setStatus(PORT,{(OLD_ADDR<<1)|1,128});
+	setStatus(PORT,{(OLD_ADDR<<1)|1,128});
+    	setStatus(V-ADDR, 0);
+}
+
+
+V-ID/V-ADDR
+{
+    if (opt0())
+    {
+        setStatus(PORT,{0xA3, (ADDR<<1)|1}); 
+	cancelDelayedCall(FROM_DTR1);
+	delayedCall(FROM_DTR1, 1);
+    }
+}
+
+
+

@@ -1,0 +1,60 @@
+/*
+{
+  desc:"Скрипт для пульта Daikin_ARC433A87",
+  tag:"import-script",
+  target:"IRT",
+  selectArea:true,
+  addItems:[
+    {tag:"item", id:"%TARGET%", name:"NAME", "sub-id":"%SUBID%", type:"conditioner", "t-delta":"12", "t-min":"18","modes":"0x1f", "funs":"0x0f","vane-ver":"0x41","vane-hor":"0"},
+  ],
+  vars:[
+ {name:"IRT",type:"devices-list",required:true,filter:["ir-transmitter"],desc:"ИК-передатчик"},
+ {name:"NAME",type:"string",required:true,min:3,max:40,desc:"Имя кондиционера",defaultValue:"Кондиционер"},
+ {name:"COND",type:"hidden",value:"%TARGET%:%SUBID%"}
+  ]
+}
+*/
+
+u8 b[] = {0x19640B000200BC060101100000030510780D0000026093010280000010CE50034010780D11DA2700C50000D70003C026010280000010CE50034010780D11DA27004228037F0003C026010280000010CE50039810780D11DA27000029C000A0000006600000C1800042}; //on
+u8 isOn	= 0;
+
+void send(){
+	setStatus(IRT, &b);}
+	
+V-ID/COND
+{
+	cancelDelayedCall(send);
+	
+	u8 m 	= (opt(0) >> 4);
+	u8 t 	= (opt(1) & 0x0f);
+	u8 f 	= (opt(4) & 0x03);	
+	u8 v 	= (opt(3) >> 4);
+	u8 c 	= 0;
+	const u8 temp[] = {0x24, 0x26, 0x28, 0x2a, 0x2c, 0x2e, 0x30, 0x32, 0x34, 0x36, 0x38, 0x3a, 0x3c};
+	const u8 mode[] = {0x60, 0x30, 0x20, 0x40, 0x00};
+	const u8 fan[] 	= {0xa0, 0x30, 0x50, 0x70};
+
+			b[91]	= (isOn != (opt(0) & 0x01))?(mode[m] | 0x09):(mode[m] | 0x08);
+			b[94]	= v?(fan[f] | 0x0f):(fan[f] | 0x00);
+			if(m == 0)
+				b[92] = 0x32;
+			else
+				if(m == 2)
+					b[92] = 0xc0;
+			else
+				b[92] = temp[t];
+			for(u8 i=86; i<=103; ++i)
+				c += b[i];
+			b[104] = c;
+		
+		delayedCallMs(send, 550);
+}
+	
+	
+	
+	
+	
+	
+	
+
+ 

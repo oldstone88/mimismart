@@ -1,0 +1,45 @@
+/*
+{
+  desc:"Скрипт для сохранения состояния кондиционера",
+  tag:"import-script",
+  selectArea:true,
+  vars:[
+    {name:"COND",type:"devices-list",required:true,filter:["conditioner"],desc:"Кондиционер"},
+    {name:"ADDR",type:"number",required:true,min:1,max:127,desc:"Адрес ячейки"},
+  ]
+}
+*/
+void onInit(){
+	u32 reg = 0;
+	u8 result = eeEmulRead(ADDR, &reg);
+	if(!result){
+		
+		reg |= [COND.0];
+		reg |= [COND.1] << 8;
+		reg |= [COND.3] << 16;
+		reg |= [COND.4] << 24;
+		result = eeEmulWrite(ADDR, reg);
+		if(!result) {
+			srvError("Write error!");
+		}
+	} else {
+		if(result) {
+			setStatus(COND,{reg&0xFF,(reg >> 8)&0xFF,0,(reg >> 16)&0xFF,(reg >> 24)&0xFF});
+		}
+	}
+}	
+
+V-ID/m:30{
+	if([~COND]){
+		u32 reg = 0;
+		reg |= [COND.0];
+		reg |= [COND.1] << 8;
+		reg |= [COND.3] << 16;
+		reg |= [COND.4] << 24;
+		u8 result = eeEmulWrite(ADDR, reg);
+		if(!result) {
+			srvError("Write error!");
+		}
+	}
+}
+

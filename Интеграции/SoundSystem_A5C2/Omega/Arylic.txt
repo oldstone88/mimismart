@@ -1,0 +1,25 @@
+/*
+{
+  vars:[
+    {name:"%NAME%",type:"text",require:true,defaultValue:"Arylic",desc:"Имя пульта"},
+    {name:"%DEST%",type:"text",required:true,defaultValue:"1000:49",filter:"0123456789:",desc:"Адрес скрипта"},
+  ]
+}
+*/
+
+<xml>
+		<item addr="2048:" name="%NAME%" type="remote-control">
+			<remote-signal identifier="signal-mute" transmitter-addr="%DEST%" value="13"/>
+			<remote-signal identifier="signal-vol-up" transmitter-addr="%DEST%" value="7"/>
+			<remote-signal identifier="signal-vol-down" transmitter-addr="%DEST%" value="6"/>
+			<remote-signal identifier="signal-play" transmitter-addr="%DEST%" value="2"/>
+			<remote-signal identifier="signal-stop" transmitter-addr="%DEST%" value="5"/>
+			<remote-signal identifier="signal-pause" transmitter-addr="%DEST%" value="1"/>	
+			<remote-signal identifier="signal-F1" transmitter-addr="%DEST%" value="9"/>
+			<remote-signal identifier="signal-F2" transmitter-addr="%DEST%" value="10"/>
+			<remote-signal identifier="signal-F3" transmitter-addr="%DEST%" value="11"/>
+			<remote-signal identifier="signal-F4" transmitter-addr="%DEST%" value="12"/>
+			<remote-signal identifier="signal-backward" transmitter-addr="%DEST%" value="3"/>
+			<remote-signal identifier="signal-forward" transmitter-addr="%DEST%" value="4"/>
+		</item>
+</xml>

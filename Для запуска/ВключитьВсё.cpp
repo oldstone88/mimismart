@@ -2,13 +2,15 @@
 {
     desc:"Вкл. весь всет",
     tag:"item",
+    name:"Вкл. весь свет",
     selectArea:true,
     vars:[
 
     {type:"comment",text:"Нужен ли возврат скрипта в состояние ВЫКЛ? 1 - ДА, 0 - НЕТ",width:200, style:"color:red;"},
     {name:"DELTA",type:"number",required:true,min:0,max:1,defaultValue:1,descWidth:150,desc:"Внесите значение 1 или 0"},
     {name:"TIME01",type:"number",required:true,min:1,max:100,defaultValue:3,descWidth:150,desc:"Время отскока в секундах, задайте любое значение если не нужно"},
-    
+    {type:"comment",text:"Автоматизации",width:200, style:"color:red;"},
+    {name:"AUTO",type:"devices-list",required:false,filter:["script"],width:888,desc:"Автоматизации"},
     {type:"comment",text:"Группы света, RGB, скрипты - выключить, закрыть",width:200, style:"color:red;"},
     {name:"U00",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
     {name:"U01",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
@@ -89,11 +91,18 @@ void OFF()
     setStatus(V-ADDR,0);
 }
 
+void ON()
+{
+    setStatus(AUTO, 1);
+}
+
 V-ID/V-ADDR
 {
     if ([V-ADDR.0]==1)
     {
-     
+        setStatus(AUTO, 0);
+        cancelDelayedCall(ON);
+        delayedCall(ON, 300);
         #ifdef U00 setStatus(U00, 1); #endif
         #ifdef U01 setStatus(U01, 1); #endif
         #ifdef U02 setStatus(U02, 1); #endif

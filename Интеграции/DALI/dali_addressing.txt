@@ -1,0 +1,264 @@
+/*
+{
+  desc:"Скрипт для сканирования шины DALI и автоматической установки всем подключенным драйверам коротких адресов 1..n, n - количество подключенных драйверов",
+  tag:"import-script",
+  selectArea:true,
+  target:"PORT",
+  vars:[
+    {name:"PORT",type:"devices-list",required:true,filter:["com-port"],desc:"Comport DALI шлюза"}
+  ]
+}
+*/
+
+u32 binary_search=0xffffff;
+u8 up=0;
+u8 answer=0;
+u8 wait_answer=0;
+u8 wait_no_answer=0;
+u32 top=0xffffff;
+u32 bottom=1;
+u8 addr=1;
+u32 binary_search_prev=0;
+u8 get_type=0;
+u8 wait2answer=0;
+
+void prepare_to_search(u8 cntr){
+    //Extended Terminate
+    if (cntr==0) {
+        setStatus(PORT,{0xa1,0x00});
+        //srvError("Extended Terminate");
+    }
+    //Extended Initialize
+    else if (cntr==1) {
+        setStatus(PORT,{0xa5,0x00});
+        setStatus(PORT,{0xa5,0x00});
+        //srvError("Extended Initialize");
+    }
+    //Extended Randomize
+    else if (cntr==2) {
+        setStatus(PORT,{0xa7,0x00});
+        setStatus(PORT,{0xa7,0x00});
+        //srvError("Extended Randomize");
+    }   
+    //srvError("counter %d ",cntr);
+}
+
+void compare()
+{
+    //Extended Compare
+    setStatus(PORT,{0xa9,0});
+    //srvError("compare");
+}
+
+void get_type_req(u8 addr){
+    //get type
+    get_type=1;
+    setStatus(PORT,{(addr<<1)|1,0x99});
+    srvError("get type");
+}
+
+void set_short_addr(u8 addr)
+{
+    //setAddr
+    setStatus(PORT,{0xb7,(addr<<1)|1});
+    srvError("set %d DALI address",addr);
+}
+
+void check_someone(){
+    srvError("stop, anyone answered on bus, 1 - %d",addr-1);
+    setStatus(V-ADDR,0);
+}
+
+void withdraw(u8 addr)
+{
+    //withdraw
+    setStatus(PORT,{0xab,0});
+   // srvError("withdraw %d",addr);
+}
+
+void change_dir(){
+    //srvError("1 change_dir binary_search %x top %x bottom %x up %d",binary_search,top,bottom,up); 
+    if (wait2answer){
+        //srvError("wait2answer");
+        wait2answer=0;
+        return;
+    }
+    if (up) {
+        up=0;
+        top=binary_search;
+    } else {
+        up=1;
+        bottom=binary_search;
+    }
+   // srvError("2 change_dir binary_search %x top %x bottom %x up %d",binary_search,top,bottom,up); 
+   // srvError("change direction %d",up);
+}
+
+void send_long_addr(u32 long_addr){
+    //Extended SEARCHADDRH
+    setStatus(PORT,{0xb1,(long_addr>>16)&0xff});
+    setStatus(PORT,{0xb3,(long_addr>>8)&0xff});
+    setStatus(PORT,{0xb5,long_addr&0xff});   
+   // srvError("send_long_addr %x binary_search %x top %x bottom %x up %d",long_addr,binary_search,top,bottom,up);
+    compare();
+}
+
+void binary_search_down()
+{
+    u8 tmp=binary_search;
+    binary_search=binary_search-(binary_search-bottom)/2;
+    if (tmp==binary_search) {
+        if (tmp>1) binary_search=tmp-1;
+        else{
+            //cancelDelayedCall(search);
+            srvError(" 1 addr");
+        }
+    }
+   // srvError("binary_search_down %x  top %x bottom %x ",binary_search,top,bottom);    
+    send_long_addr(binary_search);          
+}
+
+
+
+void binary_search_up(){
+    u8 tmp=binary_search+1;
+    binary_search=binary_search+(top-binary_search)/2;   
+    if (tmp>binary_search) {
+        if (tmp<=0xffffff) binary_search=tmp;
+        else{
+            //cancelDelayedCall(search);
+            srvError("stop, 0xffffff addr");
+        }
+    }
+    //srvError("binary_search_up %x top %x bottom %x",binary_search,top,bottom);
+    send_long_addr(binary_search);
+}
+
+u8 set_addr(){
+    //srvError("stAddr %x top %x bottom %x up %d",binary_search,top,bottom,up);
+    if (binary_search==0xffffff) {
+        srvError("stop, all addresses find, 1 - %d",addr-1);
+        return 0;
+    }
+    set_short_addr(addr);
+    withdraw(addr);
+    //get_type_req(addr);
+    ++addr;
+    if (addr>63) {
+        srvError("63 addresses founded, stop");
+        return 0;
+    }
+    top=0xffffff;
+    //if (bottom>5) bottom=bottom-5;
+    //else bottom=1;
+    //++bottom;
+    wait_no_answer=1;
+    wait_answer=0;
+    answer=0;
+    binary_search_prev=0;
+    binary_search=0xffffff;
+    up=0;
+    cancelDelayedCall(check_someone);
+    delayedCall(check_someone,1);
+    send_long_addr(0xffffff);    
+    return 1;
+}
+
+void search(){
+    if (binary_search_prev==binary_search) {
+        //set_addr();
+        if (up) {
+            //srvError("1 add + top binary_search %x top %x bottom %x up %d",binary_search,top,bottom,up); 
+            top=top+1;
+            if (wait_answer){
+                wait2answer=1;
+                bottom=binary_search-1;
+            }
+            //binary_search=binary_search+1;
+            //binary_search_prev=binary_search;
+            //srvError("2 add + top binary_search %x top %x bottom %x up %d",binary_search,top,bottom,up); 
+            
+            //send_long_addr(binary_search);   
+            //delayedCallMs(search,200);
+        } else {
+            srvError("no answer when bottom");
+            return;           
+        }
+    }
+    //srvError("answer %d wait_answer %d wait_no_answer %d",answer,wait_answer,wait_no_answer);
+    if (answer) {
+        if (wait_answer) {
+            change_dir();
+        }
+        wait_no_answer=1;
+        wait_answer=0;
+        answer=0;
+    } else {
+        if (wait_no_answer) {
+            change_dir();
+        }
+        wait_answer=1;
+        wait_no_answer=0;
+    }
+    binary_search_prev=binary_search;
+    if (up) {
+        binary_search_up();
+    } else {
+        binary_search_down();
+    }    
+    if ((binary_search<0xffffff) && (binary_search>1)) {
+       cancelDelayedCall(search);
+        delayedCallMs(search,350);
+   }
+}
+
+V-ID/PORT{
+  if ([V-ADDR]&1) {
+    //srvError("ANSWER %02x",opt(0));
+    cancelDelayedCall(check_someone);
+    cancelDelayedCall(search);
+    if (get_type){
+        get_type=0;
+        srvError("Type %d",opt(0));
+        return;
+    }
+    //if (opt(0)==0xff) {
+        answer=1;
+        if (binary_search_prev==binary_search) {
+            if (set_addr()==0) return;           
+        } else search();
+   // }
+ }
+}
+
+
+
+V-ID/V-ADDR
+{
+    cancelDelayedCall(search);
+   cancelDelayedCall(check_someone);
+    if (opt0()) {
+        top=0xffffff;
+        bottom=1;
+        addr=1;
+        wait_no_answer=1;
+        wait_answer=0;
+        answer=0;
+        up=0;
+        binary_search_prev=0;
+        binary_search=0xffffff;
+        srvError("scan DALI devices");
+        prepare_to_search(0);
+        prepare_to_search(1);
+        prepare_to_search(2);
+        cancelDelayedCall(check_someone);
+        delayedCall(check_someone,1);
+        send_long_addr(0xffffff);
+    }
+} 
+
+
+
+
+
+
