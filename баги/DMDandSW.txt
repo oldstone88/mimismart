@@ -1,3 +1,4 @@
+//В логику добавить <import-script btn="530:28" dimmer="511:8" id="530" path="scripts/DMDandSW.txt"/>
 u8 OldState [2] ={0,0};
 u8 State [2] = {0,0};
 u8 OnOff = 0;

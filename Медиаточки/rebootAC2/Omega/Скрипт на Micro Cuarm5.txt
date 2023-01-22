@@ -1,0 +1,22 @@
+/*
+{
+	desc:"Reboot AC2",
+	tag:"item",
+	selectArea:true,
+  	
+vars:[
+{name:"V1",type:"devices-list",required:true,width:600,filter:["lamp"],desc:"Виртуальный",descWidth:100},
+	]
+}
+*/
+
+void OFF()
+{
+setStatus(V-ADDR, 0);
+}
+
+V-ID/V-ADDR
+{
+if ( [V-ADDR.0]==1 ) {setStatus(SRV-ID:79,{1,"12"});
+delayedCall(OFF, 1);}
+}

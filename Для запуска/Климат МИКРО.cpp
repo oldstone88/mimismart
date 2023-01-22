@@ -4,7 +4,7 @@
   tag:"import-script",
   selectArea:true,
   addItems:[
-    {tag:"item", id:"%TARGET%", name:"NAME", "sub-id":"%SUBID%", type:"conditioner", "t-delta":"14", "t-min":"16", "vane-hor":"0x00", "vane-ver":"0x00"},
+    {tag:"item", id:"%TARGET%", name:"Климат", "sub-id":"%SUBID%", type:"conditioner", "t-delta":"14", "t-min":"16", "vane-hor":"0x00", "vane-ver":"0x00"},
   ],
   vars:[
   {name:"AUTO",type:"hidden",value:"%TARGET%:%SUBID%"},
@@ -28,7 +28,7 @@ V-ID/s:5
         tempAuto = [AUTO.1]*10;
         tempK=( [KOMHATA.1]*10 );
         tempK=tempK+([KOMHATA.0]*10)/250;
-        srvError("Значение=%d",tempK);
+        //srvError("Значение=%d",tempK);
     
         getStatus(COND, &k);
     

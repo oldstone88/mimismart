@@ -86,16 +86,16 @@ void setCond(u8 parameter, u8 value)
     setStatus(COND1, &k);
 }
 
-void setLight(u8 parameter)
+void setLight(u8 number)
 {
   //Свет
     #ifdef B01 if(number==0x11) setStatus(B01, 0xFF); #endif
-    #ifdef B01 if(number==0x12) setStatus(B02, 0xFF); #endif
-    #ifdef B01 if(number==0x13) setStatus(B03, 0xFF); #endif
-    #ifdef B01 if(number==0x14) setStatus(B04, 0xFF); #endif
+    #ifdef B02 if(number==0x12) setStatus(B02, 0xFF); #endif
+    #ifdef B03 if(number==0x13) setStatus(B03, 0xFF); #endif
+    #ifdef B04 if(number==0x14) setStatus(B04, 0xFF); #endif
     //Шторы
-    #ifdef B01 if(number==0x15) setStatus(B05, 1); #endif
-    #ifdef B01 if(number==0x16) setStatus(B06, 0); #endif
+    #ifdef B05 if(number==0x15) {setStatus(B05, 1); #ifdef B06 setStatus(B06, 1); #endif} #endif
+    #ifdef B05 if(number==0x16) {setStatus(B05, 0); #ifdef B06 setStatus(B06, 0); #endif} #endif
 }
 
 V-ID/RS485

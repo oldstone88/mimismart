@@ -31,7 +31,7 @@
 }
 */
 
-u16 porog = 0x2000; // treshold
+u16 porog = 0x1400; // treshold
 u8 statutOn = 0;
 u8 alarm=0;
 u8 ohrana=0;
@@ -63,7 +63,7 @@ void on()
     	#ifdef MOTION5 && ([MOTION5]<porog) #endif
     	#ifdef MOTION6 && ([MOTION6]<porog) #endif
     	#ifdef MOTION7 && ([MOTION7]<porog) #endif
-	#ifdef MOTION8 && ([MOTION8]<porog) #endif
+		#ifdef MOTION8 && ([MOTION8]<porog) #endif
     	#ifdef MOTION9 && ([MOTION9]<porog) #endif 
     	#ifdef MOTIONA && ([MOTIONA]<porog) #endif
     	#ifdef MOTIONB && ([MOTIONB]<porog) #endif
@@ -74,23 +74,16 @@ void on()
     {				
 		ohrana = 1;
 		setStatus(2047:32, {1,"Под охраной"});				
-			#ifdef MRMR 
-				setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/ohrana/поставлено.wav"});
-			#endif
-		#ifdef V00 if ([V00.0]%2!=0) setStatus(V00, 0); #endif
-		#ifdef V01 if ([V01.0]%2!=0) setStatus(V01, 0); #endif
-		#ifdef V02 if ([V02.0]%2!=0) setStatus(V02, 0); #endif
-		#ifdef V03 if ([V03.0]%2!=0) setStatus(V03, 0); #endif
-		#ifdef V04 if ([V04.0]%2!=0) setStatus(V04, 0); #endif
-		#ifdef V05 if ([V05.0]%2!=0) setStatus(V05, 0); #endif
-		#ifdef V06 if ([V06.0]%2!=0) {u8 kond[6]; getStatus(V06, &kond); kond[0]=kond[0]&0xFE; setStatus(V06, &kond);} #endif
+		#ifdef MRMR 
+			setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/ohrana/поставлено.wav"});
+		#endif
 	}else
 	{
         setStatus(2047:32, {1,"Не успели выйти!"});
 		setStatus(V-ADDR,0);			 
-			#ifdef MRMR 
-				setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/ohrana/не_успели.wav"});
-			#endif
+		#ifdef MRMR 
+			setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/ohrana/не_успели.wav"});
+		#endif
 	}
 }
 
@@ -100,12 +93,12 @@ void off()
     if ([V-ADDR]==0)
     {
   	 	setStatus(2047:32, {1,"Без охраны"});
-			#ifdef MRMR 
-				setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/ohrana/снято.wav"});
-			#endif
-			#ifdef L00 setStatus(L00, 0); #endif
-			#ifdef L01 setStatus(L01, 0); #endif
-			#ifdef L02 setStatus(L02, 0); #endif
+		#ifdef MRMR 
+			setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/ohrana/снято.wav"});
+		#endif
+		#ifdef L00 setStatus(L00, 0); #endif
+		#ifdef L01 setStatus(L01, 0); #endif
+		#ifdef L02 setStatus(L02, 0); #endif
 	}
 }
 
@@ -115,28 +108,28 @@ V-ID/s:1
 {
 	if ([V-ADDR]==1 && ohrana==1)
 	{   
-					if (([MOTION0:avgs:10]>porog)
-						#ifdef MOTION1 || ([MOTION1:avgs:10]>porog) #endif
-						#ifdef MOTION2 || ([MOTION2:avgs:10]>porog) #endif
-						#ifdef MOTION3 || ([MOTION3:avgs:10]>porog) #endif
-						#ifdef MOTION4 || ([MOTION4:avgs:10]>porog) #endif
-						#ifdef MOTION5 || ([MOTION5:avgs:10]>porog) #endif 
-						#ifdef MOTION6 || ([MOTION6:avgs:10]>porog) #endif
-						#ifdef MOTION7 || ([MOTION7:avgs:10]>porog) #endif
-						#ifdef MOTION8 || ([MOTION8:avgs:10]>porog) #endif
-						#ifdef MOTION9 || ([MOTION9:avgs:10]>porog) #endif
-						#ifdef MOTIONA || ([MOTIONA:avgs:10]>porog) #endif
-						#ifdef MOTIONB || ([MOTIONB:avgs:10]>porog) #endif
-						#ifdef MOTIONC || ([MOTIONC:avgs:10]>porog) #endif 
-						#ifdef MOTIOND || ([MOTIOND:avgs:10]>porog) #endif
-						#ifdef MOTIONE || ([MOTIONE:avgs:10]>porog) #endif
-						 )
-					{ 
-						if (alarm==0 && ohrana==1) {delayedCallR (alarm, TOWORK); alarm=1;}
-						#ifdef MRMR 
-							setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/ohrana/снятие.wav"});         
-						#endif
-					}
+		if (([MOTION0:avgs:10]>porog)
+			#ifdef MOTION1 || ([MOTION1:avgs:10]>porog) #endif
+			#ifdef MOTION2 || ([MOTION2:avgs:10]>porog) #endif
+			#ifdef MOTION3 || ([MOTION3:avgs:10]>porog) #endif
+			#ifdef MOTION4 || ([MOTION4:avgs:10]>porog) #endif
+			#ifdef MOTION5 || ([MOTION5:avgs:10]>porog) #endif 
+			#ifdef MOTION6 || ([MOTION6:avgs:10]>porog) #endif
+			#ifdef MOTION7 || ([MOTION7:avgs:10]>porog) #endif
+			#ifdef MOTION8 || ([MOTION8:avgs:10]>porog) #endif
+			#ifdef MOTION9 || ([MOTION9:avgs:10]>porog) #endif
+			#ifdef MOTIONA || ([MOTIONA:avgs:10]>porog) #endif
+			#ifdef MOTIONB || ([MOTIONB:avgs:10]>porog) #endif
+			#ifdef MOTIONC || ([MOTIONC:avgs:10]>porog) #endif 
+			#ifdef MOTIOND || ([MOTIOND:avgs:10]>porog) #endif
+			#ifdef MOTIONE || ([MOTIONE:avgs:10]>porog) #endif
+			)
+		{ 
+			if (alarm==0 && ohrana==1) {delayedCallR (alarm, TOWORK); alarm=1;}
+			#ifdef MRMR 
+				setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/ohrana/снятие.wav"});         
+			#endif
+		}
 						
 	}
 }
@@ -152,15 +145,15 @@ V-ID/V-ADDR
 			setStatus(MRMR,{1, VOLUME, 1, "http://192.168.1.125/ohrana/постановка.wav"});
 		#endif
 	}else
-		if (statutOn==1)
-			{
-				statutOn=0;
-				ohrana=0;
-				alarm=0;
-				off();
-				cancelDelayedCall(alarm); 
-				cancelDelayedCall(on);
-				cancelDelayedCall(LIGHT); 
-			}
+	if (statutOn==1)
+	{
+		statutOn=0;
+		ohrana=0;
+		alarm=0;
+		off();
+		cancelDelayedCall(alarm); 
+		cancelDelayedCall(on);
+		cancelDelayedCall(LIGHT); 
+	}
 }
 
