@@ -28,7 +28,7 @@ void OFF0()
 
 V-ID/V-ADDR
 {
-	setStatus(J0, 0); #ifdef J1 setStatus(J1, 0); #endif delayedCallMs(OFF1, TIME);
+	setStatus(J0, 0); #ifdef J1 setStatus(J1, 0); #endif delayedCallMs(OFF0, TIME);
 }
 
 V-ID/UP
