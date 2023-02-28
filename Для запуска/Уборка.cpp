@@ -6,6 +6,7 @@
   selectArea:true,
   vars:[
   {name:"TIME", type:"number", required:true, defaultValue:10800, min:1800, max:21600, desc:"Задержка, мин", descWidth:370},
+  {name:"GERKON",type:"devices-list",required:false, filter:["script"],desc:"Уборка-геркон"},
 {type:"comment",text:"Выберите элементы, которые нужно",width:600, "style":"color:red; font-weight:bold"},
 
 {name:"ITEM101",type:"devices-list",required:false, filter:["leak-sensor"],desc:"Устройство 1"},
@@ -36,13 +37,14 @@
 void OTKL()
 {
     setStatus(V-ADDR,0);
+    #ifdef GERKON setStatus(GERKON, 0); #endif //Скрипт уборки через геркон
 }
 
 V-ID/V-ADDR
 {
   if ( (opt(0)&1)==1 )
   {
-
+  #ifdef GERKON setStatus(GERKON, 1); #endif //Скрипт уборки через геркон
   setStatus(ITEM101,{TIME & 0xFF, TIME >> 8});
   #ifdef K00 if(([K00.0]&1)==1) setStatus(K00, 0); #endif
   #ifdef K01 if(([K00.0]&1)==1) setStatus(K01, 0); #endif

@@ -91,18 +91,20 @@ void OFF()
     setStatus(V-ADDR,0);
 }
 
+#ifdef AUTO
 void ON()
 {
     setStatus(AUTO, 1);
 }
+#endif
 
 V-ID/V-ADDR
 {
     if ([V-ADDR.0]==1)
     {
-        setStatus(AUTO, 0);
-        cancelDelayedCall(ON);
-        delayedCall(ON, 300);
+        #ifdef AUTO setStatus(AUTO, 0);
+        cancelDelayedCall(ON); 
+        delayedCall(ON, 300); #endif
         #ifdef U00 setStatus(U00, 1); #endif
         #ifdef U01 setStatus(U01, 1); #endif
         #ifdef U02 setStatus(U02, 1); #endif
