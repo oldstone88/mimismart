@@ -41,16 +41,20 @@ u8 count=0;
 
 void OPEN()
 {
-    --count;
     setStatus(@ID[count]:@SID[count], 1);
-    if(count>0) delayedCall(OPEN, 1);
+    ++count;
+    if(ID[count]){
+        delayedCall(OPEN, 1);
+    }
 }
 
 void CLOSE()
 {
-    --count;
     setStatus(@ID[count]:@SID[count], 0);
-    if(count>0) delayedCall(CLOSE, 1);
+    ++count;
+    if(ID[count]){
+        delayedCall(CLOSE, 1);
+    }
 }
 
 u8 i=0;
@@ -88,7 +92,7 @@ V-ID/JALOUSIE {
             setStatus(JALOUSIE, statusOfJalousie);
             delayedCall(stopJalousie, 3);
             cancelDelayedCall(CLOSE);
-            count=6;
+            count=0;
             OPEN();
             
         } else if  (statusOfJalousie == 3 || statusOfJalousie == 2) {
@@ -110,7 +114,7 @@ V-ID/JALOUSIE {
             setStatus(JALOUSIE, statusOfJalousie);
             delayedCall(stopJalousie, 3);
             cancelDelayedCall(OPEN);
-            count=6;
+            count=0;
             CLOSE();
             
         } else if  (statusOfJalousie == 2 || statusOfJalousie == 3) {
