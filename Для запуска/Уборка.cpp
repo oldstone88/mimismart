@@ -8,7 +8,6 @@
   {name:"TIME", type:"number", required:true, defaultValue:10800, min:1800, max:21600, desc:"Задержка, мин", descWidth:370},
   {name:"GERKON",type:"devices-list",required:false, filter:["script"],desc:"Уборка-геркон"},
 {type:"comment",text:"Выберите элементы, которые нужно",width:600, "style":"color:red; font-weight:bold"},
-
 {name:"ITEM101",type:"devices-list",required:false, filter:["leak-sensor"],desc:"Устройство 1"},
 {name:"ITEM102",type:"devices-list",required:false, filter:["leak-sensor"],desc:"Устройство 2"},
 {name:"ITEM103",type:"devices-list",required:false, filter:["leak-sensor"],desc:"Устройство 3"},

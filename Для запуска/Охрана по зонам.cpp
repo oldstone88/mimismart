@@ -17,11 +17,15 @@
         {name:"L04",type:"devices-list",required:false,width:600,filter:["script"],desc:"Зона",descWidth:100},
         {name:"T04",type:"string",required:false,desc:"Текст оповещения",width:300},
         {name:"L05",type:"devices-list",required:false,width:600,filter:["script"],desc:"Зона",descWidth:100},
+        {name:"T05",type:"string",required:false,desc:"Текст оповещения",width:300},
+        {name:"L06",type:"devices-list",required:false,width:600,filter:["script"],desc:"Зона",descWidth:100},
         {name:"T06",type:"string",required:false,desc:"Текст оповещения",width:300},
         {name:"L07",type:"devices-list",required:false,width:600,filter:["script"],desc:"Зона",descWidth:100},
         {name:"T07",type:"string",required:false,desc:"Текст оповещения",width:300},
         {name:"L08",type:"devices-list",required:false,width:600,filter:["script"],desc:"Зона",descWidth:100},
         {name:"T08",type:"string",required:false,desc:"Текст оповещения",width:300},
+        {name:"L09",type:"devices-list",required:false,width:600,filter:["script"],desc:"Зона",descWidth:100},
+        {name:"T09",type:"string",required:false,desc:"Текст оповещения",width:300},
     ]
 }
 */
@@ -47,6 +51,7 @@ V-ID/s:10
         #ifdef L06 || [L06.0]==1 #endif
         #ifdef L07 || [L07.0]==1 #endif
         #ifdef L08 || [L08.0]==1 #endif
+        #ifdef L09 || [L09.0]==1 #endif
         ) {++i; if((i*10)>COME) setStatus(2047:32, {4, "Сработка охраны!!!"});}
     }
 }
@@ -62,6 +67,7 @@ void start()
         #ifdef L06 || [L06.0]==0 #endif
         #ifdef L07 || [L07.0]==0 #endif
         #ifdef L08 || [L08.0]==0 #endif
+        #ifdef L09 || [L09.0]==0 #endif
         ) {ohrana=1; setStatus(2047:32, {4, "Под охраной!!!"});}
     else {setStatus(2047:32, {4, "Не успели выйти!!!"}); setStatus(V-ADDR, 0);}
 }

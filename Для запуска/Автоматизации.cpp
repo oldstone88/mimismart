@@ -77,6 +77,36 @@
     {name:"U67",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
     {name:"U68",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
     {name:"U69",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U70",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U71",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U72",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U73",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U74",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U75",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U76",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U77",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U78",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U79",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U80",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U81",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U82",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U83",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U84",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U85",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U86",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U87",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U88",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U89",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U90",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U91",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U92",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U93",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U94",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U95",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U96",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U97",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U98",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
+    {name:"U99",type:"devices-list",required:false,filter:["lamp","script","dimer-lamp","rgb-lamp","virtual"],width:888,desc:"Устройство"},
    
     ]
 }
@@ -157,6 +187,36 @@ V-ID/V-ADDR
         #ifdef U67 setAutoState(U67, 0xFFFE); #endif
         #ifdef U68 setAutoState(U68, 0xFFFE); #endif
         #ifdef U69 setAutoState(U69, 0xFFFE); #endif
+        #ifdef U70 setAutoState(U70, 0xFFFE); #endif
+        #ifdef U71 setAutoState(U71, 0xFFFE); #endif
+        #ifdef U72 setAutoState(U72, 0xFFFE); #endif
+        #ifdef U73 setAutoState(U73, 0xFFFE); #endif
+        #ifdef U74 setAutoState(U74, 0xFFFE); #endif
+        #ifdef U75 setAutoState(U75, 0xFFFE); #endif
+        #ifdef U76 setAutoState(U76, 0xFFFE); #endif
+        #ifdef U77 setAutoState(U77, 0xFFFE); #endif
+        #ifdef U78 setAutoState(U78, 0xFFFE); #endif
+        #ifdef U79 setAutoState(U79, 0xFFFE); #endif
+        #ifdef U80 setAutoState(U80, 0xFFFE); #endif
+        #ifdef U81 setAutoState(U81, 0xFFFE); #endif
+        #ifdef U82 setAutoState(U82, 0xFFFE); #endif
+        #ifdef U83 setAutoState(U83, 0xFFFE); #endif
+        #ifdef U84 setAutoState(U84, 0xFFFE); #endif
+        #ifdef U85 setAutoState(U85, 0xFFFE); #endif
+        #ifdef U86 setAutoState(U86, 0xFFFE); #endif
+        #ifdef U87 setAutoState(U87, 0xFFFE); #endif
+        #ifdef U88 setAutoState(U88, 0xFFFE); #endif
+        #ifdef U89 setAutoState(U89, 0xFFFE); #endif
+        #ifdef U90 setAutoState(U90, 0xFFFE); #endif
+        #ifdef U91 setAutoState(U91, 0xFFFE); #endif
+        #ifdef U92 setAutoState(U92, 0xFFFE); #endif
+        #ifdef U93 setAutoState(U93, 0xFFFE); #endif
+        #ifdef U94 setAutoState(U94, 0xFFFE); #endif
+        #ifdef U95 setAutoState(U95, 0xFFFE); #endif
+        #ifdef U96 setAutoState(U96, 0xFFFE); #endif
+        #ifdef U97 setAutoState(U97, 0xFFFE); #endif
+        #ifdef U98 setAutoState(U98, 0xFFFE); #endif
+        #ifdef U99 setAutoState(U99, 0xFFFE); #endif
 
     } else
     {
@@ -230,6 +290,36 @@ V-ID/V-ADDR
         #ifdef U67 setAutoState(U67, 0); #endif
         #ifdef U68 setAutoState(U68, 0); #endif
         #ifdef U69 setAutoState(U69, 0); #endif
+        #ifdef U70 setAutoState(U70, 0); #endif
+        #ifdef U71 setAutoState(U71, 0); #endif
+        #ifdef U72 setAutoState(U72, 0); #endif
+        #ifdef U73 setAutoState(U73, 0); #endif
+        #ifdef U74 setAutoState(U74, 0); #endif
+        #ifdef U75 setAutoState(U75, 0); #endif
+        #ifdef U76 setAutoState(U76, 0); #endif
+        #ifdef U77 setAutoState(U77, 0); #endif
+        #ifdef U78 setAutoState(U78, 0); #endif
+        #ifdef U79 setAutoState(U79, 0); #endif
+        #ifdef U80 setAutoState(U80, 0); #endif
+        #ifdef U81 setAutoState(U81, 0); #endif
+        #ifdef U82 setAutoState(U82, 0); #endif
+        #ifdef U83 setAutoState(U83, 0); #endif
+        #ifdef U84 setAutoState(U84, 0); #endif
+        #ifdef U85 setAutoState(U85, 0); #endif
+        #ifdef U86 setAutoState(U86, 0); #endif
+        #ifdef U87 setAutoState(U87, 0); #endif
+        #ifdef U88 setAutoState(U88, 0); #endif
+        #ifdef U89 setAutoState(U89, 0); #endif
+        #ifdef U90 setAutoState(U90, 0); #endif
+        #ifdef U91 setAutoState(U91, 0); #endif
+        #ifdef U92 setAutoState(U92, 0); #endif
+        #ifdef U93 setAutoState(U93, 0); #endif
+        #ifdef U94 setAutoState(U94, 0); #endif
+        #ifdef U95 setAutoState(U95, 0); #endif
+        #ifdef U96 setAutoState(U96, 0); #endif
+        #ifdef U97 setAutoState(U97, 0); #endif
+        #ifdef U98 setAutoState(U98, 0); #endif
+        #ifdef U99 setAutoState(U99, 0); #endif
     }
 
 }

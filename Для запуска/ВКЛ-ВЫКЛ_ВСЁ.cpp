@@ -329,9 +329,9 @@ void ON(){
 
 void OFF(){
     if(ID[count]){
-        setStatus(@ID:@SID, WHATDO);
+        setStatus(@ID[count]:@SID[count], WHATDO);
         ++count;
-        delayedCallMs(OFF, 250);
+        delayedCallMs(OFF, 150);
     } else {setStatus(V-ADDR, 0);}
 }
 
