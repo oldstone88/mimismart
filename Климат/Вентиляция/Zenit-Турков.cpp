@@ -27,18 +27,20 @@ V-ID/V00
     if(senderId()!=exciterId())
         {
             send[10]=opt(1)+16; send[12]=opt(4); if(send[12]==0) send[12]=4; //Уставка температуры и скорости вентилятора
-            if(opt(0)==1) //Уставка ВКЛ-ВЫКЛ
-            {
+            //Уставка режима
+            if(opt(0)==1){
                 send[8]=0x01; send[14]=0x00;
             } else
-            if(opt(0)==17)
-            {
+            if(opt(0)==17){
+                send[8]=0x01; send[14]=0x02;
+            } else
+            if(opt(0)==33){
                 send[8]=0x01; send[14]=0x01;
             } else
             if(opt(0)%2==0)
             {
                 send[8]=0x00;
-            }
+            } 
             write=1;
             setStatus(RS485, &send);
         }
@@ -65,10 +67,15 @@ void stat()
 
 V-ID/RS485
 {
-    //stat();
+    stat();
     if(optl==13 && opt(1)==0x03) //Пришел ответ на запрос
     {
-        cond[0]=opt(10); cond[0]=(cond[0]<<4)+opt(4); cond[1]=opt(6)-16; cond[4]=opt(8); if(cond[4]==4) cond[4]=0; else cond[4];
+        if(opt(10)==1) cond[0]=2; //Нагрев
+        else if(opt(10)==2) cond[0]=1; //Холод
+        else cond[0]=opt(10); //Вентиляция
+        cond[0]=(cond[0]<<4)+opt(4); //ВКЛ-ВЫКЛ
+        cond[1]=opt(6)-16; //Температура
+        cond[4]=opt(8); if(cond[4]==4) cond[4]=0; else cond[4]; //Скорость
         setStatus(V00, &cond);
     }
 }
