@@ -55,11 +55,11 @@ u8 antispam=0;
 
 V-ID/s:1
 {
-	u8 alarm=0;
-	//Уборка
+    u8 alarm=0;
+    //Уборка
     if(([V-ADDR.0]&1)==1){
-    	++timer; if(timer*60>=TIME) setStatus(V-ADDR, 0);} else if(timer!=0) {timer=0;
-    		
+        ++timer; if(timer>=TIME) setStatus(V-ADDR, 0);}
+    else if(timer!=0) {timer=0;     
     }
     #ifdef H00 if([H00.0]==0 && ([V-ADDR.0]&1)==0) { if(i[0]<=12) i[0]=i[0]+1; else {if(antispam==0) setStatus(2047:32, {8, "T00"}); alarm=1;}    } else i[0]=0; #endif
     #ifdef H01 if([H01.0]==0 && ([V-ADDR.0]&1)==0) { if(i[1]<=12) i[1]=i[1]+1; else {if(antispam==0) setStatus(2047:32, {8, "T01"}); alarm=1;}    } else i[1]=0; #endif
@@ -79,10 +79,10 @@ V-ID/s:1
     #ifdef H15 if([H15.0]==0 && ([V-ADDR.0]&1)==0) { if(i[15]<=12) i[15]=i[15]+1; else {if(antispam==0) setStatus(2047:32, {8, "T15"}); alarm=1;} } else i[15]=0; #endif
     //Где то протечка!!!
     if(alarm!=0){
-    	++antispam;
-    	if(antispam>60) antispam=0;
-    	setStatus(V00, 1); #ifdef V01 setStatus(V01, 1); #endif #ifdef V02 setStatus(V02, 1); #endif #ifdef V03 setStatus(V03, 1); #endif
+        ++antispam;
+        if(antispam>60) antispam=0;
+        setStatus(V00, 1); #ifdef V01 setStatus(V01, 1); #endif #ifdef V02 setStatus(V02, 1); #endif #ifdef V03 setStatus(V03, 1); #endif
     } else{
-    	if(antispam!=0) antispam=0;
+        if(antispam!=0) antispam=0;
     }
 }

@@ -114,7 +114,7 @@ V-ID/V-ADDR{
   #ifdef LEAK22 setStatus(LEAK22, 0); #endif
   #ifdef LEAK23 setStatus(LEAK23, 0); #endif
   #ifdef LEAK24 setStatus(LEAK24, 0); #endif
-  
+  #ifdef GERKON setStatus(GERKON, 0); #endif //Скрипт уборки через геркон
   setStatus(2047:32,{4,"Уборка выключена!"});
   cancelDelayedCall(OTKL);
   }
