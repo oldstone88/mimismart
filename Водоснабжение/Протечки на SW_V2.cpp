@@ -45,21 +45,25 @@ vars:[
 {name:"T14",type:"string",required:false,desc:"Текст оповещения",width:300},
 {name:"H15",type:"devices-list",required:false,width:800,filter:["door-sensor"],desc:"Датчик-геркон",descWidth:100},
 {name:"T15",type:"string",required:false,desc:"Текст оповещения",width:300},
+{name:"H16",type:"devices-list",required:false,width:800,filter:["door-sensor"],desc:"Датчик-геркон",descWidth:100},
+{name:"T16",type:"string",required:false,desc:"Текст оповещения",width:300},
+{name:"H17",type:"devices-list",required:false,width:800,filter:["door-sensor"],desc:"Датчик-геркон",descWidth:100},
+{name:"T17",type:"string",required:false,desc:"Текст оповещения",width:300},
 ]
 }
 */
 
-u8 i[16];
+u8 i[18];
 u32 timer=0;
 u8 antispam=0;
 
 V-ID/s:1
 {
-    u8 alarm=0;
-    //Уборка
+	u8 alarm=0;
+	//Уборка
     if(([V-ADDR.0]&1)==1){
-        ++timer; if(timer>=TIME) setStatus(V-ADDR, 0);}
-    else if(timer!=0) {timer=0;     
+    	++timer; if(timer>=TIME) setStatus(V-ADDR, 0);}
+    else if(timer!=0) {timer=0;		
     }
     #ifdef H00 if([H00.0]==0 && ([V-ADDR.0]&1)==0) { if(i[0]<=12) i[0]=i[0]+1; else {if(antispam==0) setStatus(2047:32, {8, "T00"}); alarm=1;}    } else i[0]=0; #endif
     #ifdef H01 if([H01.0]==0 && ([V-ADDR.0]&1)==0) { if(i[1]<=12) i[1]=i[1]+1; else {if(antispam==0) setStatus(2047:32, {8, "T01"}); alarm=1;}    } else i[1]=0; #endif
@@ -77,12 +81,14 @@ V-ID/s:1
     #ifdef H13 if([H13.0]==0 && ([V-ADDR.0]&1)==0) { if(i[13]<=12) i[13]=i[13]+1; else {if(antispam==0) setStatus(2047:32, {8, "T13"}); alarm=1;} } else i[13]=0; #endif
     #ifdef H14 if([H14.0]==0 && ([V-ADDR.0]&1)==0) { if(i[14]<=12) i[14]=i[14]+1; else {if(antispam==0) setStatus(2047:32, {8, "T14"}); alarm=1;} } else i[14]=0; #endif
     #ifdef H15 if([H15.0]==0 && ([V-ADDR.0]&1)==0) { if(i[15]<=12) i[15]=i[15]+1; else {if(antispam==0) setStatus(2047:32, {8, "T15"}); alarm=1;} } else i[15]=0; #endif
+    #ifdef H16 if([H16.0]==0 && ([V-ADDR.0]&1)==0) { if(i[16]<=12) i[14]=i[16]+1; else {if(antispam==0) setStatus(2047:32, {8, "T16"}); alarm=1;} } else i[16]=0; #endif
+    #ifdef H17 if([H17.0]==0 && ([V-ADDR.0]&1)==0) { if(i[17]<=12) i[15]=i[17]+1; else {if(antispam==0) setStatus(2047:32, {8, "T17"}); alarm=1;} } else i[17]=0; #endif
     //Где то протечка!!!
     if(alarm!=0){
-        ++antispam;
-        if(antispam>60) antispam=0;
-        setStatus(V00, 1); #ifdef V01 setStatus(V01, 1); #endif #ifdef V02 setStatus(V02, 1); #endif #ifdef V03 setStatus(V03, 1); #endif
+    	++antispam;
+    	if(antispam>60) antispam=0;
+    	setStatus(V00, 1); #ifdef V01 setStatus(V01, 1); #endif #ifdef V02 setStatus(V02, 1); #endif #ifdef V03 setStatus(V03, 1); #endif
     } else{
-        if(antispam!=0) antispam=0;
+    	if(antispam!=0) antispam=0;
     }
 }

@@ -1,0 +1,32 @@
+/*
+{
+  vars:[
+    {name:"%NAME%",type:"text",require:true,defaultValue:"Denon",desc:"Имя пульта"},
+    {name:"%DEST%",type:"text",required:true,defaultValue:"1000:95",filter:"0123456789:",desc:"Адрес скрипта"},
+  ]
+}
+*/
+
+<xml>
+        <item addr="2048:" name="%NAME%" type="remote-control">
+            <remote-signal identifier="signal-power" transmitter-addr="%DEST%" string-value="PWON"/>
+            <remote-signal identifier="signal-power-off" transmitter-addr="%DEST%" string-value="PWSTANDBY"/>
+            <remote-signal identifier="signal-mute" transmitter-addr="%DEST%" string-value="MUON"/>
+            <remote-signal identifier="signal-vol-up" transmitter-addr="%DEST%" string-value="MVUP"/>
+            <remote-signal identifier="signal-vol-down" transmitter-addr="%DEST%" string-value="MVDOWN"/> 
+            <remote-signal identifier="signal-F1" transmitter-addr="%DEST%" string-value="SITV"/>
+            <remote-signal identifier="signal-F2" transmitter-addr="%DEST%" string-value="SIUSB"/>
+            <remote-signal identifier="signal-F3" transmitter-addr="%DEST%" string-value="SINET"/>
+            <remote-signal identifier="signal-F4" transmitter-addr="%DEST%" string-value="SIIRADIO"/>
+            <remote-signal identifier="signal-1" transmitter-addr="%DEST%" string-value="SISAT"/>
+            <remote-signal identifier="signal-2" transmitter-addr="%DEST%" string-value="SIDVD"/>
+            <remote-signal identifier="signal-3" transmitter-addr="%DEST%" string-value="SIBD"/>
+            <remote-signal identifier="signal-4" transmitter-addr="%DEST%" string-value="SIAUX1"/>
+            <remote-signal identifier="signal-5" transmitter-addr="%DEST%" string-value="SIGAME"/>
+            <remote-signal identifier="signal-6" transmitter-addr="%DEST%" string-value="SI8K"/>
+            <remote-signal identifier="signal-7" transmitter-addr="%DEST%" string-value="SIMPLAY"/>
+            <remote-signal identifier="signal-8" transmitter-addr="%DEST%" string-value="SICD"/>
+            <remote-signal identifier="signal-9" transmitter-addr="%DEST%" string-value="SITUNER"/>
+            <remote-signal identifier="signal-0" transmitter-addr="%DEST%" string-value="SIBT"/>
+        </item>
+</xml>

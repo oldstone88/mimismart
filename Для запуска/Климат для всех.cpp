@@ -3,6 +3,7 @@
   desc:"Климат",
   tag:"import-script",
   selectArea:true,
+  name:"Климат",
   addItems:[
     {tag:"item", id:"%TARGET%", name:"Климат", "sub-id":"%SUBID%", type:"conditioner", "t-delta":"12", "t-min":"18", "vane-hor":"0x00", "vane-ver":"0x00", "modes":"0x00", "funs":"0x01"},
   ],
@@ -31,8 +32,8 @@ V-ID/s:30{
       i16 tempAuto=([COND.1]+18)*10; //Температура уставки
       i16 tempRoom=([KOMHATA.1]*10)+(([KOMHATA.0]*10)/250); //Температура в комнате
 
-      if( (tempAuto+10 < tempK) ) {k[0]=1; k[4]=[AUTO.4]; k[1]=0; setStatus(COND, &k);} //Охлаждение
-      else if(tempAuto-5 > tempK ) {k[0]=k[0]&FE; setStatus(COND, &k);} //Достаточно охладили
+      if( (tempAuto+10 < tempRoom) ) {k[0]=1; k[4]=[AUTO.4]; k[1]=0; setStatus(COND, &k);} //Охлаждение
+      else if(tempAuto-5 > tempRoom ) {k[0]=k[0]&0xFE; setStatus(COND, &k);} //Достаточно охладили
     }
     else {if( ([AUTO.0]%2)!=0) k[0]=k[0]&0xFE; setStatus(COND, &k);}
   }
@@ -40,14 +41,10 @@ V-ID/s:30{
 
 V-ID/AUTO{
   if ([AUTO.0]%2!=0){
-    i=0;
-    cancelDelayedCall(start);
-    delayedCall(start, 3);
     setStatus(1000:102, "VALVE00\0Авто");
     #ifdef VALVE01 setStatus(1000:102, "VALVE01\0Авто"); #endif
   } else
   if ([AUTO.0]%2==0){
-    i=0;
     getStatus(COND, &k);
     k[0]=k[0]&0xFE;
     setStatus(1000:102,"VALVE00\0as:-4");
