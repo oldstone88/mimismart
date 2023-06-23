@@ -31,7 +31,8 @@
 
 u8 breakpoint = 0;
 u8 write[17]={0x00, 0x10, 0x00, 0x01, 0x00, 0x04, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xCC, 0x16};
-u8 read[8]={0x00, 0x03, 0x00, 0x01, 0x04, 0xCC, 0x16};
+u8 read[8]={0x00, 0x03, 0x00, 0x01, 0x00, 0x04, 0xCC, 0x16};
+u8 count=0;
 
 const u16 ID [] = {
     ADDR2ID(Cond01)
@@ -64,6 +65,14 @@ void setmode (u8 rezhim){
     if (rezhim==4) rezhim=1; return rezhim; //Авто
 }
 
+void backmode (u8 rezhim){
+    if (rezhim==5) rezhim=0; return rezhim; //Обдув
+    if (rezhim==2) rezhim=1; return rezhim; //Охлаждение
+    if (rezhim==3) rezhim=2; return rezhim; //Сушка
+    if (rezhim==4) rezhim=3; return rezhim; //Обогрев
+    if (rezhim==1) rezhim=4; return rezhim; //Авто
+}
+
 V-ID/Cond01#ifdef Cond02, Cond02#endif#ifdef Cond03, Cond03#endif#ifdef Cond04, Cond04#endif#ifdef Cond05, Cond05#endif#ifdef Cond06, Cond06#endif{
     if(senderId()!=exciterId()){
         for(u8 i=0;i<4;++i){
@@ -94,7 +103,31 @@ u8 res[100]="";
         srvError(&res);
 }
 
+//Секция обратной связи
+V-ID/s:5{
+    if(breakpoint==0){
+        if(count==0){read[0]=Address1; setStatus(RS485, &read);}
+        else if(count==1){read[0]=Address2; setStatus(RS485, &read);}
+        else if(count==2){read[0]=Address3; setStatus(RS485, &read);}
+        else if(count==3){read[0]=Address4; setStatus(RS485, &read);}
+        if(count!=4) ++count; else count=0;
+    } else breakpoint=0;
+}
+
 V-ID/RS485{
     //stat();
-
+    if(optl==13 && opt(1)==0x03){
+        u8 cond[5]={0, 0, 0, 0, 0};
+        cond[0]=backmode(opt(4)); //Режим
+        u8 onOff=0;
+        if(opt(6)==1) onOff=0; else onOff=1;
+        cond[0]=cond[0]<<4|onOff; //Вкл-Выкл
+        cond[1]=(((opt(7)<<8|opt(8))>>1)/4)-18; //Температура
+        cond[4]=opt(10)-1;
+        //srvError("Температура=%d, скорость=%d", cond[1]+18, cond[4]);
+        if(opt(0)==Address1){setStatus(Cond01, &cond);}
+        else if(opt(0)==Address2){setStatus(Cond02, &cond);}
+        else if(opt(0)==Address3){setStatus(Cond03, &cond);}
+        else if(opt(0)==Address4){setStatus(Cond04, &cond);}
+    }
 }

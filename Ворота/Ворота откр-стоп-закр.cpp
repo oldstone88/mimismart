@@ -100,7 +100,7 @@ V-ID/JALOUSIE {
             statusOfJalousie = 4;
             setStatus(JALOUSIE, statusOfJalousie);
             setStatus(STOP, 1);
-            delayedCallMs(STOP, 500);
+            delayedCallMs(OST, 500);
         }
     }
 
@@ -109,7 +109,7 @@ if(opt(0)==0xFF){
     setStatus(JALOUSIE, statusOfJalousie);
     cancelDelayedCall(closeJalousie);
     cancelDelayedCall(openJalousie);
-    setStatus(OST, 1);
+    setStatus(STOP, 1);
     delayedCallMs(OST, 500);
   }
 
@@ -124,7 +124,7 @@ V-ID/s:1
         cancelDelayedCall(closeJalousie);
         setStatus(JALOUSIE, statusOfJalousie);
     }
-    if ([CLOSE.0]==0){
+    if ([HCLOSE.0]==0){
         statusOfJalousie=0;
         cancelDelayedCall(openJalousie);
         cancelDelayedCall(closeJalousie);
