@@ -1,4 +1,4 @@
-#Smart48.ru Telegram bot v2.0
+# Smart48.ru Telegram bot v2.0
 
 Для установки программной части на сервер нужно зайти по ssh и запустить команду:
 ```
@@ -7,5 +7,5 @@ if [ "`cat /proc/cpuinfo | grep -c Omega`" -ne "0" ] ;then wget -O /tmp/install.
 ```
 Везде где надо нажать "Y" для установки нужных компонентов.
 
-##Работа с ботом
+## Работа с ботом
 scripts/notifications/telegramm.txt - пример работы с ботом
