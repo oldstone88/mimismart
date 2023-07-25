@@ -8,7 +8,7 @@
     ],
   vars:
   [
-    {name:"K00",type:"hidden",value:"%TARGET%:%SUBID01%"}
+    {name:"K00",type:"hidden",value:"%TARGET%:%SUBID01%"},
     {name:"RS485",type:"devices-list",required:true,width:600,filter:["com-port"],desc:"РСка",descWidth:100},
   ]
 }
