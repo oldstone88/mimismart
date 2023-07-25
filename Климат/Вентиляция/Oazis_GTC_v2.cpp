@@ -3,16 +3,13 @@
   desc:"Оазис_GTC",
   tag:"import-script",
   selectArea:true,
-  
+  addItems:[
+        {tag:"item", id:"%TARGET%", name:"Вентиляция", "sub-id":"%SUBID01%", "type":"conditioner", "t-min":"16", "t-delta":"34", "vane-ver":"0x00", "vane-hor":"0x00", "funs":"0x0E"},
+    ],
   vars:
   [
-    {name:"K00",type:"devices-list",required:true,width:600,filter:["conditioner"],desc:"Установка",descWidth:100},
     {name:"RS485",type:"devices-list",required:true,width:600,filter:["com-port"],desc:"РСка",descWidth:100},
-    {name:"O00",type:"devices-list",required:false,width:600,filter:["co2-sensor"],desc:"Сенсор 1",descWidth:100},
-    {name:"O01",type:"devices-list",required:false,width:600,filter:["co2-sensor"],desc:"Сенсор 2",descWidth:100},
-    {name:"O02",type:"devices-list",required:false,width:600,filter:["co2-sensor"],desc:"Сенсор 3",descWidth:100},
-    {name:"O03",type:"devices-list",required:false,width:600,filter:["co2-sensor"],desc:"Сенсор 4",descWidth:100},
-    {name:"O04",type:"devices-list",required:false,width:600,filter:["co2-sensor"],desc:"Сенсор 5",descWidth:100},
+    {name:"K00",type:"hidden",value:"%TARGET%:%SUBID01%"}
   ]
 }
 */
