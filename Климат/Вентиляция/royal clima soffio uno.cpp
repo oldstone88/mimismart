@@ -6,10 +6,10 @@
   selectArea:true,
  addItems:[
 		{tag:"item", id:"%TARGET%", name:"Вентиляция", "sub-id":"%SUBID99%", type:"conditioner", "t-delta":"3", "t-min":"0", "vane-hor":"0x00", "vane-ver":"0x00"},
-		{tag:"item", id:"%TARGET%", name:"В комнате", "sub-id":"%SUBID97%", type:"virtual", "sub-type":"sensor", "length":"0", "dim":"°C"},
-		{tag:"item", id:"%TARGET%", name:"На улице", "sub-id":"%SUBID95%", type:"virtual", "sub-type":"sensor", "length":"0", "dim":"°C"},
-		{tag:"item", id:"%TARGET%", name:"Вытяжка", "sub-id":"%SUBID93%", type:"virtual", "sub-type":"sensor", "length":"0", "dim":"°C"},
-		{tag:"item", id:"%TARGET%", name:"Разморозка", "sub-id":"%SUBID91%", type:"virtual", "sub-type":"sensor", "length":"0", "dim":"°C"},
+		{tag:"item", id:"%TARGET%", name:"В комнате", "sub-id":"%SUBID97%", type:"virtual", "sub-type":"sensor", "length":"2", "dim":"°C"},
+		{tag:"item", id:"%TARGET%", name:"На улице", "sub-id":"%SUBID95%", type:"virtual", "sub-type":"sensor", "length":"2", "dim":"°C"},
+		{tag:"item", id:"%TARGET%", name:"Вытяжка", "sub-id":"%SUBID93%", type:"virtual", "sub-type":"sensor", "length":"2", "dim":"°C"},
+		{tag:"item", id:"%TARGET%", name:"Разморозка", "sub-id":"%SUBID91%", type:"virtual", "sub-type":"sensor", "length":"2", "dim":"°C"},
 	],
   vars:[
    {type:"comment", style:"color:red", text:"Заполните поля:"},
@@ -94,7 +94,7 @@ void transformSpeed(u8 speed){
 }
 
 V-ID/RS485{
-	stat();
+	//stat();
 	if(opt(0)==1 && optl==19){
 		u8 condStatus[5]={0, 0, 0, 0, 0};
 		condStatus[0]=opt(4);

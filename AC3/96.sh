@@ -24,7 +24,7 @@ function parser($text){
 $consoleParam = hex2bin($argv[3]);
 $consoleParam = parser($consoleParam);
 //Передача запроса
-$url = "http://". $consoleParam[addr] . "/" . $consoleParam[command];
+$url = "http://". $consoleParam['addr'] . "/" . $consoleParam['command'];
 echo $url; 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $url); 
