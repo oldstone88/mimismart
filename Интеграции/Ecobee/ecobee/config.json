@@ -1,0 +1,11 @@
+{
+    "timestamp_update_accesToken": 1698769661,
+    "accessToken": "",
+    "refreshToken": "",
+    "client_id": "",
+    "thermostats": {
+        "521721004301": "575:101",
+        "521743881377": "575:102",
+        "521767827038": "575:103"
+    }
+}

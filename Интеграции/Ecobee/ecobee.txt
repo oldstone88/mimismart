@@ -1,0 +1,46 @@
+u8 settings[4]={0,0,0,0}; // onoff, temp, mode, fan
+u8 t_min = 7;
+u8 i = 0;
+u8 command[100]="";
+void sendCommand(){
+	setStatus(SRV-ID:92, command);
+}
+V-ID/COND{
+	for (i=0;i<100;i+=1){
+		command[i]=0;
+	}
+	strcat(command, "id=ID_ECOBEE|");
+	if(opt(0)&0x01 == 1){
+		if(settings[0] != 1){
+			strcat(command, "on=1|");
+			settings[0] = 1;
+		}
+		if(1){
+			u8 str[20] = "";
+			sprintf(str, "temp=%d|", opt(1) + t_min);
+			settings[1] = opt(1);
+			strcat(command, str);
+		}
+		if(settings[2] != (opt(0)&0xf0)){
+			u8 str2[20] = "";
+			sprintf(str2, "mode=%d|", opt(0)&0xf0);
+			settings[2] = opt(0)&0xf0;
+			strcat(command, str2);
+			
+		}
+		u8 str3[30] = "";
+		//srvError("Test");
+		sprintf(str3, "mode_now=%d|", opt(0)&0xf0);
+		// settings[2] = opt(0)&0xf0;
+		strcat(command, str3);
+	}
+	else{
+		if(settings[0] != 0){
+			strcat(command, "on=0|");
+			settings[0] = 0;	
+		}
+	}
+	cancelDelayedCall(sendCommand);
+	delayedCall(sendCommand, 2);
+	// }
+}
