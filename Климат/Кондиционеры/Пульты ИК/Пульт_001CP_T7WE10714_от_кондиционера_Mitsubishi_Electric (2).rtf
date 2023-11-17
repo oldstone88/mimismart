@@ -1,0 +1,64 @@
+{\rtf1\ansi\ansicpg1251\cocoartf2580
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw16840\paperh23820\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 /*\
+\{\
+  desc:"\uc0\u1057 \u1082 \u1088 \u1080 \u1087 \u1090  \u1076 \u1083 \u1103  \u1087 \u1091 \u1083 \u1100 \u1090 \u1072  001CP T7WE10714 \u1086 \u1090  \u1082 \u1086 \u1085 \u1076 \u1080 \u1094 \u1080 \u1086 \u1085 \u1077 \u1088 \u1072  Mitsubishi Electric",\
+  tag:"import-script",\
+  target:"IRT",\
+  selectArea:true,\
+  addItems:[\
+    \{tag:"item", id:"%TARGET%", name:"NAME", "sub-id":"%SUBID%", type:"conditioner", "t-delta":"9", "t-min":"19", "vane-hor":"0", "vane-ver":"0x7C"\},\
+  ],\
+  vars:[\
+ \{name:"IRT",type:"devices-list",required:true,filter:["ir-transmitter"],desc:"\uc0\u1048 \u1050 -\u1087 \u1077 \u1088 \u1077 \u1076 \u1072 \u1090 \u1095 \u1080 \u1082 "\},\
+ \{name:"NAME",type:"string",required:true,min:3,max:40,desc:"\uc0\u1048 \u1084 \u1103  \u1082 \u1086 \u1085 \u1076 \u1080 \u1094 \u1080 \u1086 \u1085 \u1077 \u1088 \u1072 ",defaultValue:"\u1050 \u1086 \u1085 \u1076 \u1080 \u1094 \u1080 \u1086 \u1085 \u1077 \u1088 "\},\
+ \{name:"COND",type:"hidden",value:"%TARGET%:%SUBID%"\}\
+  ]\
+\}\
+*/\
+\
+u8 old = 0;\
+\
+V-ID/COND\
+\{\
+	u8 isOn = (opt(0) & 0x01);\
+	u8 t = (opt(1) & 0x0f);\
+	u8 m = (opt(0) >> 4);\
+	u8 v = (opt(3) >> 4);\
+	u8 f = (opt(4) & 0x03);\
+\
+	//u8 b[50] = \{0x18640200450357060000, 0x01000D00, 0xFF100000, 0x04008800, 0x23CB2621, 0x0000, 0x3130, 0x0400, 0x00BF, 0xCECE, 0xFBFFFF000000\};\
+	u8 b[38] = \{0x1964020002008A06, 0x0102, 0x7A0000, 0x10234B, 0x038810B10C, 0x23CB262100409137040000BF6EC8FBFFFF\};\
+		\
+	const u8 temp[12] = \{0x30, 0x40, 0x50, 0x60, 0x70, 0x80, 0x90, 0xA0, 0xB0, 0xC0, 0xD0, 0xE0\}; // \uc0\u1073 \u1072 \u1081 \u1090  \u1085 \u1086 \u1084 \u1077 \u1088  27.1	\
+	const u8 mode[5] = \{0x0, 0x1, 0x5, 0x2,0x3\}; // \uc0\u1073 \u1072 \u1081 \u1090  \u1085 \u1086 \u1084 \u1077 \u1088  27.2\
+	const u8 vane[5] = \{0x30, 0x20, 0x10, 0x00, 0xC0\}; // \uc0\u1073 \u1072 \u1081 \u1090  \u1085 \u1086 \u1084 \u1077 \u1088  28.1\
+	const u8 fan[4] = \{0x1, 0x3, 0x5, 0x7\}; // \uc0\u1073 \u1072 \u1081 \u1090  \u1085 \u1086 \u1084 \u1077 \u1088  28.2\
+\
+	b[26] = isOn?0x40:0x00;\
+	\
+	/*if(m==0)\
+		b[27] = old | mode[m];\
+	else\
+	\{*/\
+		b[27] = temp[t] | mode[m];\
+		old = temp[t];\
+	//\}\
+	\
+	b[28] = vane[v] | fan[f];\
+\
+	b[32] = 0xFF - b[26];\
+	b[33] = 0xFF - b[27];\
+	b[34] = 0xFF - b[28];\
+	\
+	setStatus(IRT, &b);\
+\}\
+\
+\
+\
+}

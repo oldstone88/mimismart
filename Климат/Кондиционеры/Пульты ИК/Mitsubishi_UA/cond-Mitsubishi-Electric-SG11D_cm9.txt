@@ -1,0 +1,101 @@
+/*
+{
+	desc:"Скрипт к пульту MITSUBISHI SG11D (cm9)",
+	tag:"import-script",
+	target:"IRT",
+	selectArea:true,
+	addItems:[
+		{tag:"item", id:"%TARGET%", name:"NAME", "sub-id":"%SUBID%", type:"conditioner", "t-delta":"15", "t-min":"16", "vane-hor":"0"},
+	],
+	vars:[
+		{name:"IRT",type:"devices-list",required:true,filter:["ir-transmitter"],desc:"ИК-передатчик"},
+		{name:"NAME",type:"string",required:true,min:3,max:40,desc:"Имя кондиционера",defaultValue:"Mitsubishi"},
+		{name:"COND",type:"hidden",value:"%TARGET%:%SUBID%"}
+	]
+}
+*/
+
+/*
+u8 statusForIrCm9[] = {	
+					// 0	0x1964040002009006,
+					// 8	0x0102,
+					//10	0x800000,
+					//13	0x10C04E,
+					//16	0x039010210D,	//26 onOff	27 mode		28 temp		29 mode		30 fan&van						//summ
+					//21	0x23CB260100, 	0x00,		0x00,		0x00, 		0x00,		0x00,		0x00000000000000, 	0x00,
+					//39	0x0102,
+					//41	0x80FCB7,
+					//44	0x10C04E,
+					//47	0x039010210D,	//57 onOff	58 mode		59 temp		60 mode		61 fan&van						//summ
+					//52	0x23CB260100, 	0x00,		0x00, 		0x06, 		0x36, 		0x40,		0x00000000000000, 	0x00
+					};
+*/
+
+u8 flagForfan = 0;
+u8 flagForvan = 0;
+
+V-ID/COND
+{
+
+	u8 statusForIrCm9[] = {	0x1964040002009006010280000010C04E039010210D23CB26010000000000000000000000000000010280FCB710C04E039010210D23CB26010000000000000000000000000000};				
+	
+	// состояние кондиционера
+	u8 onOff = (opt(0) & 0x01);
+	u8 mode = (opt(0) >> 4);
+	u8 temp = (opt(1) & 0x0f);
+	u8 fan = (opt(4) & 0x03);
+	u8 van = (opt(3) >> 4);
+	
+	// массивы статусов
+	u8 sttOnOff[] = {0x00,  0x20};
+	u8 sttVan[] = {0x40, 0x48, 0x50, 0x58, 0x60, 0x68, 0x78};
+	u8 sttMode1[] = {0x38, 0x18, 0x10, 0x08, 0x20};
+	u8 sttMode2[] = {0x30, 0x36, 0x32, 0x30, 0x36};
+	
+	// установка onOff
+	statusForIrCm9[26] = sttOnOff[onOff];
+	statusForIrCm9[57] = sttOnOff[onOff];
+	
+	// установка температуры
+	if((mode == 2 || mode == 0) && temp != 0x08) {
+		setStatus(COND, {[COND.0], 0x08, [COND.2], [COND.3], [COND.4]});
+		return;
+	}
+	statusForIrCm9[28] = temp;
+	statusForIrCm9[59] = temp;
+	
+	// установка fan и van
+	statusForIrCm9[30] = fan | sttVan[van];
+	statusForIrCm9[61] = fan | sttVan[van];
+	
+	if((flagForfan == 1 && van == 0) || (flagForvan == 1 && fan == 0) ) {
+		statusForIrCm9[30] = statusForIrCm9[30] ^ 0xC0;
+		statusForIrCm9[61] = statusForIrCm9[61] ^ 0xC0;
+		if (flagForfan == 1) {flagForfan = 0;}
+		if (flagForvan == 1) {flagForvan = 0;}
+	}
+	
+	if(van == 6) {
+		flagForfan = 1;
+	}
+	if(fan == 3) {
+		flagForvan = 1;
+	}
+	
+	// установка mode1 и mode2
+	statusForIrCm9[27] = sttMode1[mode];
+	statusForIrCm9[58] = sttMode1[mode];
+	statusForIrCm9[29] = sttMode2[mode];
+	statusForIrCm9[60] = sttMode2[mode];
+	
+	// установка суммы
+	u8 sum = 0;
+	for(u8 i = 21; i < 38; ++i) {
+		sum = sum + statusForIrCm9[i];
+	}
+	statusForIrCm9[38] = sum;
+	statusForIrCm9[69] = sum;
+	
+	// отправка сигнала
+	setStatus(IRT, &statusForIrCm9);
+}

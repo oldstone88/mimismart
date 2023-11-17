@@ -1,0 +1,70 @@
+/*
+{
+      desc:"Скрипт для пульта Haier",
+      name:"Haier",
+      tag:"import-script",
+      selectArea:true,
+      addItems:[
+            {tag:"item", id:"%TARGET%", name:"NAME", "sub-id":"%SUBID%", type:"conditioner", "t-delta":"14", "t-min":"16", "modes":"0x10","funs":"0x01","vane-hor":"0x00", "vane-ver":"0x00"},
+      ],
+      vars:[
+            {name:"IRT", type:"devices-list",filter:["ir-transmitter"], required:true,  desc:"ИК-передатчик"},
+            {name:"NAME",type:"string",required:"true",min:3,max:40,desc:"Имя кондиционера",defaultValue:"Haier"},
+            {name:"COND",type:"hidden",value:"%TARGET%:%SUBID%"}
+      ]
+}
+*/
+u8 prev_stateonoff = 0;
+void OnInit(){
+      prev_stateonoff = 0;
+}
+void cmdOn(){
+      u8 on[]={0x1964020002009806010374000074515F15CB74037015FE1065363700A205000100000000A016};
+      setStatus(IRT, &on);
+}
+void cmdOff(){
+      u8 off[]={0x1964020002009906010374000074515F15CC74037015FD10653637006005000100000000A094};
+      setStatus(IRT, &off);
+}
+V-ID/COND{
+
+      u8 mas [] = {0x1964020002009906010374000074525F15CD74037015FC1065303700E2050001000000008060};
+      u8 temp = opt(1);
+      u8 onoff= opt(0)&0x01;
+
+      if(temp == 1){mas[14]=0x51;mas[17]=0xCB;mas[22]=0xFD;mas[25]=0x38;mas[36]=0x00;mas[37]=0xA8;}
+      if(temp == 2){mas[17]=0xCC;mas[25]=0x34;mas[36]=0x00;mas[37]=0xA4;}
+      if(temp == 3){mas[14]=0x4F;mas[17]=0xCC;mas[25]=0x3C;mas[28]=0x12;mas[36]=0x00;mas[37]=0x6C;}
+      if(temp == 4){mas[17]=0xCC;mas[22]=0xFB;mas[25]=0x32;mas[28]=0x12;mas[36]=0x00;mas[37]=0x62;}
+      if(temp == 5){mas[14]=0x50;mas[17]=0xCB;mas[22]=0xFD;mas[25]=0x3A;mas[28]=0x12;mas[36]=0x00;mas[37]=0x6A;}
+      if(temp == 6){mas[14]=0x51;mas[17]=0xC9;mas[25]=0x36;mas[28]=0x12;mas[36]=0x00;mas[37]=0x66;}
+      if(temp == 7){mas[14]=0x50;mas[17]=0xCB;mas[22]=0xFE;mas[25]=0x3E;mas[28]=0x12;mas[36]=0x00;mas[37]=0x6E;}
+      if(temp == 8){mas[14]=0x50;mas[17]=0xCC;mas[22]=0xFB;mas[25]=0x31;mas[28]=0x12;mas[36]=0x00;mas[37]=0x61;}
+      if(temp == 9){mas[14]=0x4F;mas[17]=0xCC;mas[22]=0xFD;mas[25]=0x39;mas[28]=0x12;mas[36]=0x00;mas[37]=0x69;}
+      if(temp == 10){mas[14]=0x50;mas[17]=0xCB;mas[22]=0xFD;mas[25]=0x35;mas[28]=0x12;mas[36]=0x00;mas[37]=0x65;}
+      if(temp == 11){mas[14]=0x50;mas[22]=0xFE;mas[25]=0x3D;mas[28]=0x12;mas[36]=0x00;mas[37]=0x6D;}
+      if(temp == 12){mas[14]=0x4F;mas[17]=0xCA;mas[25]=0x33;mas[28]=0x12;mas[36]=0x00;mas[37]=0x63;}
+      if(temp == 13){mas[14]=0x50;mas[17]=0xCC;mas[22]=0xFE;mas[25]=0x3B;mas[28]=0x12;mas[36]=0x00;mas[37]=0x6B;}
+      if(temp == 14){mas[14]=0x50;mas[17]=0xCA;mas[22]=0xFE;mas[25]=0x37;mas[28]=0x12;mas[36]=0x00;mas[37]=0x67;}
+
+
+      if(!prev_stateonoff && onoff){
+            cancelDelayedCall(cmdOn);
+            delayedCallMs(cmdOn, 50);
+            prev_stateonoff = 1;
+            return 0;
+      }
+      if(!onoff){
+            cancelDelayedCall(cmdOff);
+            delayedCallMs(cmdOff, 50);
+            prev_stateonoff = 0;
+            return 0;
+      }
+      // u8 str [150] = "";
+      // for(u8 i=0;i<46;++i){
+      //    sprintf(str + strlen(&str),"%02X", mas[i]);
+      // }
+      // srvMessage("%s", &str);
+
+      setStatus(IRT, &mas);
+}

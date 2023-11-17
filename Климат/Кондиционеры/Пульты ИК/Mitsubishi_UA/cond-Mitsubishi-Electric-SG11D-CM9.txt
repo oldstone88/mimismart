@@ -1,0 +1,72 @@
+/*
+{
+  desc:"Скрипт для пульта SG11D от кондиционера Mitsubishi Electric для CM9",
+  tag:"import-script",
+  target:"IRT",
+  selectArea:true,
+  addItems:[
+    {tag:"item", id:"%TARGET%", name:"NAME", "sub-id":"%SUBID%", type:"conditioner", "t-delta":"15", "t-min":"16", "vane-hor":"0" },
+  ],
+  vars:[
+ {name:"IRT",type:"devices-list",required:true,filter:["ir-transmitter"],desc:"ИК-передатчик"},
+ {name:"NAME",type:"string",required:true,min:3,max:40,desc:"Имя кондиционера",defaultValue:"Mitsubishi"},
+ {name:"COND",type:"hidden",value:"%TARGET%:%SUBID%"},
+  ]
+}
+*/
+
+u8 first = 0;
+u8 pt = 0;
+u8 pf = 0;
+u8 pg = 0;
+	
+const u8 fun[4] = {0x00, 0x01, 0x02, 0x04};
+const u8 modeF[4] = {0x38, 0x18, 0x10, 0x08};
+const u8 modeL[4] = {0x30, 0x36, 0x32, 0x30};
+const u8 hor[7] = {0x00, 0x08, 0x10, 0x18, 0x20, 0x28, 0x38};
+
+u8 b[70] = {0x1964040002008E06, 0x0102, 0x800000, 0x10A64E, 0x0390101D0D, 0x23CB260100201800364800000000000000CB, 0x0102, 0x80F5B7, 0x10A64E, 0x0390101D0D, 0x23CB260100201800364800000000000000CB};
+void send()
+{
+	setStatus(IRT, &b);
+}
+
+V-ID/COND
+{
+	u8 isOn = (opt(0) & 0x01);
+	u8 m = (opt(0) >> 4);
+	u8 t = (opt(1) & 0x0f);
+	u8 f = (opt(4) & 0x03);
+	u8 g = (opt(3) >> 4);
+	
+	if(((t == 0 || t == 15) && t != pt && m != 0 && m != 2) || (f == 0  && f != pf) || (g == 0 && g != pg))
+		first = 1;
+	else
+		first = 0;
+	
+	pt = t;
+	pf = f;
+	pg = g;
+	
+	b[26]=isOn?0x20:0x00;
+	b[27] = modeF[m];
+	if ((m == 0) || (m == 2))
+		t = 0x08;
+	b[28] = t;
+	b[29] = modeL[m];
+	if(first)
+		b[30] = hor[g] + 0x80 + fun[f];
+	else
+		b[30] = hor[g] + 0x40 + fun[f];
+	b[38] = 0x15 + b[26] + b[27] + b[28] + b[29] + b[30];
+	
+	b[57] = b[26];
+	b[58] = b[27];
+	b[59] = b[28];
+	b[60] = b[29];
+	b[61] = b[30];
+	b[69] = b[38];
+	
+	cancelDelayedCall(send);
+	delayedCall(send, 1);
+}

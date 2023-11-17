@@ -1,0 +1,59 @@
+/*
+{
+	desc:"Скрипт для пульта Mitsubishi RKX502A001C",
+	tag:"import-script",
+	target:"IRT",
+	addItems:[
+		{tag:"item", id:"%TARGET%", name:"NAME", "sub-id":"%SUBID%", type:"conditioner"},
+	],
+	vars:[
+		{name:"IRT",type:"devices-list",required:true,filter:["ir-transmitter"],desc:"ИК-передатчик"},
+		{name:"NAME",type:"string",required:true,min:3,max:40,desc:"Имя кондиционера",defaultValue:"Кондиционер"},
+		{name:"COND",type:"hidden",value:"%TARGET%:%SUBID%"}
+	]
+}
+*/
+
+V-ID/COND
+{
+	u8 isOn = (opt(0) & 0x01);
+	u8 m = (opt(0) >> 4);
+	u8 t = (opt(1) & 0x0f);
+	u8 f = (opt(4) & 0x03);
+	u8 g = (opt(3) & 0x0f);
+	u8 v = (opt(3) >> 4);
+
+//	u8 b[35] = {0x1864020042033306, 0x0000, 0x01000D, 0x00FF10, 0x0000, 0x04005800, 0x52AE, 0xC326, 0xD9FF, 0x00E7, 0x18E6, 0x1900}; 	// on
+	u8 b[32] = {0x1964020002008406, 0x0102, 0x790000, 0x0F224A, 0x0358, 0x0F660C52, 0xAEC3, 0x26D9, 0xFF00, 0xFF00, 0xA55A};
+	const u8 temp[13] = {0xE0, 0xD0, 0xC0, 0xB0, 0xA0, 0x90, 0x80, 0x70, 0x60, 0x50, 0x40, 0x30, 0x20}; // байт номер 31.1
+	const u8 modeOn[4] = {0x7, 0x6, 0x5, 0x3}; // байт номер 31.2
+	const u8 modeOff[4] = {0xF, 0xE, 0xD, 0xB}; // байт номер 31.2
+	const u8 fan[4] = {0x00, 0x40, 0x60, 0x80}; // байт номер 30.1
+	const u8 gor[7] = {0x04, 0x44, 0x84, 0xC4, 0x08, 0x48, 0x80}; // байт номер 28
+	const u8 ver30[7] = {0x00, 0x18, 0x00, 0x08, 0x10, 0x18, 0x10}; // байт номер 30
+	const u8 ver28[7] = {0x00, 0x00, 0x02, 0x02, 0x02, 0x02, 0x00}; // байт номер 28
+	
+	if(isOn)
+	{
+		if(m == 0)
+			b[30] = temp[6] | modeOn[m];
+		else
+			b[30] = temp[t] | modeOn[m];
+	}
+	else
+	{
+		if(m == 0)
+			b[30] = temp[6] | modeOff[m];
+		else
+			b[30] = temp[t] | modeOff[m];
+	}
+	b[31] = 0xFF - b[30];
+	
+	b[27] = (gor[g] | ver28[v]);
+	b[26] = 0xFF - b[27];
+		
+	b[29] = (fan[f] | ver30[v]);
+	b[28] = 0xFF - b[29];
+	
+	setStatus(IRT, &b);
+}

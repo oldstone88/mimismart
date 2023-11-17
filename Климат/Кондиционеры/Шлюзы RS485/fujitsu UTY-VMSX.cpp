@@ -32,6 +32,7 @@
 u8 breakpoint = 0;
 u8 write[17]={0x00, 0x10, 0x00, 0x01, 0x00, 0x04, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xCC, 0x16};
 u8 read[8]={0x00, 0x03, 0x00, 0x01, 0x00, 0x04, 0xCC, 0x16};
+//u8 read[8]={0x00, 0x04, 0x00, 0x36, 0x00, 0x01, 0xCC, 0x16};
 u8 count=0;
 
 const u16 ID [] = {
@@ -79,7 +80,7 @@ V-ID/Cond01#ifdef Cond02, Cond02#endif#ifdef Cond03, Cond03#endif#ifdef Cond04, 
           if(SID[i]==senderSubId()){
             breakpoint=1; //Останавливаем чтение
             write[0]=Addr[i]; //Адрес
-            write[8]=setmode(opt(0)); //Режим
+            write[8]=setmode(opt(0)>>4); //Режим
             write[10]=(opt(0)%2)+1; //Вкл-Выкл
             u16 temperature = (((opt(1)+18)*4)<<1)|1; //Температура
             write[11]=temperature>>8;
@@ -104,7 +105,7 @@ u8 res[100]="";
 }
 
 //Секция обратной связи
-V-ID/s:5{
+V-ID/s:1{
     if(breakpoint==0){
         if(count==0){read[0]=Address1; setStatus(RS485, &read);}
         else if(count==1){read[0]=Address2; setStatus(RS485, &read);}
@@ -115,7 +116,7 @@ V-ID/s:5{
 }
 
 V-ID/RS485{
-    //stat();
+    stat();
     if(optl==13 && opt(1)==0x03){
         u8 cond[5]={0, 0, 0, 0, 0};
         cond[0]=backmode(opt(4)); //Режим

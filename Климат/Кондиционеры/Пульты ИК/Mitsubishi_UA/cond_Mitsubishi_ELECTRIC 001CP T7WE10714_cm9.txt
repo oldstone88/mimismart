@@ -1,0 +1,56 @@
+/*
+{
+  desc:"Скрипт для пульта 001CP T7WE10714 от кондиционера Mitsubishi Electric",
+  tag:"import-script",
+  target:"IRT",
+  selectArea:true,
+  addItems:[
+    {tag:"item", id:"%TARGET%", name:"NAME", "sub-id":"%SUBID%", type:"conditioner", "t-delta":"9", "t-min":"19", "vane-hor":"0", "vane-ver":"0x7C"},
+  ],
+  vars:[
+ {name:"IRT",type:"devices-list",required:true,filter:["ir-transmitter"],desc:"ИК-передатчик"},
+ {name:"NAME",type:"string",required:true,min:3,max:40,desc:"Имя кондиционера",defaultValue:"Кондиционер"},
+ {name:"COND",type:"hidden",value:"%TARGET%:%SUBID%"}
+  ]
+}
+*/
+
+u8 old = 0;
+
+V-ID/COND
+{
+	u8 isOn = (opt(0) & 0x01);
+	u8 t = (opt(1) & 0x0f);
+	u8 m = (opt(0) >> 4);
+	u8 v = (opt(3) >> 4);
+	u8 f = (opt(4) & 0x03);
+
+	//u8 b[50] = {0x18640200450357060000, 0x01000D00, 0xFF100000, 0x04008800, 0x23CB2621, 0x0000, 0x3130, 0x0400, 0x00BF, 0xCECE, 0xFBFFFF000000};
+	u8 b[38] = {0x1964020002008A06, 0x0102, 0x7A0000, 0x10234B, 0x038810B10C, 0x23CB262100409137040000BF6EC8FBFFFF};
+		
+	const u8 temp[12] = {0x30, 0x40, 0x50, 0x60, 0x70, 0x80, 0x90, 0xA0, 0xB0, 0xC0, 0xD0, 0xE0}; // байт номер 27.1	
+	const u8 mode[5] = {0x0, 0x1, 0x5, 0x2,0x3}; // байт номер 27.2
+	const u8 vane[5] = {0x30, 0x20, 0x10, 0x00, 0xC0}; // байт номер 28.1
+	const u8 fan[4] = {0x1, 0x3, 0x5, 0x7}; // байт номер 28.2
+
+	b[26] = isOn?0x40:0x00;
+	
+	/*if(m==0)
+		b[27] = old | mode[m];
+	else
+	{*/
+		b[27] = temp[t] | mode[m];
+		old = temp[t];
+	//}
+	
+	b[28] = vane[v] | fan[f];
+
+	b[32] = 0xFF - b[26];
+	b[33] = 0xFF - b[27];
+	b[34] = 0xFF - b[28];
+	
+	setStatus(IRT, &b);
+}
+
+
+

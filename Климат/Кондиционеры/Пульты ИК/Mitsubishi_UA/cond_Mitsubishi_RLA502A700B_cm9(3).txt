@@ -1,0 +1,57 @@
+/*
+{
+  desc:"Скрипт для пульта MITSUBISHI RLA502A700B",
+  tag:"import-script",
+  target:"IRT",
+  selectArea:true,
+  addItems:[
+    {tag:"item", id:"%TARGET%", name:"NAME", "sub-id":"%SUBID%", type:"conditioner", "t-delta":"12", "t-min":"18","modes":"0x1f", "vane-hor":"0x7f", "vane-ver":"0x7f"},
+  ],
+  vars:[
+ {name:"IRT",type:"devices-list",required:true,filter:["ir-transmitter"],desc:"ИК-передатчик"},
+ {name:"NAME",type:"string",required:true,min:3,max:40,desc:"Имя кондиционера",defaultValue:"Кондиционер"},
+ {name:"COND",type:"hidden",value:"%TARGET%:%SUBID%"}
+  ]
+}
+*/
+
+u8 b[] = {0x1964020002009C0601027400000F744A03980F690C52AEC31AE5F708F807FF003FC037C8FF007F80}; //on
+u8 vaneV = 0;
+u8 vaneH = 0;
+void send() {
+	setStatus(IRT, &b);}
+
+V-ID/COND
+{
+	cancelDelayedCall(send);
+	
+	u8 isOn = (opt(0) & 0x01);
+	u8 m	= (opt(0) >> 4);
+	u8 t	= (opt(1) & 0x0f);
+	u8 f	= (opt(4) & 0x03);	
+	u8 v	= (opt(3) >> 4);
+	u8 h	= (opt(3) & 0x0f);
+	const u8 mode[] = {0xf4, 0xf6, 0xf5, 0xf3, 0xf7};
+	const u8 ver[]	= {0x30, 0xd0, 0xb0, 0x90, 0x70, 0x50, 0xf0};
+	const u8 hor[]	= {0x0e, 0x0d, 0x0c, 0x0b, 0x0a, 0x07, 0x0f};
+	
+	if(isOn == 1){
+		b[26]   = mode[m];
+		b[27]	= 0xff - b[26];
+		b[28]   = (m == 0 || m == 2)?0xf8:(0xfe - t);
+		b[29]	= 0xff - b[28];
+		b[30]   = m == 4?0xff:(0xff - f);
+		b[31]	= 0xff - b[30];
+		if(vaneV != v | vaneH != h){
+			b[32]   = ver[v] | 0x0f;
+			b[33]	= 0xff - b[32];
+			b[34]   = ver[v] | hor[h];
+			b[35]	= 0xff - b[34];
+			 vaneV = v;
+			 vaneH = h;}
+		delayedCallMs(send, 650);}
+	else{
+		b[26]   = mode[m] + 0x08;
+		b[27]	= 0xff - b[26];
+		delayedCallMs(send, 650);}
+}
