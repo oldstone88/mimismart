@@ -6,41 +6,73 @@ void sendCommand(){
 	setStatus(SRV-ID:92, command);
 }
 V-ID/COND{
-	for (i=0;i<100;i+=1){
-		command[i]=0;
+	srvMessage("exciter__id: %d", exciterId());
+	if(exciterId() != 2031){
+		for (i=0;i<100;i+=1){
+			command[i]=0;
+		}
+		strcat(command, "id=ID_ECOBEE|");
+        // strcat(custom_command, "id=ID_ECOBEE|");
+        // if(exciterId() > 2000){
+		if(opt(0)&0x01 == 1){
+			if(settings[0] != 1){
+				strcat(command, "on=1|");
+				settings[0] = 1;
+			}
+			if(1){
+				u8 str[20] = "";
+				sprintf(str, "temp=%d|", opt(1) + t_min);
+				settings[1] = opt(1);
+				strcat(command, str);
+			}
+                // srvError("opt(0): %02x", opt(0)&0xf0);
+                // srvError("settings[2]: %02x", settings[2]);
+			if(settings[2] != (opt(0)&0xf0)){
+
+				u8 str2[20] = "";
+                        //srvError("Test");
+                        // if(settings[2] != (opt(0)&0xf0)){
+                        //      if((opt(0)&0xf0) == 0x00){
+                        //              setStatus(COND, {(opt(0)&0xf0) | 0x01, 10 + t_min});
+                        //              u8 tmp_str_1[20] = "";
+                        //              sprintf(tmp_str_1, "set24=1|mode=%d", opt(0)&0xf0);
+                        //              strcat(command, tmp_str_1);
+                        //      }
+                        //      if((opt(0)&0xf0) == 0x10){
+                        //              setStatus(COND, {(opt(0)&0xf0) | 0x01, 10 + t_min});
+                        //              u8 tmp_str_2[20] = "";
+                        //              sprintf(tmp_str_2, "set24=1|mode=%d", opt(0)&0xf0);
+                        //              strcat(command, tmp_str_2);
+                        //      }
+                        //      if((opt(0)&0xf0) == 0x20){
+                        //              setStatus(COND, {(opt(0)&0xf0) | 0x01, 10 + t_min});
+                        //              u8 tmp_str_3[20] = "";
+                        //              sprintf(tmp_str_3, "set24=1|mode=%d", opt(0)&0xf0);
+                        //              strcat(custom_command, tmp_str_3);
+                        //      }
+                        //      cancelDelayedCall(sendCustomCommand);
+                        //      delayedCall(sendCustomCommand, 2);
+                        //      return 0;
+                        // }
+				sprintf(str2, "mode=%d|", opt(0)&0xf0);
+				settings[2] = opt(0)&0xf0;
+				strcat(command, str2);
+
+			}
+			u8 str3[30] = "";
+                //srvError("Test");
+			sprintf(str3, "mode_now=%d|", opt(0)&0xf0);
+                // settings[2] = opt(0)&0xf0;
+			strcat(command, str3);
+		}
+		else{
+			if(settings[0] != 0){
+				strcat(command, "on=0|");
+				settings[0] = 0;
+			}
+		}
+		cancelDelayedCall(sendCommand);
+		delayedCall(sendCommand, 2);
+        // }
 	}
-	strcat(command, "id=ID_ECOBEE|");
-	if(opt(0)&0x01 == 1){
-		if(settings[0] != 1){
-			strcat(command, "on=1|");
-			settings[0] = 1;
-		}
-		if(1){
-			u8 str[20] = "";
-			sprintf(str, "temp=%d|", opt(1) + t_min);
-			settings[1] = opt(1);
-			strcat(command, str);
-		}
-		if(settings[2] != (opt(0)&0xf0)){
-			u8 str2[20] = "";
-			sprintf(str2, "mode=%d|", opt(0)&0xf0);
-			settings[2] = opt(0)&0xf0;
-			strcat(command, str2);
-			
-		}
-		u8 str3[30] = "";
-		//srvError("Test");
-		sprintf(str3, "mode_now=%d|", opt(0)&0xf0);
-		// settings[2] = opt(0)&0xf0;
-		strcat(command, str3);
-	}
-	else{
-		if(settings[0] != 0){
-			strcat(command, "on=0|");
-			settings[0] = 0;	
-		}
-	}
-	cancelDelayedCall(sendCommand);
-	delayedCall(sendCommand, 2);
-	// }
 }

@@ -66,7 +66,7 @@ if($argv[1] == "feedback"){
 			$shClient->setDeviceStateByAddr($elementSH, $state_to_cond);
 			echo "\n3\n";
 		}
-		sleep(2);
+		usleep(20000);
 		
 		// $state = $controller->getDeviceState($elementSH);
 		// $controller->debug($state);
@@ -99,6 +99,7 @@ class OAuth
 	private $client_id;
 	public $timestamp_update_accesToken;
 	public function RefreshToken(){
+		global $CONFIG_FILE;
 		$curl = curl_init();
 		curl_setopt_array($curl, array(
 		  CURLOPT_URL => 'https://api.ecobee.com/token?grant_type=refresh_token&code='.$this->refresh_token.'&client_id='.$this->client_id,
@@ -119,15 +120,16 @@ class OAuth
 		//echo $response;
 		$this->access_token = $response_decoded['access_token'];
 		$this->timestamp_update_accesToken = time();
-		$a = file_get_contents("config.json");
+		$a = file_get_contents($CONFIG_FILE);
 		$config = json_decode($a, true);
 		$config['accessToken'] = $this->access_token;
 		$config['timestamp_update_accesToken'] = $this->timestamp_update_accesToken;
-		file_put_contents("config.json", json_encode($config, JSON_PRETTY_PRINT));
+		file_put_contents($CONFIG_FILE, json_encode($config, JSON_PRETTY_PRINT));
 		return $this->access_token;
 	}
 	function __construct() {
-		$a  =  file_get_contents("config.json");
+		global $CONFIG_FILE;
+		$a  =  file_get_contents($CONFIG_FILE);
 		$config = json_decode($a, true); 
 		// var_dump($a);
 		// var_dump($config);
@@ -154,7 +156,7 @@ class Ecobee extends OAuth
     {
     	$curl = curl_init();
     	curl_setopt_array($curl, array(
-		  CURLOPT_URL => 'https://api.ecobee.com/1/thermostat?format=json&body={%22selection%22%3A{%22selectionType%22%3A%22registered%22%2C%22selectionMatch%22%3A%22%22%2C%22includeRuntime%22%3Atrue}}',
+		  CURLOPT_URL => 'https://api.ecobee.com/1/thermostat?format=json&body={%22selection%22%3A{%22selectionType%22%3A%22registered%22%2C%22selectionMatch%22%3A%22%22%2C%22includeRuntime%22%3Atrue%2C%22includeSettings%22%3Atrue}}',
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => '',
 		  CURLOPT_MAXREDIRS => 10,
@@ -192,6 +194,7 @@ class Ecobee extends OAuth
     function FahrenheitToCelsius($Fa_value){
     	$Fa_value = $Fa_value / 10;
     	$celsius = round(($Fa_value- 32) * 5 / 9, 0);
+
     	return $celsius;
     }
     function CelsiusToFahrenheit($celsius){
@@ -213,73 +216,13 @@ class Ecobee extends OAuth
 			"type":"setHold",
 			"params":{
 			"coolHoldTemp":'.$currentTempSettings['desiredCool'].',
-			"heatHoldTemp":'.$this->CelsiusToFahrenheit($temperature_celsius).',
+			"heatHoldTemp":'.$temperature_celsius.',
 			"holdType":"nextTransition"
 			}
 			}
 			]
 			}';
 		}
-		if($mode == 'auto'){
-			$request = '{
-			"selection":{
-			"selectionType":"thermostats",
-			"selectionMatch":"'.$conder_id.'"
-			},
-			"functions":[
-			{
-			"type":"setHold",
-			"params":{
-			"coolHoldTemp":'.$this->CelsiusToFahrenheit($temperature_celsius + 2).',
-			"heatHoldTemp":'.$this->CelsiusToFahrenheit($temperature_celsius - 2).',
-			"holdType":"nextTransition"
-			}
-			}
-			]
-			}';
-		}
-		if($mode == 'cool'){
-			$request = '{
-			"selection":{
-			"selectionType":"thermostats",
-			"selectionMatch":"'.$conder_id.'"
-			},
-			"functions":[
-			{
-			"type":"setHold",
-			"params":{
-			"coolHoldTemp":'.$this->CelsiusToFahrenheit($temperature_celsius).',
-			"heatHoldTemp":'.$currentTempSettings['desiredHeat'].',
-			"holdType":"nextTransition"
-			}
-			}
-			]
-			}';
-		}
-		curl_setopt_array($curl, array(
-		  CURLOPT_URL => 'https://api.ecobee.com/1/thermostat?format=json',
-		  CURLOPT_RETURNTRANSFER => true,
-		  CURLOPT_ENCODING => '',
-		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 0,
-		  CURLOPT_FOLLOWLOCATION => true,
-		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		  CURLOPT_CUSTOMREQUEST => 'POST',
-		  CURLOPT_POSTFIELDS =>$request,
-		  CURLOPT_HTTPHEADER => array(
-		    'Authorization: Bearer '.$this->access_token,
-		    'Content-Type: application/json',
-		    'Cookie: did=s%3Av0%3A6f4a1900-4c91-11ee-ad5d-b58ec604f8e5.9IZX%2B0ss5eI0RRIeNxBPCwx4UtwfpLig1fjdivMIv6A; did_compat=s%3Av0%3A6f4a1900-4c91-11ee-ad5d-b58ec604f8e5.9IZX%2B0ss5eI0RRIeNxBPCwx4UtwfpLig1fjdivMIv6A'
-		  ),
-		));
-
-		$response = curl_exec($curl);
-		curl_close($curl);
-		echo $response;
-    }
-    function setMode($conder_id, $mode){
-    	$curl = curl_init();
-
 		curl_setopt_array($curl, array(
 		  CURLOPT_URL => 'https://api.ecobee.com/1/thermostat?format=json',
 		  CURLOPT_RETURNTRANSFER => true,
@@ -290,18 +233,23 @@ class Ecobee extends OAuth
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => 'POST',
 		  CURLOPT_POSTFIELDS =>'{
-		  "selection": {
-		    "selectionType":"thermostats",
-		    "selectionMatch":"'.$conder_id.'"
-		  },
-		  "thermostat": {
-		    "settings":{
-		      "hvacMode":"'.$mode.'"
-		    }
-		  }
-		} ',
+			"selection":{
+			"selectionType":"thermostats",
+			"selectionMatch":"'.$conder_id.'"
+			},
+			"functions":[
+			{
+			"type":"setHold",
+			"params":{
+			"coolHoldTemp":770,
+			"heatHoldTemp":788,
+			"holdType":"nextTransition"
+			}
+			}
+			]
+			}',
 		  CURLOPT_HTTPHEADER => array(
-		    'Authorization: Bearer '.$this->access_token,
+		    'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlJFWXhNVEpDT0Rnek9UaERRelJHTkRCRlFqZEdNVGxETnpaR1JUZzRNalEwTmtWR01UQkdPQSJ9.eyJpc3MiOiJodHRwczovL2F1dGguZWNvYmVlLmNvbS8iLCJzdWIiOiJhdXRoMHw3MmQzYTdlMC01YWI4LTRlZjgtYTNiOC1mYzhlMmY0YzU0ODMiLCJhdWQiOlsiaHR0cHM6Ly9kZXZlbG9wZXItYXBwcy5lY29iZWUuY29tL2FwaS92MSIsImh0dHBzOi8vZWNvYmVlLXByb2QuYXV0aDAuY29tL3VzZXJpbmZvIl0sImlhdCI6MTY5NDI0NjQyOCwiZXhwIjoxNjk0MjUwMDI4LCJhenAiOiIzUlZDbXgzZTY1bGRPSjNSQzRvVml5bGlrM2xPREQ4eSIsInNjb3BlIjoib3BlbmlkIHNtYXJ0V3JpdGUgb2ZmbGluZV9hY2Nlc3MifQ.XL4q_ZjRIxY1V8crtykLT-O-osQKVBg_AXFm5-aczlmeWBFPptdGaiC5-udukq2bG1CwxpE0h9vwHqsRogg_31USS2ts5kVdDS1_3Db3qeEFtMlu8b3bQ0pMnF9ZpH4p0Q-X5ikGe8tDHmrYb8V9AafGuhuvPeLlOS3FCo8sYr6KUnd8gbCvpYHqmIf-As5wJ7YAnPPMvg6PqWEGckuHiZe5G-mC7P6WzWr5t5vxMHvxaN_DOUNp7tYTEQxCqSEEnpDpSaiBuTCHNEsDtZ7-PKAKSxgkTmMI8gIhj5Gx71haPWAPI_0Vv9l15puwYLy2xsCD2sxvCPQwZpWh67IU_g',
 		    'Content-Type: application/json',
 		    'Cookie: did=s%3Av0%3A6f4a1900-4c91-11ee-ad5d-b58ec604f8e5.9IZX%2B0ss5eI0RRIeNxBPCwx4UtwfpLig1fjdivMIv6A; did_compat=s%3Av0%3A6f4a1900-4c91-11ee-ad5d-b58ec604f8e5.9IZX%2B0ss5eI0RRIeNxBPCwx4UtwfpLig1fjdivMIv6A'
 		  ),
@@ -311,6 +259,7 @@ class Ecobee extends OAuth
 
 		curl_close($curl);
 		echo $response;
+
     }
 }
 class Device {

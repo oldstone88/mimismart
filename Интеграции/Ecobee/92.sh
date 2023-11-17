@@ -4,18 +4,43 @@ include_once "/home/sh2/exe/ecobee/settings.php";
 $CONFIG_FILE = "/home/sh2/exe/ecobee/config.json";
 
 
+// $controller = new Device($globalSettings);
+// //$controller->setDeviceState("771:8");
+// $state = $controller->getDeviceState("132:105");
+// $controller->debug($state);
+
+// $authorize = new OAuth();
+// $authorize->RefreshToken();
 $ecobee=new Ecobee();
 $t_min=7;
 
+//$temp_settings = $ecobee->getTemperatureSettings("521797890620");
+//var_dump($temp_settings);
 
 $shClient = new SHClient();
 $p = $shClient->getDataFromConsole();
 $p = $p['params'];
+var_dump($p);
+// if(isset($p['set24'])){
+// 	if($p['set24'] == 1){
+
+// 		$current_mode = "";
+// 		if(isset($p['mode'])) {
+// 			if($p['mode'] == "16") $current_mode = 'heat';
+// 			if($p['mode'] == "32") $current_mode = 'auto';
+// 			if($p['mode'] == "0") $current_mode = 'cool';
+// 		}
+// 		$ecobee->setMode($p['id'], $current_mode);
+// 		sleep(1);
+// 		$temp_settings = $ecobee->getTemperatureSettings($p['id']);
+// 		$ecobee->setTemperature($p['id'], 24, $current_mode, $temp_settings);
+// 	}
+// }
 if(isset($p['on'])){
 	if($p['on'] == 0){
 		$ecobee->setMode($p['id'], "off");
 	}
-	if($p['on'] == 1){
+	/*if($p['on'] == 1){
 		$current_mode = "";
 		if(isset($p['mode_now'])) {
 			if($p['mode_now'] == "16") $current_mode = 'heat';
@@ -23,7 +48,7 @@ if(isset($p['on'])){
 			if($p['mode_now'] == "0") $current_mode = 'cool';
 		}
 		$ecobee->setMode($p['id'], $current_mode);
-	}
+	}*/
 }
 if(isset($p['mode'])){
 	// 16 = нагрев
@@ -151,7 +176,7 @@ class Ecobee extends OAuth
     }
     function FahrenheitToCelsius($Fa_value){
     	$Fa_value = $Fa_value / 10;
-    	$celsius = round(($Fa_value- 32) * 5 / 9, 0);
+    	$celsius = ($Fa_value- 320) * 5 / 90;
     	return $celsius;
     }
     function CelsiusToFahrenheit($celsius){
@@ -389,7 +414,10 @@ class Device {
 					}
 				}
 			}
+
 		}
+		
 	}
+
 }
 ?>
