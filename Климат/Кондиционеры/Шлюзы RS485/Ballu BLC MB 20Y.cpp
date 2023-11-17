@@ -61,19 +61,34 @@ const u8 Addr [] = {
 //------------------------------------------
 
 void setmode (u8 rezhim){
-    if (rezhim==0) rezhim=6; return rezhim; //Обдув
-    if (rezhim==1) rezhim=1; return rezhim; //Охлаждение
-    if (rezhim==2) rezhim=2; return rezhim; //Сушка
-    if (rezhim==3) rezhim=3; return rezhim; //Обогрев
-    if (rezhim==4) rezhim=0; return rezhim; //Авто
+    if (rezhim==0) {rezhim=6; return rezhim;} //Обдув
+    if (rezhim==1) {rezhim=1; return rezhim;} //Охлаждение
+    if (rezhim==2) {rezhim=2; return rezhim;} //Сушка
+    if (rezhim==3) {rezhim=4; return rezhim;} //Обогрев
+    if (rezhim==4) {rezhim=0; return rezhim;} //Авто
 }
 
 void backmode (u8 rezhim){
-    if (rezhim==6) rezhim=0; return rezhim; //Обдув
-    if (rezhim==1) rezhim=1; return rezhim; //Охлаждение
-    if (rezhim==2) rezhim=2; return rezhim; //Сушка
-    if (rezhim==3) rezhim=3; return rezhim; //Обогрев
-    if (rezhim==0) rezhim=4; return rezhim; //Авто
+    if (rezhim==6) {rezhim=0;} //Обдув
+    else if (rezhim==1) {rezhim=1;} //Охлаждение
+    else if (rezhim==2) {rezhim=2;} //Сушка
+    else if (rezhim==4) {rezhim=3;} //Обогрев
+    else if (rezhim==0) {rezhim=4;} //Авто
+    return rezhim;
+}
+
+void speedToRS(u8 speed){
+    if (speed==1) {speed=3; return speed;}
+    if (speed==2) {speed=2; return speed;}
+    if (speed==3) {speed=1; return speed;}
+    if (speed==0) {speed=5; return speed;}
+}
+
+void rsToSpeed(u8 speed){
+    if (speed==3) {speed=1; return speed;}
+    if (speed==2) {speed=2; return speed;}
+    if (speed==1) {speed=3; return speed;}
+    if (speed==5) {speed=0; return speed;}
 }
 
 u16 NeedSend = 0;
@@ -109,14 +124,14 @@ void send(){
                 writehold[10]=temperature;
                 // srvError("Регистр 9 = %x, регистр 10 = %x", writehold[9], writehold[10]);
                 writehold[8]=setmode(state[0]>>4); // Режим
-                writehold[12]=state[4] ? state[4] : 5; // Скорость
+                writehold[12]=speedToRS(state[4]); // Скорость
                 delayedCallMs(slavesend, 250);
                 NeedSend -= 1<<i;
                 if(NeedSend) delayedCall(send, 1);
                 else {cancelDelayedCall(stopwrite); delayedCall(stopwrite, 5);}
-        	}
-    	}
-	}
+            }
+        }
+    }
 }
 
 V-ID/Cond01, Cond02, Cond03, Cond04{
@@ -163,7 +178,7 @@ V-ID/s:5{
 }
 
 V-ID/RS485{
-    // stat();
+    //stat();
     if(optl==11 && opt(1)==0x03){
         u8 cond[5]={0, 0, 0, 0, 0};
         // Считываем состояние
@@ -172,11 +187,10 @@ V-ID/RS485{
         else if (opt(0)==Addr[2]) getStatus(Cond03, cond);
         else if (opt(0)==Addr[3]) getStatus(Cond04, cond);
         // Обратная связь
-        cond[0]=cond[0]|(backmode(opt(4))<<4); //Режим
+        cond[0]=(cond[0]&1)|(backmode(opt(4))<<4); //Режим
         u16 temperature=((opt(5)<<8)|(opt(6)))/10-16;
         if(temperature<=16) cond[1]=temperature; // Температура + Проверка что не случилось переполнение
-        cond[4]=opt(8);
-        if(cond[4]==5) cond[4]=0; // Скорость
+        cond[4]=rsToSpeed(opt(8)); // Скорость
         // Распределение уставки по блокам
         if(opt(0)==Addr[0]){setStatus(Cond01, &cond);}
         else if(opt(0)==Addr[1]){setStatus(Cond02, &cond);}
@@ -192,7 +206,7 @@ V-ID/RS485{
         else if(opt(0)==Addr[2]) getStatus(Cond03, &cond);
         else if(opt(0)==Addr[3]) getStatus(Cond04, &cond);
         if (OnOff){
-        	cond[0]=cond[0]|1;
+            cond[0]=cond[0]|1;
         } else{
             cond[0]=cond[0]&0xFE;
         }
