@@ -1,0 +1,69 @@
+// <area name="NEST" system="yes">
+// 		<item name="NEST" addr="135:250" modes="0x1A" t-min="16" type="conditioner" vane-hor="0" vane-ver="0" funs="0"/>
+// 		<import-script Cond="135:250" addr="135:249" path="scripts/nest-script.txt" tmin="16"/>
+// 		<item addr="135:248" sub-type="long-text" type="virtual" length="0"/>
+// 	</area>
+
+
+u8 mode=0;
+u8 temp=0;
+
+u8 send(){
+    // srvMessage('send func');
+    u8 strForMess[70];
+    if(!mode){
+        sprintf(strForMess, "--addr=Cond --mode=COOL --cool-temp=%d --t-min=tmin", temp);
+
+        // srvMessage(&strForMess);
+        setStatus(SRV-ID:99,&strForMess);
+        strForMess="";
+    }
+    else if(mode==1){
+        sprintf(strForMess, "--addr=Cond --mode=HEAT --heat-temp=%d --t-min=tmin", temp);
+//        srvMessage(&strForMess);
+        setStatus(SRV-ID:99,&strForMess);
+        strForMess="";
+    }
+    else{
+        setStatus(SRV-ID:99,"--addr=Cond --mode=OFF");
+        // setStatus(SRV-ID:99,"--addr=Cond --mode=HEATCOOL --set-range=24,28 --t-min=tmin");
+    }
+}
+
+void onInit(){
+    u8 buf [6];
+    getStatus(Cond, &buf);
+    if(!(buf[0]&1)){
+        mode = 255; //off
+    }
+    else{
+        mode = buf[0]>>4;
+        temp = buf[1]+16;
+    }
+    send();
+}
+
+V-ID/Cond{
+    //exclude shclient`s events
+    if(exciterId()!=2031){
+
+        if(!(opt(0)&1)){
+            mode = 255; //off
+        }
+        else{
+            mode = opt(0)>>4;
+            temp = opt(1)+16;
+        }
+        cancelDelayedCall(send);
+        delayedCallMs(send, 1000);
+    }
+    // srvMessage('cond event');
+}
+
+// V-ID/Cool{
+//     setStatus(SRV-ID:99,"--mode=COOL --cool-temp=24");
+// }
+
+// V-ID/Heat{
+//     setStatus(SRV-ID:99,"--mode=HEAT --heat-temp=20");
+// }

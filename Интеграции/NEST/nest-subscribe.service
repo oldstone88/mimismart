@@ -1,0 +1,15 @@
+[Unit]
+
+Description=Subscribe for NEST-thermostate events
+
+After=multi-user.target
+
+[Service]
+
+Type=idle
+Nice=1
+ExecStart=/home/sh2/exe/nest/subscribe.php
+
+[Install]
+
+WantedBy=multi-user.target
