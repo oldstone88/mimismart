@@ -5,10 +5,10 @@
   target:"RS485",
   selectArea:true,
   addItems:[
-        {tag:"item", id:"%TARGET%", name:"NAME1", "sub-id":"%SUBID01%", "type":"conditioner", "t-min":"16", "t-delta":"14", "vane-ver":"0x00", "vane-hor":"0x00", "funs":"0x0F"},
-        {tag:"item", id:"%TARGET%", name:"NAME2", "sub-id":"%SUBID02%", "type":"conditioner", "t-min":"16", "t-delta":"14", "vane-ver":"0x00", "vane-hor":"0x00", "funs":"0x0F"},
-        {tag:"item", id:"%TARGET%", name:"NAME3", "sub-id":"%SUBID03%", "type":"conditioner", "t-min":"16", "t-delta":"14", "vane-ver":"0x00", "vane-hor":"0x00", "funs":"0x0F"},
-        {tag:"item", id:"%TARGET%", name:"NAME4", "sub-id":"%SUBID04%", "type":"conditioner", "t-min":"16", "t-delta":"14", "vane-ver":"0x00", "vane-hor":"0x00", "funs":"0x0F"}
+        {tag:"item", id:"%TARGET%", name:"NAME1", "sub-id":"%SUBID01%", "type":"conditioner", "t-min":"16", "t-delta":"14", "vane-ver":"0x00", "vane-hor":"0x00", "funs":"0x0F", "modes":"0x1F"},
+        {tag:"item", id:"%TARGET%", name:"NAME2", "sub-id":"%SUBID02%", "type":"conditioner", "t-min":"16", "t-delta":"14", "vane-ver":"0x00", "vane-hor":"0x00", "funs":"0x0F", "modes":"0x1F"},
+        {tag:"item", id:"%TARGET%", name:"NAME3", "sub-id":"%SUBID03%", "type":"conditioner", "t-min":"16", "t-delta":"14", "vane-ver":"0x00", "vane-hor":"0x00", "funs":"0x0F", "modes":"0x1F"},
+        {tag:"item", id:"%TARGET%", name:"NAME4", "sub-id":"%SUBID04%", "type":"conditioner", "t-min":"16", "t-delta":"14", "vane-ver":"0x00", "vane-hor":"0x00", "funs":"0x0F", "modes":"0x1F"}
   ],
   vars:[
         {name:"RS485",type:"devices-list",required:true,filter:["com-port"],desc:"RS485"},
@@ -167,7 +167,7 @@ V-ID/s:5{
 }
 
 V-ID/RS485{
-    //stat();
+    stat();
     if(optl==11 && opt(1)==0x03){
         u8 cond[5]={0, 0, 0, 0, 0};
         cond[0]|=backmode(opt(6))<<4; //Режим
@@ -185,9 +185,9 @@ V-ID/RS485{
     else if(optl==6 && opt(1)==0x01){
         u8 OnOff=opt(3);
         u8 cond[5]={0, 0, 0, 0, 0};
-        if(opt(0)==1){getStatus(Cond01, &cond); cond[0]|=OnOff; setStatus(Cond01, &cond);}
-        else if(opt(0)==2){getStatus(Cond02, &cond); cond[0]|=OnOff; setStatus(Cond02, &cond);}
-        else if(opt(0)==3){getStatus(Cond03, &cond); cond[0]|=OnOff; setStatus(Cond03, &cond);}
-        else if(opt(0)==4){getStatus(Cond04, &cond); cond[0]|=OnOff; setStatus(Cond04, &cond);}
+        if(opt(0)==Address1){getStatus(Cond01, &cond); cond[0]|=OnOff; setStatus(Cond01, &cond);}
+        else if(opt(0)==Address2){getStatus(Cond02, &cond); cond[0]|=OnOff; setStatus(Cond02, &cond);}
+        else if(opt(0)==Address3){getStatus(Cond03, &cond); cond[0]|=OnOff; setStatus(Cond03, &cond);}
+        else if(opt(0)==Address4){getStatus(Cond04, &cond); cond[0]|=OnOff; setStatus(Cond04, &cond);}
     }
 }
