@@ -31,10 +31,8 @@
 
 u8 numberidset=0;
 
-V-ID/ms:150
-{
-    if(numberidset==0)
-    {
+V-ID/ms:150{
+    if(numberidset==0){
     //Уставка диммеров
         u8 data[33]={ID1, 0x10, 0x00, 0x28, 0x00, 0x0C, 0x18, //6
         0x00, [DIMMER01.0]&1, 0x00, [DIMMER01.1], 0x00, 0x01, //12
@@ -46,8 +44,7 @@ V-ID/ms:150
         ++numberidset;
         return;
     } else
-    if(numberidset==1)
-    {
+    if(numberidset==1){
     //Уставка диммеров
         u8 data[33]={ID2, 0x10, 0x00, 0x28, 0x00, 0x0C, 0x18, //6
         0x00, [DIMMER05.0]&1, 0x00, [DIMMER05.1], 0x00, 0x01, //12
@@ -59,8 +56,7 @@ V-ID/ms:150
         ++numberidset;
         return;
     } else
-    if(numberidset==2)
-    {
+    if(numberidset==2){
     //Уставка диммеров
         u8 data[33]={ID3, 0x10, 0x00, 0x28, 0x00, 0x0C, 0x18, //6
         0x00, [DIMMER09.0]&1, 0x00, [DIMMER09.1], 0x00, 0x01, //12
@@ -72,8 +68,7 @@ V-ID/ms:150
         ++numberidset;
         return;
     } else
-    if(numberidset==3)
-    {
+    if(numberidset==3){
     //Уставка диммеров
         u8 data[33]={ID4, 0x10, 0x00, 0x28, 0x00, 0x0C, 0x18, //6
         0x00, [DIMMER13.0]&1, 0x00, [DIMMER13.1], 0x00, 0x01, //12
@@ -88,8 +83,7 @@ V-ID/ms:150
 }
 
 //Вывода в лог
-void stat()
-{
+void stat(){
 u8 res[100]="";
         u8 *st = opt;
         u8 i = 0;
@@ -101,7 +95,6 @@ u8 res[100]="";
         srvError(&res);
 }
 
-V-ID/RS485
-{
-    //stat();
+V-ID/RS485{
+    #ifdef DEBUG stat(); #ednif
 }
