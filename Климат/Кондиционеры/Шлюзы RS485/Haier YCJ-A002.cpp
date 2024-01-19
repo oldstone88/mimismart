@@ -60,19 +60,19 @@ const u8 Addr [] = {
 //------------------------------------------
 
 void setmode (u8 rezhim){
-    if (rezhim==0) rezhim=4; return rezhim; //Обдув
-    if (rezhim==1) rezhim=1; return rezhim; //Охлаждение
-    if (rezhim==2) rezhim=3; return rezhim; //Сушка
-    if (rezhim==3) rezhim=2; return rezhim; //Обогрев
-    if (rezhim==4) rezhim=5; return rezhim; //Авто
+    if (rezhim==0) {rezhim=4; return rezhim;} //Обдув
+    if (rezhim==1) {rezhim=1; return rezhim;} //Охлаждение
+    if (rezhim==2) {rezhim=3; return rezhim;} //Сушка
+    if (rezhim==3) {rezhim=2; return rezhim;} //Обогрев
+    if (rezhim==4) {rezhim=5; return rezhim;} //Авто
 }
 
 void backmode (u8 rezhim){
-    if (rezhim==4) rezhim=0; return rezhim; //Обдув
-    if (rezhim==1) rezhim=1; return rezhim; //Охлаждение
-    if (rezhim==3) rezhim=2; return rezhim; //Сушка
-    if (rezhim==2) rezhim=3; return rezhim; //Обогрев
-    if (rezhim==5) rezhim=4; return rezhim; //Авто
+    if (rezhim==4) {rezhim=0; return rezhim;} //Обдув
+    if (rezhim==1) {rezhim=1; return rezhim;} //Охлаждение
+    if (rezhim==3) {rezhim=2; return rezhim;} //Сушка
+    if (rezhim==2) {rezhim=3; return rezhim;} //Обогрев
+    if (rezhim==5) {rezhim=4; return rezhim;} //Авто
 }
 
 u16 NeedSend = 0;
