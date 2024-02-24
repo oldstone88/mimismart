@@ -8,14 +8,14 @@ cp 99.sh /home/sh2/exe/
 cp nest-script /home/sh2/scripts/
 
 logic.xml пример:
-<area name="nest">
+'''<area name="nest">
 		<item addr="114:101" funs="0" modes="0x1A" name="NEST" t-min="16" type="conditioner" vane-hor="0" vane-ver="0"/>
 		<item addr="114:102" funs="0" modes="0x1A" name="NEST" t-min="16" type="conditioner" vane-hor="0" vane-ver="0"/>
 		<item addr="114:103" funs="0" modes="0x1A" name="NEST" t-min="16" type="conditioner" vane-hor="0" vane-ver="0"/>
 		<import-script Cond="114:101" addr="114:231" path="scripts/nest-script.txt" tmin="16" ID="0"/>
 		<import-script Cond="114:102" addr="114:232" path="scripts/nest-script.txt" tmin="16" ID="1"/>
 		<import-script Cond="114:103" addr="114:233" path="scripts/nest-script.txt" tmin="16" ID="2"/>
-</area>
+</area>'''
 
 заполняем конфиг config.json своими данными, данные по токенам получать по инструкции: https://developers.google.com/nest/device-access/api/authorization#oauth_flow
 https://developers.google.com/nest/device-access/authorize?hl=ru
