@@ -5,9 +5,14 @@
     "refresh_token": "",
     "client_secret": "",
     "devices": {
-        "AVPHwEsFxSzrx9TrN8lQZn7rlDqsaA_ydDLhoopUKuB6X0cR2d1VFCkHU4s1vEOMFx_oqT7s5UBYCXP3UNlGI_6-vuMgHw4": "114:101",
-        "AVPHwEseW_7Q3VuuAQ5LgOQ8zRmRuOvpOjp8VRSgOGHRIIrlDCvITLQmorYKPZIG8ThP8tNWDdArTTExHqGghDHrXbj-atw": "114:102",
-        "AVPHwEub0wGKisr1TjJ_i7nbQgtHu8IQ_1UWUvNSgwXg-W8jeDpVWliogoQ06jzVrY0dgOPaHQWdL_ggII7pFn4PxEw6Vg8": "114:103"
+        "AVPHw": "114:101",
+        "AVPHw": "114:102",
+        "AVPHw": "114:103"
+    },
+    "temp_sensors": {
+        "AVPHw": "517:210",
+        "AVPHw": "517:209",
+        "AVPHw": "517:208"
     },
     "server_port": 55555,
     "mimi_key": "1234567890123456"

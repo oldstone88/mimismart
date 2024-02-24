@@ -8,6 +8,8 @@ After=multi-user.target
 
 Type=idle
 Nice=1
+Restart=on-failure
+RestartSec=5s
 ExecStart=/home/sh2/exe/nest/subscribe.php
 
 [Install]
