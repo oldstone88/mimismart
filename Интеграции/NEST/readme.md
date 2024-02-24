@@ -6,7 +6,7 @@
 ```
 cp -r nest /home/sh2/exe/
 cp 99.sh /home/sh2/exe/
-cp nest-script /home/sh2/scripts/]
+cp nest-script /home/sh2/scripts/
 ```
 
 logic.xml пример:
@@ -22,6 +22,7 @@ logic.xml пример:
 ```
 
 заполняем конфиг config.json своими данными, данные по токенам получать по инструкции: https://developers.google.com/nest/device-access/api/authorization#oauth_flow
+
 https://developers.google.com/nest/device-access/authorize?hl=ru
 
 идентификаторы термостатов можно увидеть отправив запрос (укажите свои access token и project-id)
