@@ -1,5 +1,5 @@
-Для управления AC3 закинуть скрипт в /home/sh2/exe/
-Примеры работы:
-setStatus(1000:95, {"192.168.1.126|httpapi.asp?command=playPromptUrl:http://192.168.1.125/sirena.mp3|"}); - Будет проигран файл sirena.mp3
-setStatus(1000:95, {"192.168.1.126|httpapi.asp?command=setPlayerCmd:stop|"}); - остановить воспроизведение
-setStatus(1000:95, {"192.168.1.126|httpapi.asp?command=setPlayerCmd:play:<url>|"}); - проииграется <url> (вместо него нужно вставить ссылку)
+Р”Р»СЏ СѓРїСЂР°РІР»РµРЅРёСЏ AC3 Р·Р°РєРёРЅСѓС‚СЊ СЃРєСЂРёРїС‚ РІ /home/sh2/exe/
+РџСЂРёРјРµСЂС‹ СЂР°Р±РѕС‚С‹:
+setStatus(1000:96, {"192.168.1.126|httpapi.asp?command=playPromptUrl:http://192.168.1.125/sirena.mp3|"}); - Р‘СѓРґРµС‚ РїСЂРѕРёРіСЂР°РЅ С„Р°Р№Р» sirena.mp3
+setStatus(1000:96, {"192.168.1.126|httpapi.asp?command=setPlayerCmd:stop|"}); - РѕСЃС‚Р°РЅРѕРІРёС‚СЊ РІРѕСЃРїСЂРѕРёР·РІРµРґРµРЅРёРµ
+setStatus(1000:96, {"192.168.1.126|httpapi.asp?command=setPlayerCmd:play:<url>|"}); - РїСЂРѕРёРёРіСЂР°РµС‚СЃСЏ <url> (РІРјРµСЃС‚Рѕ РЅРµРіРѕ РЅСѓР¶РЅРѕ РІСЃС‚Р°РІРёС‚СЊ СЃСЃС‹Р»РєСѓ)
