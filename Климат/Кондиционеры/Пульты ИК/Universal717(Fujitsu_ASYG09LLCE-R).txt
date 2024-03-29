@@ -1,0 +1,34 @@
+/*
+{
+	desc:"Скрипт к пульту Fujitsu",
+	tag:"import-script",
+	target:"IRT",
+	selectArea:true,
+	addItems:[
+		{tag:"item", id:"%TARGET%", name:"NAME", "sub-id":"%SUBID%", type:"conditioner", "vane-hor":"0", "vane-ver":"0x41", "t-delta":"12", "t-min":"18"},
+	],
+	vars:[
+		{name:"IRT", type:"devices-list", required:true, filter:["ir-transmitter"], desc:"ИК-передатчик"},
+		{name:"NAME",type:"string",required:true,min:3,max:40,desc:"Имя кондиционера",defaultValue:"Кондиционер"},
+		{name:"COND",type:"hidden",value:"%TARGET%:%SUBID%"}
+	]
+}
+
+*/
+
+u8 fans [] = {0,3,2,1};
+u8 mods [] = {3,1,2,4,0};
+
+V-ID/Cond{
+    if(opt(0)&1){
+        u8 mas [] = {0x1964020002009A0601027D000010D44C0380100C0D1463001010FE0930000000000000207D};
+        mas[29] = (opt(1) + 2)<<4; //temp
+        mas[30] = mods[opt(0)>>4]; //mod
+        mas[31] = fans[opt(4)]; //fan
+        mas[31] |= (opt(3) ? 0:1)<<4; //vane
+		mas[36] = (opt(1)<=7 ? 0x07-opt(1) : 0x17-opt(1)) << 4; //crc
+		mas[36] |= 16 - fans[opt(4)] - mods[(opt(0)>>4)]; //crc
+        setStatus(IRT,mas);
+    }
+    else setStatus(IRT,0x1964020002009B0601027D000010E14C033810070D146300101002FD);
+}
