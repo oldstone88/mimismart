@@ -1,0 +1,33 @@
+/*
+{
+  desc:"Радио по диммеру",
+  tag:"import-script",
+  selectArea:true,
+  vars:[
+	{name:"D00",type:"devices-list",required:true,filter:["dimer-lamp"],desc:"Диммируемая группа",width:800},
+	{name:"AC3",type:"string",required:true,filter:"1234567890.:",min:7,max:20,desc:"IP AC3",width:300},
+	{name:"Stream",type:"string",required:true,min:10,max:50,desc:"URL of stream",width:300},
+]
+}
+*/
+
+u8 pow[2];
+u8 vol;
+u8 httpapi[100];
+
+V-ID/D00{
+	if (pow[1] == 0 && [D00.0] == 1){
+		setStatus(1000:95, {"AC3|httpapi.asp?command=setPlayerCmd:play:Stream|"});
+		srvMessage("AC3 Play");
+		pow[1] = 1;
+	} else if (pow[1] == 1 && [D00.0] == 0) {
+		setStatus(1000:95, {"AC3|httpapi.asp?command=setPlayerCmd:stop|"});
+		srvMessage("AC3 Play");
+		pow[1] = 0;
+	}
+	vol = ([D00.1])/2;
+	sprintf(httpapi, "AC3|httpapi.asp?command=setPlayerCmd:vol:%d|", vol);
+	setStatus(1000:95, &httpapi);
+	srvMessage("[D00.1] = %s", vol);
+	//vol(vol);
+}

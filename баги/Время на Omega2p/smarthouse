@@ -1,0 +1,23 @@
+#!/bin/sh /etc/rc.common
+# Example script
+# Copyright (C) 2007 OpenWrt.org
+
+START=40
+
+start() {
+        echo start
+        /mimismart/time/ntp.sh
+        screen -d -m /bin/sh -c 'sleep 20; while true; do /mimismart/run20.sh; sleep 10; done;'
+}
+
+stop() {
+        echo stop
+}
+
+restart()
+{
+    stop
+    start
+}
+
+
