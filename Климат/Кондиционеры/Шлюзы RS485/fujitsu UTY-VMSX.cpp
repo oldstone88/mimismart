@@ -116,16 +116,19 @@ V-ID/s:1{
 }
 
 V-ID/RS485{
-    stat();
+    #ifdef DEBUG stat(); #endif
     if(optl==13 && opt(1)==0x03){
         u8 cond[5]={0, 0, 0, 0, 0};
         cond[0]=backmode(opt(4)); //Режим
         u8 onOff=0;
         if(opt(6)==1) onOff=0; else onOff=1;
         cond[0]=cond[0]<<4|onOff; //Вкл-Выкл
-        cond[1]=(((opt(7)<<8|opt(8))>>1)/4)-18; //Температура
-        cond[4]=opt(10)-1;
-        //srvError("Температура=%d, скорость=%d", cond[1]+18, cond[4]);
+        //Температура
+        u16 temperature = (((opt(7)<<8|opt(8))>>1)/4);
+        if(temperature>=18) cond[1]=temperature-18;
+        // Скорость
+        cond[4]=opt(10)?opt(10)-1:opt(10);
+        // srvError("Температура=%d, скорость=%d", cond[1]+18, cond[4]);
         if(opt(0)==Address1){setStatus(Cond01, &cond);}
         else if(opt(0)==Address2){setStatus(Cond02, &cond);}
         else if(opt(0)==Address3){setStatus(Cond03, &cond);}
