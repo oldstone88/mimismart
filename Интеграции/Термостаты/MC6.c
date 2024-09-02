@@ -48,19 +48,19 @@ void antiblock(){
 
 void modeToCond(u8 mode){
     mode=mode>>4;
-    if(mode=0) return 2;
-    if(mode=1) return 1;
-    if(mode=2) return 3;
-    if(mode=3) return 0;
-    if(mode=4) return 4;
+    if(mode==0) return 2;
+    if(mode==1) return 1;
+    if(mode==2) return 3;
+    if(mode==3) return 0;
+    if(mode==4) return 4;
     return 4;
 }
 
 void speedToCond(u8 speed){
-    if(speed=0) return 3;
-    if(speed=1) return 2;
-    if(speed=2) return 1;
-    if(speed=3) return 0;
+    if(speed==0) return 3;
+    if(speed==1) return 2;
+    if(speed==2) return 1;
+    if(speed==3) return 0;
     return 3;
 }
 
@@ -77,7 +77,7 @@ void send(){
             else if(i==4) getStatus(COND05, condState);
             else if(i==5) getStatus(COND06, condState);
             else if(i==6) getStatus(COND07, condState);
-            write[8]=condState%2;
+            write[8]=condState[0]%2;
             write[10]=modeToCond(condState[0]);
             write[12]=speedToCond(condState[4]);
             u16 temp=(condState[1]+5)*10;
@@ -97,17 +97,17 @@ V-ID/COND01, COND02, COND03, COND04, COND05, COND06, COND07{
         cancelDelayedCall(send);
         block=1;
         for(u8 i=0; i<7; ++i){
-            if(SID[i]==senderSubId){
-                needSend|=1<<i;;
+            if(SID[i]==senderSubId()){
+                needSend|=1<<i;
             }
         }
         delayedCall(send, 1);
     }
 }
 
-u8 numRead=0
+u8 numRead=0;
 
-V-ID/s:5{
+V-ID/s:1{
     if(!block){
         u8 read[8]={0x00, 0x03, 0x00, 61, 0x00, 0x04, 0xCC, 0x16};
         ++numRead;
@@ -131,26 +131,26 @@ void stat(){
 }
 
 void modeFromCond(u8 mode){
-    if(mode=0) return 3;
-    if(mode=1) return 1;
-    if(mode=2) return 0;
-    if(mode=3) return 2;
-    if(mode=4) return 4;
+    if(mode==0) return 3;
+    if(mode==1) return 1;
+    if(mode==2) return 0;
+    if(mode==3) return 2;
+    if(mode==4) return 4;
     return 4;
 }
 
 void speedFromCond(u8 speed){
-    if(speed=0) return 3;
-    if(speed=1) return 2;
-    if(speed=2) return 1;
-    if(speed=3) return 0;
+    if(speed==0) return 3;
+    if(speed==1) return 2;
+    if(speed==2) return 1;
+    if(speed==3) return 0;
     return 0;
 }
 
 V-ID/RS485{
-    #ifdef DEBUF stat(); #endif
+    #ifdef DEBUG stat(); #endif
     if(opt(1)==3 && optl==13){
-        u8 state[5];
+        u8 state[5]={0, 0, 0, 0, 0};
         state[0]=modeFromCond(opt(6));
         state[0]=(state[0]<<4)|opt(4);
         state[4]=speedFromCond(opt(8));
