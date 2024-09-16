@@ -19,15 +19,75 @@
 
 u8 block=0;
 u8 write[21]={Address, 0x10, 0x00, 0x6A, 0x00, 0x06, 0x0C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xCC, 0x16};
+u8 numSend=0;
+
+void stotWrite(){
+    block=0;
+}
+
+void send(){
+    if(numSend){
+        if(numSend==3){
+            u8 onOff[8]={Address, 0x06, 0x00, 0x01, 0x00, 0x01, 0xCC, 0x16};
+            setStatus(RS485, &onOff);
+        } else if(numSend==2){
+            u8 mode[8]={Address, 0x06, 0x00, 0x05, 0x00, 0x02, 0xCC, 0x16};
+            setStatus(RS485, &mode);
+        } else if(numSend==1){
+            // Приток
+            u32 speed=60000*(1+[VENT.4]);
+            write[7]=speed>>24;
+            write[8]=speed>>16;
+            write[9]=speed>>8;
+            write[10]=speed;
+            // Вытяжка
+            speed=(speed*8)/10;
+            write[11]=speed>>24;
+            write[12]=speed>>16;
+            write[13]=speed>>8;
+            write[14]=speed;
+            // Температура
+            write[15]=(([VENT.1]+5)*10)>>8;
+            write[16]=([VENT.1]+5)*10;
+            // Обогрев или вентиляция
+            write[18]=[VENT.0]>>4;
+            setStatus(RS485, &write);
+        }
+        numSend-=1;
+        if(numSend) delayedCallMs(send, 500);
+        else delayedCallMs(stotWrite, 1000);
+    }
+}
 
 V-ID/VENT{
-
+    if(senderId()!=exciterId()){
+        cancelDelayedCall(send);
+        block=1;
+        if(([VENT.0]%2)==1){
+            numSend=3;
+            delayedCallMs(send, 500);
+        } else if(([VENT.0]%2)==0){
+            u8 onOff[]={Address, 0x06, 0x00, 0x01, 0x00, 0x00, 0xCC, 0x16};
+            setStatus(RS485, &onOff);
+        }
+    }
 }
+
+u8 count=0;
 
 V-ID/s:5{
     if(!block){
-        u8 read[8]={Address, 0x03, 0x00, 0x6A, 0x00, 0x06, 0xCC, 0x16};
-        setStatus(RS485, &read);
+        if(!count){
+            // Чтение ВКЛ-ВЫКЛ
+            u8 onOff[8]={Address, 0x03, 0x00, 0x01, 0x00, 0x01, 0xCC, 0x16};
+            setStatus(RS485, &onOff);
+            ++count;
+        } else{
+            // Чтение уставок
+            u8 read[8]={Address, 0x03, 0x00, 0x6A, 0x00, 0x06, 0xCC, 0x16};
+            setStatus(RS485, &read);
+            --count;
+        }
     }
 }
 
@@ -47,8 +107,17 @@ void stat(){
 V-ID/RS485{
     #ifdef DEBUF stat(); #endif
     if(opt(1)==3 && optl==17){
-        u8 state[5];
+        u8 state[5]={0, 0, 0, 0, 0};
         getStatus(VENT, state);
-        state[1]=(((opt(8)<<8)|opt(9))/10)-5;
+        // Температура
+        state[1]=(((opt(11)<<8)|opt(12))/10)-5;
+        // Нагрев
+        state[0]|=opt(14)<<4;
+        setStatus(VENT, state);
+    } else if(opt(1)==3 && optl==7){
+        u8 state[5] = {0, 0, 0, 0, 0};
+        state[0]&=0xFE;
+        state[0]|=opt(4);
+        setStatus(VENT, &state);
     }
 }
