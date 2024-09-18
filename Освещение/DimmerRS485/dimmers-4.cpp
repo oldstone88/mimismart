@@ -96,5 +96,5 @@ u8 res[100]="";
 }
 
 V-ID/RS485{
-    #ifdef DEBUG stat(); #ednif
+    #ifdef DEBUG stat(); #endif
 }
