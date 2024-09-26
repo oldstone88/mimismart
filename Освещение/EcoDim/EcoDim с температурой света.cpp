@@ -42,7 +42,7 @@
 }
 */
 
-u16 NeedSendD = 0;
+u16 NeedSend = 0;
 u16 NumSend = 0;
 
 const u8 SIDD[]={
@@ -86,13 +86,13 @@ const u8 SIDT[]={
 void sendtors(){
     cancelDelayedCall(sendtors);
     u8 breakpoint = 0;
-    if(NeedSendD){
+    if(NeedSend){
         for(u8 i=0; (i<16) && (breakpoint==0); ++i){
-            if((NeedSendD>>i)&1){
+            if((NeedSend>>i)&1){
+                breakpoint=1;
                 if(NumSend==0) NumSend=2;
                 else if(NumSend==2){
-                    u8 data[8] = {Address, 0x06, 2000+i*5>>8, 2000+i*5, 0x00, 0x00, 0xCC, 0x16};
-                    breakpoint=1;
+                    u8 data[8] = {Address, 0x06, (2000+i*5)>>8, (2000+i*5), 0x00, 0x00, 0xCC, 0x16};
                     if(!i) data[5] = ([DIMMER01.0]&1)?[DIMMER01.1]:0;
                     #ifdef DIMMER02 else if(i==1) data[5] = ([DIMMER02.0]&1)?[DIMMER02.1]:0; #endif
                     #ifdef DIMMER03 else if(i==2) data[5] = ([DIMMER03.0]&1)?[DIMMER03.1]:0; #endif
@@ -113,30 +113,29 @@ void sendtors(){
                     setStatus(RS485, &data);
                     --NumSend;
                 } else if(NumSend==1){
-                    u8 data[8] = {Address, 0x06, 2620+i*5>>8, 2620+i*5, 0x00, 0x00, 0xCC, 0x16};
-                    breakpoint=1;
-                    if(!i) {data[4] = 36*[TEMPERATURE01.1]>>8; data[5] = 36*[TEMPERATURE01.1];}
-                    #ifdef TEMPERATURE02 else if(i==1) {data[4] = 36*[TEMPERATURE02.1]>>8; data[5] = 36*[TEMPERATURE02.1];} #endif
-                    #ifdef TEMPERATURE03 else if(i==2) {data[4] = 36*[TEMPERATURE03.1]>>8; data[5] = 36*[TEMPERATURE03.1];} #endif
-                    #ifdef TEMPERATURE04 else if(i==3) {data[4] = 36*[TEMPERATURE04.1]>>8; data[5] = 36*[TEMPERATURE04.1];} #endif
-                    #ifdef TEMPERATURE05 else if(i==4) {data[4] = 36*[TEMPERATURE05.1]>>8; data[5] = 36*[TEMPERATURE05.1];} #endif
-                    #ifdef TEMPERATURE06 else if(i==5) {data[4] = 36*[TEMPERATURE06.1]>>8; data[5] = 36*[TEMPERATURE06.1];} #endif
-                    #ifdef TEMPERATURE07 else if(i==6) {data[4] = 36*[TEMPERATURE07.1]>>8; data[5] = 36*[TEMPERATURE07.1];} #endif
-                    #ifdef TEMPERATURE08 else if(i==7) {data[4] = 36*[TEMPERATURE08.1]>>8; data[5] = 36*[TEMPERATURE08.1];} #endif
-                    #ifdef TEMPERATURE09 else if(i==8) {data[4] = 36*[TEMPERATURE09.1]>>8; data[5] = 36*[TEMPERATURE09.1];} #endif
-                    #ifdef TEMPERATURE10 else if(i==9) {data[4] = 36*[TEMPERATURE10.1]>>8; data[5] = 36*[TEMPERATURE10.1];} #endif
-                    #ifdef TEMPERATURE11 else if(i==10) {data[4] = 36*[TEMPERATURE11.1]>>8; data[5] = 36*[TEMPERATURE11.1];} #endif
-                    #ifdef TEMPERATURE12 else if(i==11) {data[4] = 36*[TEMPERATURE12.1]>>8; data[5] = 36*[TEMPERATURE12.1];} #endif
-                    #ifdef TEMPERATURE13 else if(i==12) {data[4] = 36*[TEMPERATURE13.1]>>8; data[5] = 36*[TEMPERATURE13.1];} #endif
-                    #ifdef TEMPERATURE14 else if(i==13) {data[4] = 36*[TEMPERATURE14.1]>>8; data[5] = 36*[TEMPERATURE14.1];} #endif
-                    #ifdef TEMPERATURE15 else if(i==14) {data[4] = 36*[TEMPERATURE15.1]>>8; data[5] = 36*[TEMPERATURE15.1];} #endif
-                    #ifdef TEMPERATURE16 else if(i==15) {data[4] = 36*[TEMPERATURE16.1]>>8; data[5] = 36*[TEMPERATURE16.1];} #endif
+                    u8 data[8] = {Address, 0x06, (2620+i*5)>>8, (2620+i*5), 0x00, 0x00, 0xCC, 0x16};
+                    if(!i) {data[4] = ((36*[TEMPERATURE01.1]+1000)>>8); data[5] = (36*[TEMPERATURE01.1])+1000;}
+                    #ifdef TEMPERATURE02 else if(i==1) {data[4] = (36*[TEMPERATURE02.1]+1000)>>8; data[5] = 36*[TEMPERATURE02.1]+1000;} #endif
+                    #ifdef TEMPERATURE03 else if(i==2) {data[4] = (36*[TEMPERATURE03.1]+1000)>>8; data[5] = 36*[TEMPERATURE03.1]+1000;} #endif
+                    #ifdef TEMPERATURE04 else if(i==3) {data[4] = (36*[TEMPERATURE04.1]+1000)>>8; data[5] = 36*[TEMPERATURE04.1]+1000;} #endif
+                    #ifdef TEMPERATURE05 else if(i==4) {data[4] = (36*[TEMPERATURE05.1]+1000)>>8; data[5] = 36*[TEMPERATURE05.1]+1000;} #endif
+                    #ifdef TEMPERATURE06 else if(i==5) {data[4] = (36*[TEMPERATURE06.1]+1000)>>8; data[5] = 36*[TEMPERATURE06.1]+1000;} #endif
+                    #ifdef TEMPERATURE07 else if(i==6) {data[4] = (36*[TEMPERATURE07.1]+1000)>>8; data[5] = 36*[TEMPERATURE07.1]+1000;} #endif
+                    #ifdef TEMPERATURE08 else if(i==7) {data[4] = (36*[TEMPERATURE08.1]+1000)>>8; data[5] = 36*[TEMPERATURE08.1]+1000;} #endif
+                    #ifdef TEMPERATURE09 else if(i==8) {data[4] = (36*[TEMPERATURE09.1]+1000)>>8; data[5] = 36*[TEMPERATURE09.1]+1000;} #endif
+                    #ifdef TEMPERATURE10 else if(i==9) {data[4] = (36*[TEMPERATURE10.1]+1000)>>8; data[5] = 36*[TEMPERATURE10.1]+1000;} #endif
+                    #ifdef TEMPERATURE11 else if(i==10) {data[4] = (36*[TEMPERATURE11.1+1000])>>8; data[5] = 36*[TEMPERATURE11.1]+1000;} #endif
+                    #ifdef TEMPERATURE12 else if(i==11) {data[4] = (36*[TEMPERATURE12.1+1000])>>8; data[5] = 36*[TEMPERATURE12.1]+1000;} #endif
+                    #ifdef TEMPERATURE13 else if(i==12) {data[4] = (36*[TEMPERATURE13.1+1000])>>8; data[5] = 36*[TEMPERATURE13.1]+1000;} #endif
+                    #ifdef TEMPERATURE14 else if(i==13) {data[4] = (36*[TEMPERATURE14.1+1000])>>8; data[5] = 36*[TEMPERATURE14.1]+1000;} #endif
+                    #ifdef TEMPERATURE15 else if(i==14) {data[4] = (36*[TEMPERATURE15.1+1000])>>8; data[5] = 36*[TEMPERATURE15.1]+1000;} #endif
+                    #ifdef TEMPERATURE16 else if(i==15) {data[4] = (36*[TEMPERATURE16.1+1000])>>8; data[5] = 36*[TEMPERATURE16.1]+1000;} #endif
                     // srvError("Адрес отправки = %x, %x. Яркость = %d", data[2], data[3], data[5]);
                     setStatus(RS485, &data);
                     --NumSend;
                 }
-                if(!NumSend) NeedSendD -= 1<<i;
-                if(NeedSendD) delayedCallMs(sendtors, 100);
+                if(!NumSend) NeedSend -= 1<<i;
+                if(NeedSend) delayedCallMs(sendtors, 150);
             }
         }
     }
@@ -145,10 +144,10 @@ void sendtors(){
 V-ID/DIMMER01#ifdef DIMMER02, DIMMER02#endif#ifdef DIMMER03, DIMMER03#endif#ifdef DIMMER04, DIMMER04#endif#ifdef DIMMER05, DIMMER05#endif#ifdef DIMMER06, DIMMER06#endif#ifdef DIMMER07, DIMMER07#endif#ifdef DIMMER08, DIMMER08#endif#ifdef DIMMER09, DIMMER09#endif#ifdef DIMMER10, DIMMER10#endif#ifdef DIMMER11, DIMMER11#endif#ifdef DIMMER12, DIMMER12#endif#ifdef DIMMER13, DIMMER13#endif#ifdef DIMMER14, DIMMER14#endif#ifdef DIMMER15, DIMMER15#endif#ifdef DIMMER16, DIMMER16#endif
 {
     for(u8 i=0; i<16; ++i){
-        if(SID[i] && (SIDD[i]==senderSubId())){
+        if(SIDD[i] && (SIDD[i]==senderSubId())){
             cancelDelayedCall(sendtors);
-            NeedSendD |= 1<<i;
-            delayedCallMs(sendtors, 100);
+            NeedSend |= 1<<i;
+            delayedCallMs(sendtors, 150);
         }
     }
 }
@@ -156,10 +155,10 @@ V-ID/DIMMER01#ifdef DIMMER02, DIMMER02#endif#ifdef DIMMER03, DIMMER03#endif#ifde
 V-ID/TEMPERATURE01#ifdef TEMPERATURE02, TEMPERATURE02#endif#ifdef TEMPERATURE03, TEMPERATURE03#endif#ifdef TEMPERATURE04, TEMPERATURE04#endif#ifdef TEMPERATURE05, TEMPERATURE05#endif#ifdef TEMPERATURE06, TEMPERATURE06#endif#ifdef TEMPERATURE07, TEMPERATURE07#endif#ifdef TEMPERATURE08, TEMPERATURE08#endif#ifdef TEMPERATURE09, TEMPERATURE09#endif#ifdef TEMPERATURE10, TEMPERATURE10#endif#ifdef TEMPERATURE11, TEMPERATURE11#endif#ifdef TEMPERATURE12, TEMPERATURE12#endif#ifdef TEMPERATURE13, TEMPERATURE13#endif#ifdef TEMPERATURE14, TEMPERATURE14#endif#ifdef TEMPERATURE15, TEMPERATURE15#endif#ifdef TEMPERATURE16, TEMPERATURE16#endif
 {
     for(u8 i=0; i<16; ++i){
-        if(SID[i] && (SIDT[i]==senderSubId())){
+        if(SIDT[i] && (SIDT[i]==senderSubId())){
             cancelDelayedCall(sendtors);
-            NeedSendT |= 1<<i;
-            delayedCallMs(sendtors, 100);
+            NeedSend |= 1<<i;
+            delayedCallMs(sendtors, 150);
         }
     }
 }
