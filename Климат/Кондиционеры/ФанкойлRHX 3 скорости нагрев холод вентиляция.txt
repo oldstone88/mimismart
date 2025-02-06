@@ -1,0 +1,122 @@
+/*
+{
+	desc:"Фанкойлы сухой контакт 3 скорости 3 режима",
+	tag:"import-script",
+	selectArea:true,
+	addItems:[
+    	{tag:"item", id:"%TARGET%", name:"Фанкойл", "sub-id":"%SUBID%", type:"conditioner", "t-delta":"16", "t-min":"16", "vane-ver":"0x00", "vane-hor":"0x00", "modes":"0x1B", "funs":"0x0F"},
+  	],
+	vars:[
+		{name:"K1",type:"devices-list",required:true,width:600,filter:["lamp", "dimer-lamp"],desc:"Нагрев",descWidth:100},
+		{name:"K2",type:"devices-list",required:true,width:600,filter:["lamp", "dimer-lamp"],desc:"Охлаждение",descWidth:100},
+		{name:"C1",type:"devices-list",required:true,width:600,filter:["lamp", "dimer-lamp"],desc:"Скорость 1",descWidth:100},
+		{name:"C2",type:"devices-list",required:true,width:600,filter:["lamp", "dimer-lamp"],desc:"Скорость 2",descWidth:100},
+		{name:"C3",type:"devices-list",required:true,width:600,filter:["lamp", "dimer-lamp"],desc:"Скорость 3",descWidth:100},
+		{name:"V1",type:"hidden",value:"%TARGET%:%SUBID%"},
+		{name:"T1",type:"devices-list",required:true,width:600,filter:["temperature-sensor", "virtual"],desc:"Датчик температуры",descWidth:100},
+		{name:"D1",type:"number", defaultValue:20, required:true, desc:"Дельта первой скорости умножте на 10"},
+		{name:"D2",type:"number", defaultValue:30, required:true, desc:"Дельта второй скорости умножте на 10"},
+		{name:"G1",type:"number", defaultValue:10, required:true, desc:"Гистерезис нужно умножить на 10"},
+	]
+}
+*/
+
+u8 previusState=0;
+i16 realTemp = 0;
+i16 setTemp = 0;
+
+void offCond(){
+	setStatus(K1, 0); setStatus(K2, 0);
+	setStatus(C1, 0); setStatus(C2, 0); setStatus(C3, 0);
+}
+
+void setWork(u8 mode, u8 speed){
+	// Режим
+	if(mode==1){
+		setStatus(K1, 0); setStatus(K2, 0);
+	}
+	else if(mode==17){
+		setStatus(K1, 0); setStatus(K2, 1);
+	}
+	else if(mode==33){
+		setStatus(K2, 0); setStatus(K1, 1);
+	}
+	// Скорость
+	if(speed==1){
+		setStatus(C3, 0); setStatus(C2, 0); setStatus(C1, 1);
+	}
+	else if(speed==2){
+		setStatus(C3, 0); setStatus(C1, 0); setStatus(C2, 1);
+	}
+	else if(speed==3){
+		setStatus(C1, 0); setStatus(C2, 0); setStatus(C3, 1);
+	}
+	else if(speed==0){
+		if(previusState==17){
+			if(realTemp>setTemp+D2){setStatus(C1, 0); setStatus(C2, 0); setStatus(C3, 1);}
+			else if(realTemp>setTemp+D1){setStatus(C1, 0); setStatus(C3, 0); setStatus(C2, 1);}
+			else {setStatus(C2, 0); setStatus(C3, 0); setStatus(C1, 1);}
+		}
+		else if(previusState==33){
+			if(realTemp<setTemp-D2){setStatus(C1, 0); setStatus(C2, 0); setStatus(C3, 1);}
+			else if(realTemp<setTemp-D1){setStatus(C1, 0); setStatus(C3, 0); setStatus(C2, 1);}
+			else {setStatus(C2, 0); setStatus(C3, 0); setStatus(C1, 1);}
+		}
+		else {setStatus(C2, 0); setStatus(C3, 0); setStatus(C1, 1);}
+	}
+}
+
+V-ID/s:5{
+	if(([V1.0]%2)==1){
+		realTemp = ([T1.1]*10) + (([T1.0]*10)/250);
+		setTemp = ([V1.1]+16)*10;
+		if([V1.0]==1){
+			// Обдув на заданной скорости
+			setWork(1, [V1.4]);
+		}
+		if([V1.0]==17){
+			if(realTemp>setTemp+G1){
+				// Охлаждение на нужной скорости
+				setWork(17, [V1.4]);
+				previusState=17;
+			}
+			else if(realTemp<setTemp-G1){
+				// Выключаем охлаждение
+				offCond();
+			}
+		}
+		else if([V1.0]==33){
+			if(realTemp<setTemp-G1){
+				// Нагрев
+				setWork(33, [V1.4]);
+				previusState=33;
+			}
+			else if(realTemp>setTemp+G1){
+				offCond();
+			}
+		}
+		else if([V1.0]==49){
+			if((realTemp>setTemp+G1) && (previusState==0 || previusState==17)){
+				setWork(17, [V1.4]); previusState=17;
+			}
+			else if((realTemp<setTemp-G1) && (previusState==0 || previusState==33)){
+				setWork(33, [V1.4]); previusState=33;
+			}
+			else if((previusState==17) && (realTemp<setTemp-G1)) offCond();
+			else if((previusState==33) && (realTemp>setTemp+G1)) offCond();
+			// Сброс авторежима(отклонились от уставки на 2 гистерезиса)
+			if(previusState==17 && realTemp<(setTemp-(G1*3))) previusState=0;
+			else if(previusState==33 && realTemp>(setTemp+(G1*3))) previusState=0;
+		}
+	}
+	else {
+		offCond();
+	}
+}
+
+// Для первичной настройки при авто режиме
+V-ID/V1{
+	if(opt(0)==49){
+		previusState=0;
+	}
+}

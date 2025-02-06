@@ -1,0 +1,28 @@
+/*
+{
+  desc:"Скрипт проверки погоды OpenWether",
+  tag:"import-script",
+  selectArea:true,
+  addItems:[
+    {tag:"item", id:"%TARGET%", name:"Температура", "sub-id":"%SUBID95%", type:"virtual", "sub-type":"sensor", length:"2", dim:"ºС"},
+    {tag:"item", id:"%TARGET%", name:"Влажность", "sub-id":"%SUBID97%", type:"virtual", "sub-type":"sensor", length:"2", dim:"%"},
+  ],
+  vars:[
+    {name:"LAT",type:"string",required:true,filter:"1234567890.",min:5,max:50,desc:"Укажите широту",width:200},
+    {name:"LON",type:"string",required:true,filter:"1234567890.",min:5,max:50,desc:"Укажите долготу",width:200},
+    {name:"KEY",type:"string",required:true,filter:"",min:5,max:500,desc:"Укажите ключ API OpenWether",width:500},
+	   {name:"SHLUZ",type:"string",required:true,filter:"1234567890.",min:5,max:500,desc:"Укажите IP адрес шлюза на котором висит CM скрипта",width:500},
+     {name:"TEMP",type:"hidden",value:"%TARGET%:%SUBID95%"},
+    {name:"VLAJ",type:"hidden",value:"%TARGET%:%SUBID97%"},
+    {name:"DEST",type:"hidden",value:"1000:97"},
+  ]                       
+}
+*/
+
+void onInit() {
+  setStatus(DEST, "gwxIP=SHLUZ|tempSensor=TEMP|humSensor=VLAJ|apiKey=KEY|lat=LAT|lon=LON|");
+}
+
+V-ID/m:60{
+  setStatus(DEST, "gwxIP=SHLUZ|tempSensor=TEMP|humSensor=VLAJ|apiKey=KEY|lat=LAT|lon=LON|");
+}
