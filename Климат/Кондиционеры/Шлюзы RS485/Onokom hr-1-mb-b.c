@@ -73,7 +73,8 @@ void Send(){
                 if(!i){getStatus(COND00, cond);} else
                 if(i==1){getStatus(COND01, cond);} else
                 if(i==2){getStatus(COND02, cond);} else
-                if(i==3){getStatus(COND03, cond);}
+                if(i==3){getStatus(COND03, cond);} else
+                if(i==4){getStatus(COND04, cond);}
 
                 if(SendNext == 0) SendNext = 3;
                 // ВКЛ-ВЫКЛ + Режим
@@ -118,7 +119,7 @@ void Send(){
 
 V-ID/COND00, COND01, COND02, COND03, COND04{
     if(senderId()!=exciterId()){
-        for(u8 i=0;i<4;++i){
+        for(u8 i=0;i<5;++i){
             if(ID[i] && SID[i] && SID[i]==senderSubId()){
                     write=1;
                     SendNext = 3;
@@ -177,8 +178,7 @@ void synccond(){
     else if(count==4) setStatus(COND04, &cond);
 }
 
-V-ID/RS485
-{
+V-ID/RS485{
     if(opt(1)==3 && optl==17) synccond(); // Чтение состояния
     #ifdef DEBUG stat(); #endif
 }
