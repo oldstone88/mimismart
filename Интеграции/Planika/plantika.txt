@@ -1,0 +1,64 @@
+/*
+{
+  desc:"Plantica fire",
+  tag:"item",
+  selectArea:true,
+  addItems:[
+    {tag:"item", id:"%TARGET%", name:"Плюс", "sub-id":"%SUBID%", type:"lamp"},
+    {tag:"item", id:"%TARGET%", name:"Минус", "sub-id":"%SUBID99%", type:"lamp"},
+    {tag:"item", id:"%TARGET%", name:"Блок клавиш", "sub-id":"%SUBID98%", type:"lamp"},
+    {tag:"item", id:"%TARGET%", name:"Разблок клавиш", "sub-id":"%SUBID97%", type:"lamp"},
+  ],
+  vars:[
+	{name:"IPADDR",type:"string",required:true,filter:"1234567890.:",min:7,max:20,desc:"IP AC3",width:300},
+	{name:"PLS",type:"hidden",value:"%TARGET%:%SUBID%"},
+	{name:"MNS",type:"hidden",value:"%TARGET%:%SUBID99%"},
+	{name:"LCK",type:"hidden",value:"%TARGET%:%SUBID98%"},
+	{name:"UNL",type:"hidden",value:"%TARGET%:%SUBID97%"},
+]
+}
+*/
+
+void off() {
+	setStatus(PLS, 0);
+	setStatus(MNS, 0);
+	setStatus(LCK, 0);
+	setStatus(UNL, 0);
+}
+
+V-ID/V-ADDR{
+	if (opt(0)&1){
+		setStatus(1000:77, {"IPADDR:start"});
+	} else {
+		setStatus(1000:77, {"IPADDR:on"});
+	}
+	srvMessage("IPADDR send command");
+}
+
+V-ID/PLS{
+	if ([V-ADDR.0]&1 && [PLS.0]&1) {
+		setStatus(1000:77, {"IPADDR:plus"});
+	}
+	delayedCall(off, 1);
+}
+
+V-ID/MNS{
+	if ([V-ADDR.0]&1 && [MNS.0]&1) {
+		setStatus(1000:77, {"IPADDR:minus"});
+	}
+	delayedCall(off, 1);
+}
+
+V-ID/LCK{
+	if ([LCK.0]&1) {
+		setStatus(1000:77, {"IPADDR:lock"});
+	}
+	delayedCall(off, 1);
+}
+
+V-ID/UNL{
+	if ([UNL.0]&1) {
+		setStatus(1000:77, {"IPADDR:unlock"});
+	}
+	delayedCall(off, 1);
+}
