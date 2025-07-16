@@ -1,0 +1,73 @@
+/*
+{
+      desc:"Скрипт для пульта 33",
+      name:"Hokkaido(Пульт 33)",
+      tag:"import-script",
+      selectArea:true,
+      addItems:[
+            {tag:"item", id:"%TARGET%", name:"NAME", "sub-id":"%SUBID%", type:"conditioner", "t-delta":"12", "t-min":"18", "modes":"0x0E","funs":"0x01","vane-hor":"0x00", "vane-ver":"0x00"},
+      ],
+      vars:[
+            {name:"IRT", type:"devices-list",filter:["ir-transmitter"], required:true,  desc:"ИК-передатчик"},
+            {name:"NAME",type:"string",required:"true",min:3,max:40,desc:"Имя кондиционера",defaultValue:"33"},
+            {name:"COND",type:"hidden",value:"%TARGET%:%SUBID%"}
+      ]
+}
+*/
+
+u8 masCold [] = {0x19640500020094060103FF000055976818C96A032318A312490200500200029F450101180000032018B11201200070};
+u8 strartCold[] = {0x19640500020094060103FF000055976818C96A032318A312490200500200029F450101180000032018B11201200070};
+u8 humidity[] = {0x19640500020094060103FF000058976818DB6A0323188C125A0700500200028A450101190000032018B312012000D0};
+u8 off[] = {0x19640500020095060103FF000057976818EE6A0323189E12410E0050020002C8450101190000032018B612012000B0};
+
+void cmdOff(){
+      setStatus(IRT, &off);
+}
+
+void cmdOn(){
+      setStatus(IRT, &mas);
+}
+
+V-ID/COND{
+      cancelDelayed(cmdOff);
+      cancelDelayed(cmdOn);
+      // Холод
+      if(opt(0) == 1){
+            memcpy(&mas, &strartCold, 47); // обнуляем массив до стартовых 18
+            if(opt(1) == 1){mas[6]=0x93;mas[13]=0x58;mas[17]=0xD7;mas[22]=0x9A;mas[25]=0x03;mas[31]=0x80;mas[35]=0x19;mas[41]=0xC7;mas[46]=0x80;}
+            if(opt(1) == 2){mas[6]=0x93;mas[13]=0x58;mas[17]=0xDC;mas[22]=0xA4;mas[25]=0x04;mas[31]=0xB7;mas[41]=0xBB;mas[46]=0x90;}
+            if(opt(1) == 3){mas[13]=0x58;mas[17]=0xDD;mas[22]=0x9B;mas[25]=0x05;mas[31]=0x91;mas[35]=0x19;mas[41]=0xBE;mas[46]=0xA0;}
+            if(opt(1) == 4){mas[6]=0x9A;mas[13]=0x58;mas[17]=0xDF;mas[22]=0x9B;mas[25]=0x06;mas[31]=0x97;mas[35]=0x19;mas[41]=0xB3;mas[46]=0xB0;}
+            if(opt(1) == 5){mas[13]=0x58;mas[17]=0xDE;mas[22]=0x94;mas[25]=0x07;mas[31]=0x78;mas[35]=0x19;mas[41]=0xBD;mas[46]=0xC0;}
+            if(opt(1) == 6){mas[13]=0x58;mas[17]=0xDF;mas[22]=0xA4;mas[25]=0x08;mas[31]=0xC7;mas[41]=0xB2;mas[46]=0xD0;}
+            if(opt(1) == 7){mas[13]=0x58;mas[17]=0xDF;mas[22]=0x9B;mas[25]=0x09;mas[31]=0x96;mas[35]=0x19;mas[41]=0xB3;mas[46]=0xE0;}
+            if(opt(1) == 8){mas[13]=0x58;mas[17]=0xE1;mas[22]=0x9B;mas[25]=0x0A;mas[31]=0x9D;mas[35]=0x19;mas[41]=0xAB;mas[46]=0xF0;}
+            if(opt(1) == 9){mas[13]=0x58;mas[17]=0xE1;mas[22]=0x94;mas[25]=0x0B;mas[31]=0x80;mas[35]=0x19;mas[41]=0xD4;mas[46]=0x00;}
+            if(opt(1) == 10){mas[13]=0x58;mas[17]=0xE2;mas[22]=0x9C;mas[25]=0x0C;mas[31]=0xA7;mas[35]=0x19;mas[41]=0xC9;mas[46]=0x10;}
+            if(opt(1) == 11){mas[13]=0x58;mas[17]=0xE4;mas[22]=0x95;mas[25]=0x0D;mas[31]=0x88;mas[35]=0x19;mas[41]=0xC9;mas[46]=0x20;}
+            if(opt(1) == 12){mas[6]=0x95;mas[13]=0x58;mas[17]=0xDB;mas[22]=0x95;mas[25]=0x0E;mas[31]=0xC7;mas[41]=0xBC;mas[46]=0x30;}
+      }
+      // Осушение
+      else if(opt(0) == 17){
+            memcpy(&mas, &humidity, 47);
+      }
+      // Нагрев
+      else if(opt(0)%2 == 33){
+            memcpy(&mas, &strartCold, 47);
+            if(opt(1) == 1){mas[6]=0x93;mas[13]=0x58;mas[17]=0xA8;mas[22]=0xA1;mas[24]=0x4C;mas[31]=0x7B;mas[41]=0xB8;mas[46]=0xA0;}
+            if(opt(1) == 2){mas[13]=0x58;mas[17]=0xBF;mas[22]=0x99;mas[24]=0x4C;mas[25]=0x03;mas[31]=0x65;mas[35]=0x19;mas[46]=0xB0;}
+            if(opt(1) == 3){mas[6]=0x93;mas[13]=0x58;mas[17]=0xC4;mas[22]=0xA2;mas[24]=0x4C;mas[25]=0x04;mas[31]=0x94;mas[41]=0xBA;mas[46]=0xC0;}
+            if(opt(1) == 4){mas[6]=0x93;mas[13]=0x58;mas[17]=0xCC;mas[22]=0x9A;mas[24]=0x4C;mas[25]=0x05;mas[31]=0x70;mas[35]=0x19;mas[41]=0xB2;mas[46]=0xD0;}
+            if(opt(1) == 5){mas[13]=0x57;mas[17]=0xC2;mas[22]=0x99;mas[24]=0x4C;mas[25]=0x06;mas[31]=0x70;mas[35]=0x19;mas[41]=0xB2;mas[46]=0xE0;}
+            if(opt(1) == 6){mas[13]=0x58;mas[17]=0xCC;mas[22]=0x93;mas[24]=0x4C;mas[25]=0x07;mas[31]=0xA5;mas[41]=0xA7;mas[46]=0xF0;}
+            if(opt(1) == 7){mas[6]=0x95;mas[13]=0x58;mas[17]=0xD8;mas[22]=0xA4;mas[24]=0x4C;mas[25]=0x08;mas[31]=0xBD;mas[41]=0xD2;mas[46]=0x00;}
+            if(opt(1) == 8){mas[6]=0x93;mas[13]=0x58;mas[17]=0xD3;mas[22]=0x9A;mas[24]=0x4C;mas[25]=0x09;mas[31]=0x7B;mas[35]=0x19;mas[41]=0xC7;mas[46]=0x10;}
+            if(opt(1) == 9){mas[13]=0x58;mas[17]=0xD7;mas[22]=0x9A;mas[24]=0x4C;mas[25]=0x0A;mas[31]=0x82;mas[35]=0x19;mas[41]=0xC7;mas[46]=0x20;}
+            if(opt(1) == 10){mas[6]=0xCA;mas[13]=0x58;mas[14]=0x94;mas[15]=0x6B;mas[17]=0xD9;mas[18]=0x67;mas[22]=0x93;mas[24]=0x4C;mas[25]=0x0B;mas[31]=0x65;mas[35]=0x19;mas[41]=0xBD;mas[46]=0x30;}
+            if(opt(1) == 11){mas[13]=0x58;mas[17]=0xD9;mas[22]=0x9B;mas[24]=0x4C;mas[25]=0x0C;mas[31]=0x85;mas[35]=0x19;mas[41]=0xC7;mas[46]=0x40;}
+            if(opt(1) == 12){mas[13]=0x58;mas[17]=0xD8;mas[22]=0x94;mas[24]=0x4C;mas[25]=0x0D;mas[31]=0x6C;mas[35]=0x19;mas[41]=0xBD;mas[46]=0x50;}
+            if(opt(1) == 13){mas[13]=0x58;mas[17]=0xDA;mas[22]=0x94;mas[24]=0x4C;mas[25]=0x0E;mas[31]=0x6E;mas[35]=0x19;mas[41]=0xBD;mas[46]=0x60;}
+      }
+      // Отправка команды
+      if(opt(0)%2 == 0) delayedCall(cmdOff, 1); else delayedCall(cmdOn, 1);
+}
