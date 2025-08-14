@@ -169,7 +169,7 @@ void synccond(){
 }
 
 V-ID/RS485{
-    //#ifdef DEBUG stat(); #endif
+    #ifdef DEBUG stat(); #endif
     // Проверка ВКЛ-ВЫКЛ
     if(opt(0)==Address && opt(1)==1 && optl==6){
         u8 cond[5]={0, 0, 0, 0 ,0};
