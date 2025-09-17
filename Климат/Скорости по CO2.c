@@ -42,7 +42,7 @@ V-ID/s:15{
       state[4] = 2;
       setStatus(VENT, &state);
     }
-    else if( (pokazanie0 > DANGERMED) || (pokazanie1 > DANGERMED) || (pokazanie2 > DANGERMED)){
+    else if( (pokazanie0 > DANGERMED) || (pokazanie1 > DANGERMED) || (pokazanie2 > DANGERMED)|| (pokazanie3 > DANGERMED)){
       getStatus(VENT, state);
       state[0] = 1;
       state[4] = 1;
