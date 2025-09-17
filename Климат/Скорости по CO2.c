@@ -10,8 +10,8 @@
     {name:"CO201",type:"devices-list",required:true, filter:["co2-sensor"],desc:"Датчик CO2"},
     {name:"CO202",type:"devices-list",required:true, filter:["co2-sensor"],desc:"Датчик CO2"},
     {name:"CO203",type:"devices-list",required:true, filter:["co2-sensor"],desc:"Датчик CO2"},
-    {name:"DANGERHI",type:"number",min:"400",max:"1500",required:true,defaultValue:"1",desc:"Порог максимум"},
-    {name:"DANGERMED",type:"number",min:"400",max:"1500",required:true,defaultValue:"1",desc:"Порог средний"},
+    {name:"DANGERHI",type:"number",min:"400",max:"1500",required:true,defaultValue:"1000",desc:"Порог максимум"},
+    {name:"DANGERMED",type:"number",min:"400",max:"1500",required:true,defaultValue:"800",desc:"Порог средний"},
 
 	]
 }
