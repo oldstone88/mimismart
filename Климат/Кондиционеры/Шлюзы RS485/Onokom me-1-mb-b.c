@@ -177,7 +177,7 @@ u8 res[100]="";
 // Обратная связь
 void synccond(){
     // ВКЛ-ВЫКЛ и режимы
-    if(opt(4)==0) cond[0]=0;
+    if(opt(4)==0) cond[0]&=0xFE;
     else if(opt(4)==1) cond[0] = 49; // Нагрев
     else if(opt(4)==2) cond[0] = 17; // Охлаждение
     else if(opt(4)==3) cond[0] = 65; // Авто
