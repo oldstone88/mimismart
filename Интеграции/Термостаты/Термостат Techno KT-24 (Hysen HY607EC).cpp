@@ -179,9 +179,6 @@ void prepare_write_temp(u8 i){
 
 void prepare_write_fan(u8 i){
 	getStateByIndex(i);
-	u8 fan_low = state[4] & 0x0F;
-	u8 fan_high = state[4] >> 4;
-	
 	
 	writehold[0] = Addr[i];
 	writehold[1] = 0x06;
