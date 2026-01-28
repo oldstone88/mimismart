@@ -40,11 +40,11 @@
 u8 write = 0; // Маркер чтения-записи
 u8 writehold[8] = {0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0xCC, 0x16};
 u8 readhold[] = {0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0xCC, 0x16};
-u16 NeedSend = 0;
-u8 writeStage = 0;
-u8 curIndex = 0;
-u8 pollStage = 0;
-u8 pollIndex = 0;
+u16 NeedSend = 0; // Битовая маска термостатов ожидающих записи
+u8 writeStage = 0; // Этап записи
+u8 curIndex = 0; // Индекс текущего термостата на отправку команды
+u8 pollStage = 0; // Этап опроса
+u8 pollIndex = 0; // Индекс опрашиваемого термостата
 u8 state[5] = {0, 0, 0, 0, 0};
 u8 pollState[5] = {0, 0, 0, 0, 0};
 u8 pollStateRoomTemp[2] = {0, 0};
@@ -73,7 +73,7 @@ const u16 ID_SEN [] = {
     #ifdef SENSOR05, ADDR2ID(SENSOR05) #else ,0 #endif
 };
 const u8 SID_SEN [] = {
-    ADDR2SID(COND01)
+    ADDR2SID(SENSOR01)
     #ifdef SENSOR02, ADDR2SID(SENSOR02) #else ,0 #endif
     #ifdef SENSOR03, ADDR2SID(SENSOR03) #else ,0 #endif
     #ifdef SENSOR04, ADDR2SID(SENSOR04) #else ,0 #endif
