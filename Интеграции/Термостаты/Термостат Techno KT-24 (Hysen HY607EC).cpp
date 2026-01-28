@@ -111,10 +111,6 @@ void stopwrite(){
     write=0;
 }
 
-// Отправка hold регистров
-void slavesend(){
-    setStatus(RS485, &writehold);
-}
 
 u8 findNextIndex(){
 	for(u8 i=0; i<5; ++i){
