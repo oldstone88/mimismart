@@ -37,11 +37,17 @@
 }
 */
 
-
-u8 write = 0;
+u8 write = 0; // Маркер чтения-записи
 u8 writehold[8] = {0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0xCC, 0x16};
 u8 readhold[] = {0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0xCC, 0x16};
-u8 count=0;
+u16 NeedSend = 0;
+u8 writeStage = 0;
+u8 curIndex = 0;
+u8 pollStage = 0;
+u8 pollIndex = 0;
+u8 state[5] = {0, 0, 0, 0, 0};
+u8 pollState[5] = {0, 0, 0, 0, 0};
+u8 pollStateRoomTemp[2] = {0, 0};
 
 
 const u16 ID_CON [] = {
@@ -100,18 +106,6 @@ void backmode (u8 rezhim){
 
 
 
-u16 NeedSend = 0;
-u8 writeStage = 0;
-u8 curIndex = 0;
-u8 pollStage = 0;
-u8 pollIndex = 0;
-
-// Маркер чтения-записи
-void stopwrite(){
-    write=0;
-}
-
-
 u8 findNextIndex(){
 	for(u8 i=0; i<5; ++i){
 		if(NeedSend & (1<<i)){
@@ -121,9 +115,6 @@ u8 findNextIndex(){
 	return 0xFF;
 }
 
-u8 state[5] = {0, 0, 0, 0, 0};
-u8 pollState[5] = {0, 0, 0, 0, 0};
-u8 pollStateRoomTemp[2] = {0, 0};
 
 void getStateByIndex(u8 i){
 	if (i == 0) getStatus(COND01, state);
