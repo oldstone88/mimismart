@@ -14,9 +14,9 @@ function parser($text){
     ];
     //echo "String_getted = ". $text."\n";
     $helper = preg_split("/[*|*]/",$text);
-    $string["addr"] = substr($helper[0],5);
-    $string["command"] = substr($helper[1],8);
-    $string["fake"] = substr($helper[2],5);
+    $string["addr"] = $helper[0];
+    $string["command"] = $helper[1];
+    $string["fake"] = $helper[2];
     //var_dump($string);
     return $string;
 }
