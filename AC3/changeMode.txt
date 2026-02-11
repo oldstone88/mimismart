@@ -3,7 +3,7 @@
 desc:"AC3-rezhimi",
 tag:"item",
 selectArea:true,
-name:"Bluetooth",
+name:"Wi-Fi",
 
 addItems:[
     {tag:"item", id:"%TARGET%", name:"Bluetooth", "sub-id":"%SUBID97%", type:"script"},
