@@ -1,0 +1,59 @@
+/*
+{
+  desc:"Энкодер",
+  name:"Энкодер",
+  tag:"import-script",
+  target: "DEV",
+  selectArea:false,
+  vars:[
+  {name:"DEV",type:"devices-list",required:false, filter:["dimer-lamp"],descWidth:150,desc:"Диммер"},
+  {name:"VER",type:"checkbox",checkValue:"1",uncheckValue:"0",desc:"Устройство старой версии прошивки",descWidth:150},
+    [
+      {name:"BNT",type:"devices-list",required:false, filter:["switch"],descWidth:150,desc:"Энкодер Нажатие"},
+    ],
+    [
+      {name:"ENC",type:"devices-list",required:false, filter:["switch"],descWidth:150,desc:"Энкодер Вращение"},
+    ],
+  {name:"STEP",type:"number",required:true,defaultValue:6,min:0,max:255,desc:"Шаг на 1 щелчок",descWidth:150},
+  {name:"FWD",type:"checkbox",checkValue:"0xFE",uncheckValue:"0x00",desc:"Веверс вращения",descWidth:150}
+  ]
+}
+*/
+
+
+V-ID/BNT
+{
+  if (opt(0) == 0xFF) setStatus(DEV, 0xFF);
+}
+
+#if VER == 1
+
+u8 status[2];
+
+V-ID/ENC
+{
+  if (opt(0) == 0xFB)
+  {
+    getStatus(DEV, &status);
+    if(opt(1) == FWD+1)
+    {
+      if (status[1] < (0xFF - STEP)) status[1] += STEP;
+      else status[1] = 0xFF;
+    }
+    else
+    {
+      if (status[1] > STEP) status[1] -= STEP;
+    }
+    
+    setStatus(DEV, {0xFE, status[1]});
+  }
+}
+
+#else
+
+V-ID/ENC
+{
+  setStatus(DEV, {opt(0), opt(1)^FWD});  
+}
+
+#endif
