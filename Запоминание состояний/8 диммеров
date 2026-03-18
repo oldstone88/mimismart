@@ -1,0 +1,234 @@
+/*
+{
+    desc:"Сохранение состояния диммеров",
+    tag:"import-script",
+    selectArea:true,
+    name:"Сохранение состояния диммеров",
+    vars:[
+        
+        {name:"DIM00",type:"devices-list",required:false, filter:["dimer-lamp"],desc:"Диммер"},
+        {name:"DIM01",type:"devices-list",required:false, filter:["dimer-lamp"],desc:"Диммер"},
+        {name:"DIM02",type:"devices-list",required:false, filter:["dimer-lamp"],desc:"Диммер"},
+        {name:"DIM03",type:"devices-list",required:false, filter:["dimer-lamp"],desc:"Диммер"},
+        {name:"DIM04",type:"devices-list",required:false, filter:["dimer-lamp"],desc:"Диммер"},
+        {name:"DIM05",type:"devices-list",required:false, filter:["dimer-lamp"],desc:"Диммер"},
+        {name:"DIM06",type:"devices-list",required:false, filter:["dimer-lamp"],desc:"Диммер"},
+        {name:"DIM07",type:"devices-list",required:false, filter:["dimer-lamp"],desc:"Диммер"},
+        {type:"comment",text:"Один диммер занимает 2 ячейки памяти!!! Будьте внимательны задавая стартовую ячейку. Рекомендую задавать кратно 3!!!",width:200, style:"color:red;"},
+        {name:"MEMMORY",type:"number",required:true,min:1,max:128,defaultValue:3,descWidth:150,desc:"Номер стартовой ячейки памяти"},
+    ]
+}
+*/
+
+u8 state[2]={0, 0};
+u8 res = 0;
+u8 buff = 0;
+u8 goChamp = 0;
+
+void reset(){
+    #ifdef DIM00
+    for(u8 i = 0; i<2; ++i){
+        res =  eeEmulRead(MEMMORY+i, &buff);
+        if(!res) srvError("Ошибка = %d", i);
+        else state[i]=buff;
+    }
+    if(res) setStatus(DIM00, {state[0], state[1], 0});
+    #endif
+
+    #ifdef DIM01
+    for(u8 i = 0; i<2; ++i){
+        res =  eeEmulRead((2+MEMMORY+i), &buff);
+        if(!res) srvError("Ошибка = %d", i);
+        else state[i]=buff;
+    }
+    if(res) setStatus(DIM01, {state[0], state[1], 0});
+    #endif
+
+    #ifdef DIM02
+    for(u8 i = 0; i<2; ++i){
+        res =  eeEmulRead((4+MEMMORY+i), &buff);
+        if(!res) srvError("Ошибка = %d", i);
+        else state[i]=buff;
+    }
+    if(res) setStatus(DIM02, {state[0], state[1], 0});
+    #endif
+
+    #ifdef DIM03
+    for(u8 i = 0; i<2; ++i){
+        res =  eeEmulRead((6+MEMMORY+i), &buff);
+        if(!res) srvError("Ошибка = %d", i);
+        else state[i]=buff;
+    }
+    if(res) setStatus(DIM03, {state[0], state[1], 0});
+    #endif
+
+    #ifdef DIM04
+    for(u8 i = 0; i<2; ++i){
+        res =  eeEmulRead((8+MEMMORY+i), &buff);
+        if(!res) srvError("Ошибка = %d", i);
+        else state[i]=buff;
+    }
+    if(res) setStatus(DIM04, {state[0], state[1], 0});
+    #endif
+
+    #ifdef DIM05
+    for(u8 i = 0; i<2; ++i){
+        res =  eeEmulRead((10+MEMMORY+i), &buff);
+        if(!res) srvError("Ошибка = %d", i);
+        else state[i]=buff;
+    }
+    if(res) setStatus(DIM05, {state[0], state[1], 0});
+    #endif
+
+    #ifdef DIM06
+    for(u8 i = 0; i<2; ++i){
+        res =  eeEmulRead((12+MEMMORY+i), &buff);
+        if(!res) srvError("Ошибка = %d", i);
+        else state[i]=buff;
+    }
+    if(res) setStatus(DIM06, {state[0], state[1], 0});
+    #endif
+
+    #ifdef DIM07
+    for(u8 i = 0; i<2; ++i){
+        res =  eeEmulRead((14+MEMMORY+i), &buff);
+        if(!res) srvError("Ошибка = %d", i);
+        else state[i]=buff;
+    }
+    if(res) setStatus(DIM07, {state[0], state[1], 0});
+    #endif
+
+    goChamp = 1;
+}
+
+void onInit(){
+    delayedCall(reset, 3);
+}
+
+#ifdef DIM00
+void remember00(){
+    getStatus(DIM00, state);
+    for(u8 i = 0; i<2; ++i){
+        res = eeEmulWrite(((MEMMORY)+i), state[i]);
+    }
+}
+
+V-ID/DIM00{
+    if(goChamp){
+        cancelDelayedCall(remember00);
+        delayedCall(remember00, 3);
+    }
+}
+#endif
+
+#ifdef DIM01
+void remember01(){
+    getStatus(DIM01, state);
+    for(u8 i = 0; i<2; ++i){
+        res = eeEmulWrite(((2+MEMMORY)+i), state[i]);
+    }
+}
+
+V-ID/DIM01{
+    if(goChamp){
+        cancelDelayedCall(remember01);
+        delayedCall(remember01, 3);
+    }
+}
+#endif
+
+#ifdef DIM02
+void remember02(){
+    getStatus(DIM02, state);
+    for(u8 i = 0; i<2; ++i){
+        res = eeEmulWrite(((4+MEMMORY)+i), state[i]);
+    }
+}
+
+V-ID/DIM02{
+    if(goChamp){
+        cancelDelayedCall(remember02);
+        delayedCall(remember02, 3);
+    }
+}
+#endif
+
+#ifdef DIM03
+void remember03(){
+    getStatus(DIM03, state);
+    for(u8 i = 0; i<2; ++i){
+        res = eeEmulWrite(((6+MEMMORY)+i), state[i]);
+    }
+}
+
+V-ID/DIM03{
+    if(goChamp){
+        cancelDelayedCall(remember03);
+        delayedCall(remember03, 3);
+    }
+}
+#endif
+
+#ifdef DIM04
+void remember04(){
+    getStatus(DIM04, state);
+    for(u8 i = 0; i<2; ++i){
+        res = eeEmulWrite(((8+MEMMORY)+i), state[i]);
+    }
+}
+
+V-ID/DIM04{
+    if(goChamp){
+        cancelDelayedCall(remember04);
+        delayedCall(remember04, 3);
+    }
+}
+#endif
+
+#ifdef DIM05
+void remember05(){
+    getStatus(DIM05, state);
+    for(u8 i = 0; i<2; ++i){
+        res = eeEmulWrite(((10+MEMMORY)+i), state[i]);
+    }
+}
+
+V-ID/DIM05{
+    if(goChamp){
+        cancelDelayedCall(remember05);
+        delayedCall(remember05, 3);
+    }
+}
+#endif
+
+#ifdef DIM06
+void remember06(){
+    getStatus(DIM06, state);
+    for(u8 i = 0; i<2; ++i){
+        res = eeEmulWrite(((12+MEMMORY)+i), state[i]);
+    }
+}
+
+V-ID/DIM06{
+    if(goChamp){
+        cancelDelayedCall(remember06);
+        delayedCall(remember06, 3);
+    }
+}
+#endif
+
+#ifdef DIM07
+void remember07(){
+    getStatus(DIM07, state);
+    for(u8 i = 0; i<2; ++i){
+        res = eeEmulWrite(((14+MEMMORY)+i), state[i]);
+    }
+}
+
+V-ID/DIM07{
+    if(goChamp){
+        cancelDelayedCall(remember07);
+        delayedCall(remember07, 3);
+    }
+}
+#endif
