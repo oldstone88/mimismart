@@ -151,7 +151,7 @@ void onOffcheker(){
         else if(count==2){readcoil[0]=Address3;}
         else if(count==3){readcoil[0]=Address4;}
         setStatus(RS485, &readcoil);
-        if(count!=3) ++count; else count=0;
+        if(count!=1) ++count; else count=0; // Сократил до 2х кондеев
     }
 }
 
@@ -191,9 +191,9 @@ V-ID/RS485{
     }
     else if(optl==6 && opt(1)==0x01){
         OnOff=opt(3);
-        if(opt(0)==1){getStatus(Cond01, &cond); cond[0]|=OnOff; setStatus(Cond01, &cond);}
-        else if(opt(0)==2){getStatus(Cond02, &cond); cond[0]|=OnOff; setStatus(Cond02, &cond);}
-        else if(opt(0)==3){getStatus(Cond03, &cond); cond[0]|=OnOff; setStatus(Cond03, &cond);}
-        else if(opt(0)==4){getStatus(Cond04, &cond); cond[0]|=OnOff; setStatus(Cond04, &cond);}
+        if(opt(0)==1){getStatus(Cond01, &cond); cond[0]&=0xF0; cond[0]|=OnOff; setStatus(Cond01, &cond);}
+        else if(opt(0)==2){getStatus(Cond02, &cond); cond[0]&=0xF0; cond[0]|=OnOff; setStatus(Cond02, &cond);}
+        else if(opt(0)==3){getStatus(Cond03, &cond); cond[0]&=0xF0; cond[0]|=OnOff; setStatus(Cond03, &cond);}
+        else if(opt(0)==4){getStatus(Cond04, &cond); cond[0]&=0xF0; cond[0]|=OnOff; setStatus(Cond04, &cond);}
     }
 }
