@@ -1,0 +1,24 @@
+/*
+{
+   desc:"Температура по скрипту",
+   tag:"item",
+   selectArea:true,
+   vars:[
+      {type:"comment",text:"Включить отопление",width:600, "style":"color:red; font-weight:bold"},
+      {name:"V00",type:"devices-list",required:false,width:800,filter:["valve-heating"],desc:"Отопление",descWidth:100},
+      {name:"TEMP",type:"number",min:"1",max:"127",required:true,defaultValue:"23",desc:"Целевая температура"},
+   ]
+}
+*/
+
+// Отскок
+void offScript(){
+   setStatus(V-ADDR, 0);
+}
+
+V-ID/V-ADDR{
+   if((opt(0)&1) == 1){
+      setStatus(1000:102, "V00\0ts:TEMP");
+      delayedCall(offScript, 1);
+   }
+}
