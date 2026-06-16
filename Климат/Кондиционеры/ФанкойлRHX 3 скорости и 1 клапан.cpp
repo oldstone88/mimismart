@@ -69,7 +69,7 @@ V-ID/s:TIME
         taketemp();
         if( (tempAuto+G1)<=tempK) //Комтана нагрелась
         {
-            if( ([AUTO.0]==17) && (([H00.0]&1)==0) ) setStatus(H00, 1); else if([H00.0]==1) setStatus(H00, 0); //Открываем клапан если режим холода
+            if([AUTO.0]==17) {if(([H00.0]&1)==0) setStatus(H00, 1);} else if([H00.0]==1) setStatus(H00, 0); //Открываем клапан если режим холода
             //АвтоСкорость
             if([AUTO.4]==0) {
                 if( (tempK-tempAuto)>D2) speed3(); else
