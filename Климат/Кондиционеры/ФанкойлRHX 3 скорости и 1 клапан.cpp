@@ -4,7 +4,7 @@
     tag:"import-script",
     selectArea:true,
     addItems:[
-    {tag:"item", id:"%TARGET%", name:"NAME", "sub-id":"%SUBID%", type:"conditioner", "t-delta":"16", "t-min":"16", "vane-hor":"0x00", "vane-ver":"0x00", "funs":"0x0B", "modes":"0x02"},
+    {tag:"item", id:"%TARGET%", name:"NAME", "sub-id":"%SUBID%", type:"conditioner", "t-delta":"16", "t-min":"16", "vane-hor":"0x00", "vane-ver":"0x00", "funs":"0x0F", "modes":"0x03"},
   ],
     vars:[
 {name:"AUTO",type:"hidden",value:"%TARGET%:%SUBID%"},
