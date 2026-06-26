@@ -135,7 +135,7 @@ void Send(){
     }
 }
 
-V-ID/COND00, COND01, COND02, COND03, COND04, COND05, CONS06{
+V-ID/COND00, COND01, COND02, COND03, COND04, COND05, COND06{
     if(senderId()!=exciterId()){
         for(u8 i=0;i<7;++i){
             if(ID[i] && SID[i] && SID[i]==senderSubId()){
