@@ -39,7 +39,7 @@ u8 write = 0;
 u8 breakpoint = 0;
 u8 NeedSend = 0; // Флаги какой кондиционер требует отправки состояния
 u16 modbusregister = 0;
-u8 condstatus[15] = {Address, 0x10, 0, 0, 0, 0x03, 0x06, 0, 0, 0, 0, 0, 0, 0xCC, 0x16};
+u8 condstatus[15] = {Address, 0x10, 0, 0x01, 0, 0x03, 0x06, 0, 0, 0, 0, 0, 0, 0xCC, 0x16};
 
 void startread(){
     write=0;
@@ -52,11 +52,11 @@ void Send(){
         for(u8 i = 0; (i < 4) && (breakpoint ==0 ); ++i){
             if((NeedSend >> i)&1){
                 breakpoint = 1;
-                if(!i){getStatus(COND00, cond);} else
-                if(i == 1){getStatus(COND01, cond);} else
-                if(i == 2){getStatus(COND02, cond);} else
-                if(i == 3){getStatus(COND03, cond);}
-                modbusregister = 40000 + (32 * i) + 2; // Вычисляется адрес первого регистра для записи
+                if(!i){getStatus(COND00, cond);}
+                else if(i == 1){getStatus(COND01, cond);}
+                else if(i == 2){getStatus(COND02, cond);}
+                else if(i == 3){getStatus(COND03, cond);}
+                modbusregister = (32 * i) + 1; // Вычисляется адрес первого регистра для записи
                 condstatus[2] = modbusregister>>8;
                 condstatus[3] = modbusregister;
                 // Режим
@@ -67,15 +67,18 @@ void Send(){
                 else if((cond[0]>>4) == 4) condstatus[8] = (1<<4); // Авто
                 // ВКЛ-ВЫКЛ
                 condstatus[8] |= ((cond[0]%2)<<7);
+                // srvError("Регистр режима и ВКЛ-ВЫКЛ = %x", condstatus[8]);
                 // Скорость
                 if(cond[4] == 0) condstatus[10] = (1<<7); // Авто
                 else if(cond[4] == 1) condstatus[10] = (1<<2); // Низкая 
                 else if(cond[4] == 2) condstatus[10] = (1<<1); // Средняя
                 else if(cond[4] == 3) condstatus[10] = 1; // Высокая
+                // srvError("Регистр скорости = %x", condstatus[10]);
                 // Лопости
                 // Ничего не делаем 
                 // Температура
                 condstatus[12] = cond[1]+17;
+                // srvError("Регистр температуры = %x", condstatus[12]);
                 setStatus(RS485, &condstatus); // Отправка состояния
                 NeedSend -= 1<<i;
                 if(NeedSend) {delayedCall(Send, 1);} else delayedCall(startread, 10); 
@@ -104,7 +107,7 @@ V-ID/s:1{
     if(write == 0){
         ++readCount;
         if(readCount>3) readCount=0;
-        modbusregister = 40000 + (readcond * 32) + 2; // Вычисляется адрес первого регистра для чтения
+        modbusregister = (readcond * 32) + 1; // Вычисляется адрес первого регистра для чтения
         readcond[2] = modbusregister>>8;
         readcond[3] = modbusregister;
         setStatus(RS485, &readcond);
